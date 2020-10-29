@@ -1,0 +1,11 @@
+variable "product_arns" {
+  type        = list
+  default     = []
+  description = "A list of the ARNs of the products you want to import into Security Hub"
+}
+
+variable "region" {
+  type        = string
+  default     = "eu-west-1"
+  description = "The name of the AWS region where SecurityHub will be enabled"
+}
