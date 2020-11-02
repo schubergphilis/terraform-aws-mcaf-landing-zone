@@ -9,6 +9,19 @@ This module provisions by default a set of basic AWS Config Rules. In order to a
 aws_config_rules = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
 ```
 
+## Okta Groups for AWS SSO
+
+By default, this module will create an Okta Group called `AWSPlatformAdmins` and assign the group to the AWS SSO Okta App.
+
+To add other groups, a map of key-value pairs (`group_name` and `group_description`) can be passed down to the variable `aws_okta_groups` like in the example below:
+
+```hcl
+aws_okta_groups = {
+  "AWSAuditors"   = "Provides auditing access to AWS accounts" 
+  "AWSDevelopers" = "Provides developer access to AWS accounts"
+}
+```
+
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
 
