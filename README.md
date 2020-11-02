@@ -29,11 +29,11 @@ aws_config_rules = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| audit\_account\_id | Account ID of AWS audit account | `string` | n/a | yes |
 | aws\_sso\_acs\_url | AWS SSO ACS URL for the Okta App | `string` | n/a | yes |
 | aws\_sso\_entity\_id | AWS SSO Entity ID for the Okta App | `string` | n/a | yes |
 | control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
 | tags | Map of tags | `map` | n/a | yes |
+| aws\_config\_rules | List of managed AWS Config Rule identifiers that should be deployed across the organization | `list` | `[]` | no |
 
 ## Outputs
 
