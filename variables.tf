@@ -1,6 +1,7 @@
-variable "audit_account_id" {
-  type        = string
-  description = "Account ID of AWS audit account"
+variable "aws_config_rules" {
+  type        = list
+  default     = []
+  description = "List of managed AWS Config Rule identifiers that should be deployed across the organization"
 }
 
 variable "aws_sso_acs_url" {
