@@ -13,6 +13,14 @@ variable "aws_sso_entity_id" {
   description = "AWS SSO Entity ID for the Okta App"
 }
 
+variable "control_tower_account_ids" {
+  type = object({
+    audit   = string
+    logging = string
+  })
+  description = "Control Tower core account IDs"
+}
+
 variable "tags" {
   type        = map
   description = "Map of tags"

@@ -1,3 +1,9 @@
+variable "member_accounts" {
+  type        = map
+  default     = {}
+  description = "A map of accounts that should be added as SecurityHub Member Accounts (format: account_id = email)"
+}
+
 variable "product_arns" {
   type        = list
   default     = []

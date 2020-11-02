@@ -37,6 +37,11 @@ resource "aws_iam_account_alias" "alias" {
   account_alias = local.prefixed_name
 }
 
+module "security_hub" {
+  source    = "../security_hub"
+  providers = { aws = aws.managed_by_inception }
+}
+
 module "workspace" {
   source                 = "github.com/schubergphilis/terraform-aws-mcaf-workspace?ref=v0.2.2"
   providers              = { aws = aws.managed_by_inception }
