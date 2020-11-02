@@ -1,21 +1,19 @@
 locals {
-  okta_groups = {
-    "AWSPlatformAdmins" = {
-      description = "AWS administrator access to all stacks/accounts"
+  aws_okta_groups = merge(
+    var.aws_okta_groups,
+    {
+      "AWSPlatformAdmins" = "AWS administrator access to all stacks/accounts"
     }
-    "GitHubAccess" = {
-      description = "Access to GitHub Organization"
-    }
-  }
+  )
 }
 
 resource "okta_app_saml" "aws_sso" {
-  groups            = list(okta_group.groups["AWSPlatformAdmins"].id)
+  groups            = [for group in okta_group.aws_groups : group.id]
   key_years_valid   = 3
   label             = "Amazon Web Services"
   preconfigured_app = "amazon_aws_sso"
 
-  app_settings_json = templatefile("${path.module}/okta_app_saml.json.tpl", {
+  app_settings_json = templatefile("${path.module}/files/okta/app_settings.json.tpl", {
     acsURL   = var.aws_sso_acs_url
     entityID = var.aws_sso_entity_id
   })
@@ -25,8 +23,8 @@ resource "okta_app_saml" "aws_sso" {
   }
 }
 
-resource "okta_group" "groups" {
-  for_each    = local.okta_groups
+resource "okta_group" "aws_groups" {
+  for_each    = local.aws_okta_groups
   name        = each.key
-  description = each.value.description
+  description = each.value
 }
