@@ -25,6 +25,7 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 |------|---------|
 | terraform | >= 0.13 |
 | aws | ~> 3.7.0 |
+| datadog | ~> 2.14 |
 | github | ~> 3.1.0 |
 | mcaf | ~> 0.1.0 |
 | tfe | ~> 0.21.0 |
@@ -42,6 +43,9 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 | defaults | Default options for this module | <pre>object({<br>    account_prefix         = string<br>    github_organization    = string<br>    sso_email              = string<br>    terraform_organization = string<br>    terraform_version      = string<br>  })</pre> | n/a | yes |
 | name | Stack name | `string` | n/a | yes |
 | oauth\_token\_id | The OAuth token ID of the VCS provider | `string` | n/a | yes |
+| datadog\_api\_key | Datadog API key | `string` | `null` | no |
+| datadog\_install\_log\_forwarder | Set to true to install Datadog AWS Log Forwarder | `bool` | `false` | no |
+| datadog\_integration | Whether the Datadog integration should be enabled or not | `bool` | `false` | no |
 | email | Email address of the account | `string` | `null` | no |
 | environment | Stack environment | `string` | `null` | no |
 | kms\_key\_id | The KMS key ID used to encrypt the SSM parameters | `string` | `null` | no |
