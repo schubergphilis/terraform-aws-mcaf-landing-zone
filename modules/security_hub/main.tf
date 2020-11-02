@@ -6,16 +6,24 @@ locals {
   ]
 }
 
-resource "aws_securityhub_account" "this" {}
+resource "aws_securityhub_account" "default" {}
 
-resource "aws_securityhub_product_subscription" "this" {
-  for_each    = toset(var.product_arns)
-  product_arn = each.value
-  depends_on  = [aws_securityhub_account.this]
+resource "aws_securityhub_member" "default" {
+  for_each   = var.member_accounts
+  account_id = each.key
+  email      = each.value
+  invite     = true
+  depends_on = [aws_securityhub_account.default]
 }
 
-resource "aws_securityhub_standards_subscription" "this" {
+resource "aws_securityhub_product_subscription" "default" {
+  for_each    = toset(var.product_arns)
+  product_arn = each.value
+  depends_on  = [aws_securityhub_account.default]
+}
+
+resource "aws_securityhub_standards_subscription" "default" {
   for_each      = toset(local.standards_arns)
   standards_arn = each.value
-  depends_on    = [aws_securityhub_account.this]
+  depends_on    = [aws_securityhub_account.default]
 }
