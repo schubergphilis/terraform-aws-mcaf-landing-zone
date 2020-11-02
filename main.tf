@@ -16,6 +16,14 @@ resource "aws_config_organization_managed_rule" "default" {
   rule_identifier = each.value
 }
 
+module "datadog_master" {
+  count                 = var.datadog_integration == true ? 1 : 0
+  source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.2"
+  api_key               = var.datadog_api_key
+  install_log_forwarder = var.datadog_install_log_forwarder.master
+  tags                  = var.tags
+}
+
 module "kms_key" {
   source      = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.1.5"
   name        = "inception"

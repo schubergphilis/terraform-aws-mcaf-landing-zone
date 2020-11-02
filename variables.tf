@@ -28,6 +28,32 @@ variable "control_tower_account_ids" {
   description = "Control Tower core account IDs"
 }
 
+variable "datadog_api_key" {
+  type        = string
+  default     = null
+  description = "Datadog API key"
+}
+
+variable "datadog_install_log_forwarder" {
+  type = object({
+    audit   = bool
+    logging = bool
+    master  = bool
+  })
+  default = {
+    audit   = false
+    logging = false
+    master  = false
+  }
+  description = "Set to true to install Datadog AWS Log Forwarder for each of the core accounts"
+}
+
+variable "datadog_integration" {
+  type        = bool
+  default     = false
+  description = "Whether the Datadog integration should be enabled or not"
+}
+
 variable "tags" {
   type        = map
   description = "Map of tags"

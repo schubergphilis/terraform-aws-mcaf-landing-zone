@@ -2,6 +2,22 @@
 
 Terraform module to provision an AWS account with a TFE workspace backed by a VCS project.
 
+## Datadog Integration
+
+This module supports an optional Datadog-AWS integration. This integration makes it easier for you to forward metrics and logs from your AWS account to Datadog.
+
+In order to enable the integration, you will need to set the variable `datadog_integration` to `true` and provide a Datadog API Key using the variable `datadog_api_key`. If you would also like to forward logs to Datadog, you can set the variable `datadog_install_log_forwarder` to `true`.
+
+In case you don't want to use the integration, you can configure the Datadog provider like in the example below:
+
+```hcl
+provider "datadog" {
+  validate = false
+}
+```
+
+This should prevent the provider from asking you for a Datadog API Key and allow the module to be provisioned without the integration resources.
+
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
 

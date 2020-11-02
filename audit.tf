@@ -8,6 +8,15 @@ provider "aws" {
   }
 }
 
+module "datadog_audit" {
+  count                 = var.datadog_integration == true ? 1 : 0
+  providers             = { aws = aws.audit }
+  source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.2"
+  api_key               = var.datadog_api_key
+  install_log_forwarder = var.datadog_install_log_forwarder.audit
+  tags                  = var.tags
+}
+
 module "security_hub_audit" {
   source    = "./modules/security_hub"
   providers = { aws = aws.audit }
