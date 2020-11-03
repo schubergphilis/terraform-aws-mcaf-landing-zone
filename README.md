@@ -36,8 +36,7 @@ aws_config_rules = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
 | aws\_config\_rules | List of managed AWS Config Rule identifiers that should be deployed across the organization | `list` | `[]` | no |
 | aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list` | `[]` | no |
 | datadog\_api\_key | Datadog API key | `string` | `null` | no |
-| datadog\_install\_log\_forwarder | Set to true to install Datadog AWS Log Forwarder for each of the core accounts | <pre>object({<br>    audit   = bool<br>    logging = bool<br>    master  = bool<br>  })</pre> | <pre>{<br>  "audit": false,<br>  "logging": false,<br>  "master": false<br>}</pre> | no |
-| datadog\_integration | Whether the Datadog integration should be enabled or not | `bool` | `false` | no |
+| datadog\_integration | Configuration for Datadog Integration | <pre>object({<br>    audit = object({<br>      enabled      = bool<br>      forward_logs = bool<br>    })<br>    logging = object({<br>      enabled      = bool<br>      forward_logs = bool<br>    })<br>    master = object({<br>      enabled      = bool<br>      forward_logs = bool<br>    })<br>  })</pre> | <pre>{<br>  "audit": {<br>    "enabled": false,<br>    "forward_logs": false<br>  },<br>  "logging": {<br>    "enabled": false,<br>    "forward_logs": false<br>  },<br>  "master": {<br>    "enabled": false,<br>    "forward_logs": false<br>  }<br>}</pre> | no |
 
 ## Outputs
 
