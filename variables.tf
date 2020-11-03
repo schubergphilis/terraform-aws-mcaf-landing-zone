@@ -4,6 +4,12 @@ variable "aws_config_rules" {
   description = "List of managed AWS Config Rule identifiers that should be deployed across the organization"
 }
 
+variable "aws_okta_group_ids" {
+  type        = list
+  default     = []
+  description = "List of Okta group IDs that should be assigned the AWS SSO Okta app"
+}
+
 variable "aws_sso_acs_url" {
   type        = string
   description = "AWS SSO ACS URL for the Okta App"
