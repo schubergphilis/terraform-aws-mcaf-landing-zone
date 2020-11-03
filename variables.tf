@@ -4,10 +4,10 @@ variable "aws_config_rules" {
   description = "List of managed AWS Config Rule identifiers that should be deployed across the organization"
 }
 
-variable "aws_okta_groups" {
-  type        = map
-  default     = {}
-  description = "Map of Okta Groups that should have access to the AWS organization (format: name => description)"
+variable "aws_okta_group_ids" {
+  type        = list
+  default     = []
+  description = "List of Okta Group Ids that should have the Amazon Web Services Okta app assigned"
 }
 
 variable "aws_sso_acs_url" {

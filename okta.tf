@@ -1,14 +1,5 @@
-locals {
-  aws_okta_groups = merge(
-    var.aws_okta_groups,
-    {
-      "AWSPlatformAdmins" = "AWS administrator access to all stacks/accounts"
-    }
-  )
-}
-
 resource "okta_app_saml" "aws_sso" {
-  groups            = [for group in okta_group.aws_groups : group.id]
+  groups            = toset(var.aws_okta_group_ids)
   key_years_valid   = 3
   label             = "Amazon Web Services"
   preconfigured_app = "amazon_aws_sso"
@@ -21,10 +12,4 @@ resource "okta_app_saml" "aws_sso" {
   lifecycle {
     ignore_changes = [features, users]
   }
-}
-
-resource "okta_group" "aws_groups" {
-  for_each    = local.aws_okta_groups
-  name        = each.key
-  description = each.value
 }
