@@ -41,6 +41,9 @@ Terraform module to provision an AWS account with a TFE workspace backed by a VC
 
 ## Outputs
 
-No output.
+| Name | Description |
+|------|-------------|
+| id | The AWS account ID |
+| workspace\_id | The Terraform workspace ID |
 
 <!--- END_TF_DOCS --->
