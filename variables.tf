@@ -34,24 +34,36 @@ variable "datadog_api_key" {
   description = "Datadog API key"
 }
 
-variable "datadog_install_log_forwarder" {
+variable "datadog_integration" {
   type = object({
-    audit   = bool
-    logging = bool
-    master  = bool
+    audit = object({
+      enabled      = bool
+      forward_logs = bool
+    })
+    logging = object({
+      enabled      = bool
+      forward_logs = bool
+    })
+    master = object({
+      enabled      = bool
+      forward_logs = bool
+    })
   })
   default = {
-    audit   = false
-    logging = false
-    master  = false
+    audit = {
+      enabled      = false
+      forward_logs = false
+    }
+    logging = {
+      enabled      = false
+      forward_logs = false
+    }
+    master = {
+      enabled      = false
+      forward_logs = false
+    }
   }
-  description = "Set to true to install Datadog AWS Log Forwarder for each of the core accounts"
-}
-
-variable "datadog_integration" {
-  type        = bool
-  default     = false
-  description = "Whether the Datadog integration should be enabled or not"
+  description = "Configuration for Datadog Integration"
 }
 
 variable "tags" {

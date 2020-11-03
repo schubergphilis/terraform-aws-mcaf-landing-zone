@@ -9,11 +9,11 @@ provider "aws" {
 }
 
 module "datadog_audit" {
-  count                 = var.datadog_integration == true ? 1 : 0
-  providers             = { aws = aws.audit }
+  count                 = var.datadog_integration.audit.enabled == true ? 1 : 0
   source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.2"
+  providers             = { aws = aws.audit }
   api_key               = var.datadog_api_key
-  install_log_forwarder = var.datadog_install_log_forwarder.audit
+  install_log_forwarder = var.datadog_integration.audit.forward_logs
   tags                  = var.tags
 }
 

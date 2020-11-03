@@ -7,11 +7,11 @@ provider "aws" {
 }
 
 module "datadog_logging" {
-  count                 = var.datadog_integration == true ? 1 : 0
-  providers             = { aws = aws.logging }
+  count                 = var.datadog_integration.logging.enabled == true ? 1 : 0
   source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.2"
+  providers             = { aws = aws.logging }
   api_key               = var.datadog_api_key
-  install_log_forwarder = var.datadog_install_log_forwarder.logging
+  install_log_forwarder = var.datadog_integration.logging.forward_logs
   tags                  = var.tags
 }
 

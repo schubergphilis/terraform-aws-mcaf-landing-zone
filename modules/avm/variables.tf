@@ -4,16 +4,16 @@ variable "datadog_api_key" {
   description = "Datadog API key"
 }
 
-variable "datadog_install_log_forwarder" {
-  type        = bool
-  default     = false
-  description = "Set to true to install Datadog AWS Log Forwarder"
-}
-
 variable "datadog_integration" {
-  type        = bool
-  default     = false
-  description = "Whether the Datadog integration should be enabled or not"
+  type = object({
+    enabled      = bool
+    forward_logs = bool
+  })
+  default = {
+    enabled      = false
+    forward_logs = false
+  }
+  description = "Configuration for Datadog Integration"
 }
 
 variable "defaults" {
