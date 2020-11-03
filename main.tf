@@ -19,7 +19,7 @@ resource "aws_config_organization_managed_rule" "default" {
 module "datadog_master" {
   count                 = var.datadog_integration.master.enabled == true ? 1 : 0
   source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.2"
-  api_key               = var.datadog_api_key
+  api_key               = var.datadog_integration.api_key
   install_log_forwarder = var.datadog_integration.master.forward_logs
   tags                  = var.tags
 }

@@ -28,14 +28,9 @@ variable "control_tower_account_ids" {
   description = "Control Tower core account IDs"
 }
 
-variable "datadog_api_key" {
-  type        = string
-  default     = null
-  description = "Datadog API key"
-}
-
 variable "datadog_integration" {
   type = object({
+    api_key = string
     audit = object({
       enabled      = bool
       forward_logs = bool
@@ -50,6 +45,7 @@ variable "datadog_integration" {
     })
   })
   default = {
+    api_key = null
     audit = {
       enabled      = false
       forward_logs = false

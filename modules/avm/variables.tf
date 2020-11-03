@@ -1,15 +1,11 @@
-variable "datadog_api_key" {
-  type        = string
-  default     = null
-  description = "Datadog API key"
-}
-
 variable "datadog_integration" {
   type = object({
+    api_key      = string
     enabled      = bool
     forward_logs = bool
   })
   default = {
+    api_key      = null
     enabled      = false
     forward_logs = false
   }
