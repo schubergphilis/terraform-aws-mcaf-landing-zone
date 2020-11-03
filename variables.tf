@@ -7,7 +7,7 @@ variable "aws_config_rules" {
 variable "aws_okta_group_ids" {
   type        = list
   default     = []
-  description = "List of Okta Group Ids that should have the Amazon Web Services Okta app assigned"
+  description = "List of Okta group IDs that should be assigned the AWS SSO Okta app"
 }
 
 variable "aws_sso_acs_url" {
