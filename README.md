@@ -54,7 +54,7 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 | tags | Map of tags | `map` | n/a | yes |
 | aws\_config\_rules | List of managed AWS Config Rule identifiers that should be deployed across the organization | `list` | `[]` | no |
 | aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list` | `[]` | no |
-| datadog\_integration | Configuration for Datadog Integration | <pre>object({<br>    api_key = string<br>    audit = object({<br>      enabled      = bool<br>      forward_logs = bool<br>    })<br>    logging = object({<br>      enabled      = bool<br>      forward_logs = bool<br>    })<br>    master = object({<br>      enabled      = bool<br>      forward_logs = bool<br>    })<br>  })</pre> | <pre>{<br>  "api_key": null,<br>  "audit": {<br>    "enabled": false,<br>    "forward_logs": false<br>  },<br>  "logging": {<br>    "enabled": false,<br>    "forward_logs": false<br>  },<br>  "master": {<br>    "enabled": false,<br>    "forward_logs": false<br>  }<br>}</pre> | no |
+| datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
 
 ## Outputs
 
