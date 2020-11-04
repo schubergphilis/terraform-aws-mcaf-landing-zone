@@ -13,29 +13,10 @@ aws_config_rules = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
 
 This module supports an optional Datadog-AWS integration. This integration makes it easier for you to forward metrics and logs from your AWS account to Datadog.
 
-In order to enable the integration, you can pass an object to the variable `datadog_integration` containing the following attributes: (Note: `enabled` and `forward_logs` should be set for each core account)
-- `api_key`: Datadog API Key.
-- `enabled`: boolean indicating if the integration should be enabled.
-- `forward_logs`: boolean indicating if logs should be forwarded to Datadog.
-
-Example:
-```hcl
-datadog_integration = {
-  api_key = "abc123"
-  audit = {
-    enabled      = true
-    forward_logs = false
-  }
-  logging = {
-    enabled      = true
-    forward_logs = true
-  }
-  master = {
-    enabled      = true
-    forward_logs = false
-  }
-}
-```
+In order to enable the integration, you can pass an object to the variable `datadog` containing the following attributes:
+- `api_key`: sets the Datadog API key
+- `enable_integration`: set to `true` to configure the [Datadog AWS integration](https://docs.datadoghq.com/integrations/amazon_web_services/)
+- `install_log_forwarder`: set to `true` to install the [Datadog Forwarder](https://docs.datadoghq.com/serverless/forwarder/)
 
 In case you don't want to use the integration, you can configure the Datadog provider like in the example below:
 

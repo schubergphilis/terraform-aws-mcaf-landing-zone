@@ -28,38 +28,14 @@ variable "control_tower_account_ids" {
   description = "Control Tower core account IDs"
 }
 
-variable "datadog_integration" {
+variable "datadog" {
   type = object({
-    api_key = string
-    audit = object({
-      enabled      = bool
-      forward_logs = bool
-    })
-    logging = object({
-      enabled      = bool
-      forward_logs = bool
-    })
-    master = object({
-      enabled      = bool
-      forward_logs = bool
-    })
+    api_key               = string
+    enable_integration    = bool
+    install_log_forwarder = bool
   })
-  default = {
-    api_key = null
-    audit = {
-      enabled      = false
-      forward_logs = false
-    }
-    logging = {
-      enabled      = false
-      forward_logs = false
-    }
-    master = {
-      enabled      = false
-      forward_logs = false
-    }
-  }
-  description = "Configuration for Datadog Integration"
+  default     = null
+  description = "Datadog integration options for the core accounts"
 }
 
 variable "tags" {

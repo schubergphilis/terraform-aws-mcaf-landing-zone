@@ -1,15 +1,11 @@
-variable "datadog_integration" {
+variable "datadog" {
   type = object({
-    api_key      = string
-    enabled      = bool
-    forward_logs = bool
+    api_key               = string
+    enable_integration    = bool
+    install_log_forwarder = bool
   })
-  default = {
-    api_key      = null
-    enabled      = false
-    forward_logs = false
-  }
-  description = "Configuration for Datadog Integration"
+  default     = null
+  description = "Datadog integration options"
 }
 
 variable "defaults" {
