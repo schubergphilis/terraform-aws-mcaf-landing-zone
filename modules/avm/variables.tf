@@ -1,3 +1,13 @@
+variable "datadog" {
+  type = object({
+    api_key               = string
+    enable_integration    = bool
+    install_log_forwarder = bool
+  })
+  default     = null
+  description = "Datadog integration options"
+}
+
 variable "defaults" {
   type = object({
     account_prefix         = string

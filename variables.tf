@@ -28,6 +28,16 @@ variable "control_tower_account_ids" {
   description = "Control Tower core account IDs"
 }
 
+variable "datadog" {
+  type = object({
+    api_key               = string
+    enable_integration    = bool
+    install_log_forwarder = bool
+  })
+  default     = null
+  description = "Datadog integration options for the core accounts"
+}
+
 variable "tags" {
   type        = map
   description = "Map of tags"

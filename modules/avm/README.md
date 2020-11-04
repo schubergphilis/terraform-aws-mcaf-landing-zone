@@ -2,6 +2,26 @@
 
 Terraform module to provision an AWS account with a TFE workspace backed by a VCS project.
 
+## Datadog Integration
+
+This module supports an optional Datadog-AWS integration. This integration makes it easier for you to forward metrics and logs from your AWS account to Datadog.
+
+In order to enable the integration, you can pass an object to the variable `datadog` containing the following attributes:
+
+- `api_key`: sets the Datadog API key
+- `enable_integration`: set to `true` to configure the [Datadog AWS integration](https://docs.datadoghq.com/integrations/amazon_web_services/)
+- `install_log_forwarder`: set to `true` to install the [Datadog Forwarder](https://docs.datadoghq.com/serverless/forwarder/)
+
+In case you don't want to use the integration, you can configure the Datadog provider like in the example below:
+
+```hcl
+provider "datadog" {
+  validate = false
+}
+```
+
+This should prevent the provider from asking you for a Datadog API Key and allow the module to be provisioned without the integration resources.
+
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
 
@@ -9,6 +29,7 @@ Terraform module to provision an AWS account with a TFE workspace backed by a VC
 |------|---------|
 | terraform | >= 0.13 |
 | aws | ~> 3.7.0 |
+| datadog | ~> 2.14 |
 | github | ~> 3.1.0 |
 | mcaf | ~> 0.1.0 |
 | tfe | ~> 0.21.0 |
@@ -26,6 +47,7 @@ Terraform module to provision an AWS account with a TFE workspace backed by a VC
 | defaults | Default options for this module | <pre>object({<br>    account_prefix         = string<br>    github_organization    = string<br>    sso_email              = string<br>    terraform_organization = string<br>    terraform_version      = string<br>  })</pre> | n/a | yes |
 | name | Stack name | `string` | n/a | yes |
 | oauth\_token\_id | The OAuth token ID of the VCS provider | `string` | n/a | yes |
+| datadog | Datadog integration options | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
 | email | Email address of the account | `string` | `null` | no |
 | environment | Stack environment | `string` | `null` | no |
 | kms\_key\_id | The KMS key ID used to encrypt the SSM parameters | `string` | `null` | no |
