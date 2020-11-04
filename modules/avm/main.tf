@@ -55,6 +55,7 @@ module "workspace" {
   oauth_token_id         = var.oauth_token_id
   policy_arns            = ["arn:aws:iam::aws:policy/AdministratorAccess"]
   region                 = var.region
+  ssh_key_id             = var.ssh_key_id
   terraform_organization = var.defaults.terraform_organization
   terraform_version      = var.terraform_version != null ? var.terraform_version : var.defaults.terraform_version
   trigger_prefixes       = var.trigger_prefixes
