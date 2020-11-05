@@ -4,5 +4,5 @@ module "datadog" {
   providers             = { aws = aws.managed_by_inception }
   api_key               = try(var.datadog.api_key, null)
   install_log_forwarder = try(var.datadog.install_log_forwarder, false)
-  tags                  = local.tags
+  tags                  = var.tags
 }

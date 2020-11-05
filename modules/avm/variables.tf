@@ -77,6 +77,11 @@ variable "sso_lastname" {
   description = "The lastname of the Control Tower SSO account"
 }
 
+variable "tags" {
+  type        = map(string)
+  description = "Map of tags"
+}
+
 variable "terraform_auto_apply" {
   type        = bool
   default     = false

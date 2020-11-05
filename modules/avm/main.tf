@@ -4,12 +4,6 @@ locals {
   prefixed_email      = "${var.defaults.account_prefix}-aws-${local.name}"
   prefixed_name       = "${var.defaults.account_prefix}-${local.name}"
   organizational_unit = var.organizational_unit != null ? var.organizational_unit : var.environment == "prod" ? "Production" : "Non-Production"
-
-  tags = {
-    environment = var.environment != null ? var.environment : var.organizational_unit
-    stack       = var.name
-    terraform   = true
-  }
 }
 
 module "account" {
@@ -60,5 +54,5 @@ module "workspace" {
   trigger_prefixes       = var.trigger_prefixes
   username               = "TFEPipeline"
   working_directory      = var.environment != null ? "terraform/${var.environment}" : "terraform"
-  tags                   = local.tags
+  tags                   = var.tags
 }
