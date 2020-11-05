@@ -47,6 +47,7 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 | defaults | Default options for this module | <pre>object({<br>    account_prefix         = string<br>    github_organization    = string<br>    sso_email              = string<br>    terraform_organization = string<br>    terraform_version      = string<br>  })</pre> | n/a | yes |
 | name | Stack name | `string` | n/a | yes |
 | oauth\_token\_id | The OAuth token ID of the VCS provider | `string` | n/a | yes |
+| tags | Map of tags | `map(string)` | n/a | yes |
 | datadog | Datadog integration options | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
 | email | Email address of the account | `string` | `null` | no |
 | environment | Stack environment | `string` | `null` | no |
