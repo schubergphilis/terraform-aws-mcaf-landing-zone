@@ -54,6 +54,7 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 | organizational\_unit | Organizational Unit to place account in | `string` | `null` | no |
 | provisioned\_product\_name | A custom name for the provisioned product | `string` | `null` | no |
 | region | The default region of the account | `string` | `"eu-west-1"` | no |
+| ssh\_key\_id | The SSH key ID to assign to the TFE workspace | `string` | `null` | no |
 | sso\_firstname | The firstname of the Control Tower SSO account | `string` | `"AWS Control Tower"` | no |
 | sso\_lastname | The lastname of the Control Tower SSO account | `string` | `"Admin"` | no |
 | terraform\_auto\_apply | Whether to automatically apply changes when a Terraform plan is successful | `bool` | `false` | no |
@@ -66,6 +67,6 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 | Name | Description |
 |------|-------------|
 | id | The AWS account ID |
-| workspace\_id | The Terraform workspace ID |
+| workspace\_id | The TFE workspace ID |
 
 <!--- END_TF_DOCS --->

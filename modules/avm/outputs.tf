@@ -5,5 +5,5 @@ output "id" {
 
 output "workspace_id" {
   value       = module.workspace.workspace_id
-  description = "The Terraform workspace ID"
+  description = "The TFE workspace ID"
 }

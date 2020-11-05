@@ -65,6 +65,12 @@ variable "region" {
   description = "The default region of the account"
 }
 
+variable "ssh_key_id" {
+  type        = string
+  default     = null
+  description = "The SSH key ID to assign to the TFE workspace"
+}
+
 variable "sso_firstname" {
   type        = string
   default     = "AWS Control Tower"
