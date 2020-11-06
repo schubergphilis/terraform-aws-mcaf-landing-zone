@@ -43,6 +43,8 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 | Name | Version |
 |------|---------|
 | aws | ~> 3.7.0 |
+| aws.audit | ~> 3.7.0 |
+| aws.logging | ~> 3.7.0 |
 | okta | ~> 3.0 |
 
 ## Inputs
@@ -53,7 +55,7 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 | aws\_sso\_entity\_id | AWS SSO Entity ID for the Okta App | `string` | n/a | yes |
 | control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
 | tags | Map of tags | `map` | n/a | yes |
-| aws\_config\_rules | List of managed AWS Config Rule identifiers that should be deployed across the organization | `list` | `[]` | no |
+| aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_id = string<br>    aggregator_regions    = list(string)<br>    rule_identifiers      = list(string)<br>  })</pre> | `null` | no |
 | aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list` | `[]` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
 
