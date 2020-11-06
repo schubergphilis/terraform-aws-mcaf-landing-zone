@@ -27,7 +27,7 @@ provider "aws" {
 }
 
 resource "aws_config_aggregate_authorization" "default" {
-  for_each   = try(var.aws_config.aggregator_account_id, null) != null ? toset(var.aws_config.aggregator_regions) : []
+  for_each   = toset(try(var.aws_config.aggregator_regions, []))
   provider   = aws.managed_by_inception
   account_id = var.aws_config.aggregator_account_id
   region     = each.value

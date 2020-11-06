@@ -3,10 +3,18 @@ Terraform module to setup and manage various components of the AWS Landing Zone.
 
 ## AWS Config Rules
 
-This module provisions by default a set of basic AWS Config Rules. In order to add extra rules, a list of [rule identifiers](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html) can be passed to the variable `aws_config_rules` like in the example below:
+This module provisions by default a set of basic AWS Config Rules. In order to add extra rules, a list of [rule identifiers](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html) can be passed via the variable `aws_config` using the attribute `rule_identifiers`.
+
+If you would like to authorize another account to aggregate AWS Config data, the account ID and regions can also be passed via the variable `aws_config` using the attributes `aggregator_account_id` and `aggregator_regions` respectively.
+
+Example:
 
 ```hcl
-aws_config_rules = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
+aws_config = {
+  aggregator_account_id = "123456789012"
+  aggregator_regions    = ["eu-west-1"]
+  rule_identifiers      = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
+}
 ```
 
 ## Datadog Integration

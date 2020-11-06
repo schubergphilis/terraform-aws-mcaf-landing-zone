@@ -11,7 +11,7 @@ locals {
 }
 
 resource "aws_config_aggregate_authorization" "master" {
-  for_each   = try(var.aws_config.aggregator_account_id, null) != null ? toset(var.aws_config.aggregator_regions) : []
+  for_each   = toset(try(var.aws_config.aggregator_regions, []))
   account_id = var.aws_config.aggregator_account_id
   region     = each.value
 }
