@@ -6,6 +6,13 @@ provider "aws" {
   }
 }
 
+resource "aws_config_aggregate_authorization" "audit" {
+  for_each   = toset(try(var.aws_config.aggregator_regions, []))
+  provider   = aws.audit
+  account_id = var.aws_config.aggregator_account_id
+  region     = each.value
+}
+
 module "datadog_audit" {
   count                 = try(var.datadog.enable_integration, false) == true ? 1 : 0
   source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.2"
