@@ -1,7 +1,11 @@
-variable "aws_config_rules" {
-  type        = list
-  default     = []
-  description = "List of managed AWS Config Rule identifiers that should be deployed across the organization"
+variable "aws_config" {
+  type = object({
+    aggregator_account_id = string
+    aggregator_regions    = list(string)
+    rule_identifiers      = list(string)
+  })
+  default     = null
+  description = "AWS Config settings"
 }
 
 variable "aws_okta_group_ids" {

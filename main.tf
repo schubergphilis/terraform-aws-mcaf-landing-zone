@@ -1,6 +1,6 @@
 locals {
   aws_config_rules = concat(
-    var.aws_config_rules,
+    try(var.aws_config.rule_identifiers, []),
     [
       "CLOUD_TRAIL_ENABLED",
       "ENCRYPTED_VOLUMES",
@@ -8,6 +8,12 @@ locals {
       "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
     ]
   )
+}
+
+resource "aws_config_aggregate_authorization" "master" {
+  for_each   = try(var.aws_config.aggregator_account_id, null) != null ? toset(var.aws_config.aggregator_regions) : []
+  account_id = var.aws_config.aggregator_account_id
+  region     = each.value
 }
 
 resource "aws_config_configuration_recorder" "default" {
