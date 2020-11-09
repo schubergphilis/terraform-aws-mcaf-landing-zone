@@ -1,3 +1,9 @@
+variable "aws_allowed_regions" {
+  type        = list(string)
+  default     = null
+  description = "List of AWS regions allowed to be used"
+}
+
 variable "aws_config" {
   type = object({
     aggregator_account_id = string

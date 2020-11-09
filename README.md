@@ -37,6 +37,16 @@ provider "datadog" {
 
 This should prevent the provider from asking you for a Datadog API Key and allow the module to be provisioned without the integration resources.
 
+## Restricting AWS Regions
+
+If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_allowed_regions`. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.
+
+Example:
+
+```hcl
+aws_allowed_regions = ["eu-west-1"]
+```
+
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
 
