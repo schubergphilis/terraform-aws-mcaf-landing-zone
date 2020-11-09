@@ -37,6 +37,16 @@ provider "datadog" {
 
 This should prevent the provider from asking you for a Datadog API Key and allow the module to be provisioned without the integration resources.
 
+## Restricting AWS Regions
+
+If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_allowed_regions`. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.
+
+Example:
+
+```hcl
+aws_allowed_regions = ["eu-west-1"]
+```
+
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
 
@@ -63,6 +73,7 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 | aws\_sso\_entity\_id | AWS SSO Entity ID for the Okta App | `string` | n/a | yes |
 | control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
 | tags | Map of tags | `map` | n/a | yes |
+| aws\_allowed\_regions | List of allowed AWS regions | `list(string)` | `null` | no |
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_id = string<br>    aggregator_regions    = list(string)<br>    rule_identifiers      = list(string)<br>  })</pre> | `null` | no |
 | aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list` | `[]` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
