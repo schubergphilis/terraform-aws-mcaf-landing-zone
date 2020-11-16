@@ -93,6 +93,7 @@ monitor_iam_access = {
 | email | Email address of the account | `string` | `null` | no |
 | environment | Stack environment | `string` | `null` | no |
 | kms\_key\_id | The KMS key ID used to encrypt the SSM parameters | `string` | `null` | no |
+| monitor\_iam\_access | Object containing list of IAM Identities that should have their access monitored and the SNS Topic that should be notified | <pre>object({<br>    sns_topic_arn = string<br>    identities = list(object({<br>      name = string<br>      type = string<br>    }))<br>  })</pre> | `null` | no |
 | organizational\_unit | Organizational Unit to place account in | `string` | `null` | no |
 | provisioned\_product\_name | A custom name for the provisioned product | `string` | `null` | no |
 | region | The default region of the account | `string` | `"eu-west-1"` | no |

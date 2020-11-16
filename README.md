@@ -107,6 +107,7 @@ aws_allowed_regions = ["eu-west-1"]
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
 | aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list` | `[]` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
+| monitor\_iam\_access | List of IAM Identities that should have their access monitored | <pre>list(object({<br>    account = string<br>    name    = string<br>    type    = string<br>  }))</pre> | `null` | no |
 
 ## Outputs
 
@@ -114,5 +115,6 @@ aws_allowed_regions = ["eu-west-1"]
 |------|-------------|
 | kms\_key\_arn | ARN of KMS key for SSM encryption |
 | kms\_key\_id | ID of KMS key for SSM encryption |
+| monitor\_iam\_access\_sns\_topic\_arn | ARN of the SNS Topic in the Audit account for IAM access monitoring notifications |
 
 <!--- END_TF_DOCS --->
