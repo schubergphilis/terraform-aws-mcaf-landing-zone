@@ -7,10 +7,10 @@ provider "aws" {
 }
 
 resource "aws_config_aggregate_authorization" "logging" {
-  for_each   = toset(try(var.aws_config.aggregator_regions, []))
+  for_each   = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator }
   provider   = aws.logging
-  account_id = var.aws_config.aggregator_account_id
-  region     = each.value
+  account_id = each.value.account_id
+  region     = each.value.region
 }
 
 module "datadog_logging" {

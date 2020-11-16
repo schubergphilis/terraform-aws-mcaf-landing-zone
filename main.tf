@@ -1,19 +1,7 @@
-locals {
-  aws_config_rules = concat(
-    try(var.aws_config.rule_identifiers, []),
-    [
-      "CLOUD_TRAIL_ENABLED",
-      "ENCRYPTED_VOLUMES",
-      "ROOT_ACCOUNT_MFA_ENABLED",
-      "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
-    ]
-  )
-}
-
 resource "aws_config_aggregate_authorization" "master" {
-  for_each   = toset(try(var.aws_config.aggregator_regions, []))
-  account_id = var.aws_config.aggregator_account_id
-  region     = each.value
+  for_each   = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator }
+  account_id = each.value.account_id
+  region     = each.value.region
 }
 
 resource "aws_config_configuration_recorder" "default" {

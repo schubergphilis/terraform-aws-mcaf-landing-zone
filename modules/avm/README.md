@@ -4,14 +4,14 @@ Terraform module to provision an AWS account with a TFE workspace backed by a VC
 
 ## AWS Config Rules
 
-If you would like to authorize another account to aggregate AWS Config data, the account ID and regions can be passed via the variable `aws_config` using the attributes `aggregator_account_id` and `aggregator_regions` respectively.
+If you would like to authorize other accounts to aggregate AWS Config data, the account IDs and regions can be passed via the variable `aws_config` using the attributes `aggregator_account_ids` and `aggregator_regions` respectively.
 
 Example:
 
 ```hcl
 aws_config = {
-  aggregator_account_id = "123456789012"
-  aggregator_regions    = ["eu-west-1"]
+  aggregator_account_ids = ["123456789012"]
+  aggregator_regions     = ["eu-west-1"]
 }
 ```
 

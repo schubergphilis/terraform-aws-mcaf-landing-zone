@@ -1,7 +1,7 @@
 variable "aws_config" {
   type = object({
-    aggregator_account_id = string
-    aggregator_regions    = list(string)
+    aggregator_account_ids = list(string)
+    aggregator_regions     = list(string)
   })
   default     = null
   description = "AWS Config settings"

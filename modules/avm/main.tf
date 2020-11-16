@@ -1,4 +1,12 @@
 locals {
+  aws_config_aggregators = var.aws_config != null ? flatten([
+    for account in var.aws_config.aggregator_account_ids : [
+      for region in var.aws_config.aggregator_regions : {
+        account_id = account
+        region     = region
+      }
+    ]
+  ]) : []
   email               = var.email != null ? var.email : "${local.prefixed_email}@schubergphilis.com"
   name                = var.environment != null ? "${var.name}-${var.environment}" : var.name
   prefixed_email      = "${var.defaults.account_prefix}-aws-${local.name}"
@@ -27,10 +35,10 @@ provider "aws" {
 }
 
 resource "aws_config_aggregate_authorization" "default" {
-  for_each   = toset(try(var.aws_config.aggregator_regions, []))
+  for_each   = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator }
   provider   = aws.managed_by_inception
-  account_id = var.aws_config.aggregator_account_id
-  region     = each.value
+  account_id = each.value.account_id
+  region     = each.value.region
 }
 
 resource "aws_iam_account_alias" "alias" {
