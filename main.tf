@@ -1,3 +1,22 @@
+resource "aws_cloudwatch_event_rule" "monitor_iam_access_master" {
+  for_each    = local.monitor_iam_access
+  name        = substr("LandingZone-MonitorIAMAccess-${each.key}", 0, 64)
+  description = "Monitors IAM access for ${each.key}"
+
+  event_pattern = templatefile("${path.module}/files/event_bridge/monitor_iam_access.json.tpl", {
+    userIdentity = jsonencode(each.value)
+  })
+
+  depends_on = [data.aws_iam_role.monitor_iam_access_master, data.aws_iam_user.monitor_iam_access_master]
+}
+
+resource "aws_cloudwatch_event_target" "monitor_iam_access_master" {
+  for_each  = aws_cloudwatch_event_rule.monitor_iam_access_master
+  rule      = each.value.name
+  target_id = "SendToSNS"
+  arn       = aws_sns_topic.monitor_iam_access.arn
+}
+
 resource "aws_config_aggregate_authorization" "master" {
   for_each   = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator }
   account_id = each.value.account_id
@@ -24,7 +43,7 @@ resource "aws_config_delivery_channel" "default" {
   name           = "default"
   s3_bucket_name = "aws-controltower-logs-${var.control_tower_account_ids.logging}-${data.aws_region.current.name}"
   s3_key_prefix  = data.aws_organizations_organization.default.id
-  sns_topic_arn  = "arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_account_ids.audit}:aws-controltower-AllConfigNotifications"
+  sns_topic_arn  = data.aws_sns_topic.all_config_notifications.arn
   depends_on     = [aws_config_configuration_recorder.default]
 }
 

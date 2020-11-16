@@ -39,6 +39,34 @@ provider "datadog" {
 
 This should prevent the provider from asking you for a Datadog API Key and allow the module to be provisioned without the integration resources.
 
+## Monitoring IAM Access
+
+This module automatically monitors and notifies all activities performed by the `root` user of all core accounts. All notifications will be sent to the SNS Topic `LandingZone-MonitorIAMAccess` in the `audit` account.
+
+In case you would like to monitor other users or roles, a list can be passed using the variable `monitor_iam_access`. All objects in the list should have the attributes `account`, `name` and `type`. 
+
+The allowed values are:
+
+- `account`: `audit`, `logging` or `master`
+- `name`: the name of the IAM Role or the IAM User
+- `type`: `AssumedRole` or `IAMUser` 
+
+For more details regarding identities, please check [this link](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html).
+
+NOTE: Data Sources will be used to make sure that the identities provided actually exist in each account to avoid monitoring non-existent resources. In case an invalid identity is provided, a `NoSuchEntity` error will be thrown. 
+
+Example:
+
+```hcl
+monitor_iam_access = [
+  {
+    account = "master"
+    name    = "AWSReservedSSO_AWSAdministratorAccess_123abc"
+    type    = "AssumedRole"
+  }
+]
+```
+
 ## Restricting AWS Regions
 
 If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_allowed_regions`. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.

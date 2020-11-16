@@ -6,6 +6,27 @@ provider "aws" {
   }
 }
 
+resource "aws_cloudwatch_event_rule" "monitor_iam_access_logging" {
+  for_each    = local.monitor_iam_access
+  provider    = aws.logging
+  name        = substr("LandingZone-MonitorIAMAccess-${each.key}", 0, 64)
+  description = "Monitors IAM access for ${each.key}"
+
+  event_pattern = templatefile("${path.module}/files/event_bridge/monitor_iam_access.json.tpl", {
+    userIdentity = jsonencode(each.value)
+  })
+
+  depends_on = [data.aws_iam_role.monitor_iam_access_logging, data.aws_iam_user.monitor_iam_access_logging]
+}
+
+resource "aws_cloudwatch_event_target" "monitor_iam_access_logging" {
+  for_each  = aws_cloudwatch_event_rule.monitor_iam_access_logging
+  provider  = aws.logging
+  rule      = each.value.name
+  target_id = "SendToSNS"
+  arn       = aws_sns_topic.monitor_iam_access.arn
+}
+
 resource "aws_config_aggregate_authorization" "logging" {
   for_each   = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator }
   provider   = aws.logging

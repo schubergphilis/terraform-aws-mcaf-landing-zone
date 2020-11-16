@@ -47,6 +47,23 @@ variable "datadog" {
   description = "Datadog integration options for the core accounts"
 }
 
+variable "monitor_iam_access" {
+  type = list(object({
+    account = string
+    name    = string
+    type    = string
+  }))
+  default     = null
+  description = "List of IAM Identities that should have their access monitored"
+
+  validation {
+    condition = length(setsubtract(toset([
+      for identity in var.monitor_iam_access : identity.account
+    ]), ["audit", "logging", "master"])) == 0
+    error_message = "Invalid account. The allowed values are \"audit\", \"logging\" or \"master\"."
+  }
+}
+
 variable "tags" {
   type        = map
   description = "Map of tags"

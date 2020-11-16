@@ -12,6 +12,30 @@ locals {
   prefixed_email      = "${var.defaults.account_prefix}-aws-${local.name}"
   prefixed_name       = "${var.defaults.account_prefix}-${local.name}"
   organizational_unit = var.organizational_unit != null ? var.organizational_unit : var.environment == "prod" ? "Production" : "Non-Production"
+
+  monitor_iam_access = merge(
+    {
+      for identity in try(var.monitor_iam_access.identities, []) : identity.name => {
+        "type"     = [identity.type]
+        "userName" = identity.name
+      } if identity.type == "IAMUser"
+    },
+    {
+      for identity in try(var.monitor_iam_access.identities, []) : identity.name => {
+        "type" = [identity.type]
+        "sessionContext" = {
+          "sessionIssuer" = {
+            "userName" = identity.name
+          }
+        }
+      } if identity.type == "AssumedRole"
+    },
+    {
+      for identity in ["Root"] : identity => {
+        "type" = [identity]
+      } if try(var.monitor_iam_access.sns_topic_arn, null) != null
+    }
+  )
 }
 
 module "account" {
@@ -32,6 +56,39 @@ provider "aws" {
   assume_role {
     role_arn = "arn:aws:iam::${module.account.id}:role/AWSControlTowerExecution"
   }
+}
+
+data "aws_iam_role" "monitor_iam_access" {
+  for_each = toset([for identity in try(var.monitor_iam_access.identities, []) : identity.name if identity.type == "AssumedRole"])
+  provider = aws.managed_by_inception
+  name     = each.value
+}
+
+data "aws_iam_user" "monitor_iam_access" {
+  for_each  = toset([for identity in try(var.monitor_iam_access.identities, []) : identity.name if identity.type == "IAMUser"])
+  provider  = aws.managed_by_inception
+  user_name = each.value
+}
+
+resource "aws_cloudwatch_event_rule" "monitor_iam_access" {
+  for_each    = local.monitor_iam_access
+  provider    = aws.managed_by_inception
+  name        = substr("LandingZone-MonitorIAMAccess-${each.key}", 0, 64)
+  description = "Monitors IAM access for ${each.key}"
+
+  event_pattern = templatefile("${path.module}/files/event_bridge/monitor_iam_access.json.tpl", {
+    userIdentity = jsonencode(each.value)
+  })
+
+  depends_on = [data.aws_iam_role.monitor_iam_access, data.aws_iam_user.monitor_iam_access]
+}
+
+resource "aws_cloudwatch_event_target" "monitor_iam_access" {
+  for_each  = aws_cloudwatch_event_rule.monitor_iam_access
+  provider  = aws.managed_by_inception
+  rule      = each.value.name
+  target_id = "SendToSNS"
+  arn       = var.monitor_iam_access.sns_topic_arn
 }
 
 resource "aws_config_aggregate_authorization" "default" {
