@@ -76,7 +76,7 @@ aws_allowed_regions = ["eu-west-1"]
 | control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
 | tags | Map of tags | `map` | n/a | yes |
 | aws\_allowed\_regions | List of allowed AWS regions | `list(string)` | `null` | no |
-| aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_id = string<br>    aggregator_regions    = list(string)<br>    rule_identifiers      = list(string)<br>  })</pre> | `null` | no |
+| aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
 | aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list` | `[]` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
 
