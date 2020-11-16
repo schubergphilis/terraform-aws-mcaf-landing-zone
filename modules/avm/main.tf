@@ -16,7 +16,7 @@ locals {
 
 module "account" {
   source                   = "github.com/schubergphilis/terraform-aws-mcaf-account?ref=v0.3.0"
-  account                  = local.name
+  account                  = coalesce(var.account_name, local.name)
   email                    = local.email
   organizational_unit      = local.organizational_unit
   provisioned_product_name = var.provisioned_product_name
