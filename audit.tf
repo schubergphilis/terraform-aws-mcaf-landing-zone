@@ -7,10 +7,21 @@ provider "aws" {
 }
 
 resource "aws_config_aggregate_authorization" "audit" {
-  for_each   = toset(try(var.aws_config.aggregator_regions, []))
+  for_each   = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator }
   provider   = aws.audit
-  account_id = var.aws_config.aggregator_account_id
-  region     = each.value
+  account_id = each.value.account_id
+  region     = each.value.region
+}
+
+resource "aws_config_configuration_aggregator" "audit" {
+  name = "audit"
+
+  account_aggregation_source {
+    account_ids = [
+      for account in data.aws_organizations_organization.default.accounts : account.id if account.id != var.control_tower_account_ids.audit
+    ]
+    all_regions = true
+  }
 }
 
 module "datadog_audit" {

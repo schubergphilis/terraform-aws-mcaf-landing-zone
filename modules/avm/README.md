@@ -4,14 +4,14 @@ Terraform module to provision an AWS account with a TFE workspace backed by a VC
 
 ## AWS Config Rules
 
-If you would like to authorize another account to aggregate AWS Config data, the account ID and regions can be passed via the variable `aws_config` using the attributes `aggregator_account_id` and `aggregator_regions` respectively.
+If you would like to authorize other accounts to aggregate AWS Config data, the account IDs and regions can be passed via the variable `aws_config` using the attributes `aggregator_account_ids` and `aggregator_regions` respectively.
 
 Example:
 
 ```hcl
 aws_config = {
-  aggregator_account_id = "123456789012"
-  aggregator_regions    = ["eu-west-1"]
+  aggregator_account_ids = ["123456789012"]
+  aggregator_regions     = ["eu-west-1"]
 }
 ```
 
@@ -62,7 +62,7 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 | oauth\_token\_id | The OAuth token ID of the VCS provider | `string` | n/a | yes |
 | tags | Map of tags | `map(string)` | n/a | yes |
 | account\_name | Name of the AWS Service Catalog provisioned account (overrides computed name from the `name` variable) | `string` | `null` | no |
-| aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_id = string<br>    aggregator_regions    = list(string)<br>  })</pre> | `null` | no |
+| aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
 | datadog | Datadog integration options | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
 | email | Email address of the account | `string` | `null` | no |
 | environment | Stack environment | `string` | `null` | no |

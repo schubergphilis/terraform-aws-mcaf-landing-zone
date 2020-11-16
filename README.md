@@ -5,15 +5,17 @@ Terraform module to setup and manage various components of the AWS Landing Zone.
 
 This module provisions by default a set of basic AWS Config Rules. In order to add extra rules, a list of [rule identifiers](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html) can be passed via the variable `aws_config` using the attribute `rule_identifiers`.
 
-If you would like to authorize another account to aggregate AWS Config data, the account ID and regions can also be passed via the variable `aws_config` using the attributes `aggregator_account_id` and `aggregator_regions` respectively.
+If you would like to authorize other accounts to aggregate AWS Config data, the account IDs and regions can also be passed via the variable `aws_config` using the attributes `aggregator_account_ids` and `aggregator_regions` respectively. 
+
+NOTE: The `audit` account will be automatically authorized to aggregate AWS Config data from the other 2 core acccounts in the following regions: `eu-central-1` and `eu-west-1`.
 
 Example:
 
 ```hcl
 aws_config = {
-  aggregator_account_id = "123456789012"
-  aggregator_regions    = ["eu-west-1"]
-  rule_identifiers      = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
+  aggregator_account_ids = ["123456789012"]
+  aggregator_regions     = ["eu-west-1"]
+  rule_identifiers       = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
 }
 ```
 
@@ -74,7 +76,7 @@ aws_allowed_regions = ["eu-west-1"]
 | control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
 | tags | Map of tags | `map` | n/a | yes |
 | aws\_allowed\_regions | List of allowed AWS regions | `list(string)` | `null` | no |
-| aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_id = string<br>    aggregator_regions    = list(string)<br>    rule_identifiers      = list(string)<br>  })</pre> | `null` | no |
+| aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
 | aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list` | `[]` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
 
