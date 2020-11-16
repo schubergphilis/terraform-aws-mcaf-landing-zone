@@ -83,5 +83,6 @@ aws_allowed_regions = ["eu-west-1"]
 | Name | Description |
 |------|-------------|
 | kms\_key\_arn | ARN of KMS key for SSM encryption |
+| kms\_key\_id | ID of KMS key for SSM encryption |
 
 <!--- END_TF_DOCS --->
