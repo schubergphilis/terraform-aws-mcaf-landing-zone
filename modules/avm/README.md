@@ -61,6 +61,7 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 | name | Stack name | `string` | n/a | yes |
 | oauth\_token\_id | The OAuth token ID of the VCS provider | `string` | n/a | yes |
 | tags | Map of tags | `map(string)` | n/a | yes |
+| account\_name | Name of the AWS Service Catalog provisioned account (overrides computed name from the `name` variable) | `string` | `null` | no |
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_id = string<br>    aggregator_regions    = list(string)<br>  })</pre> | `null` | no |
 | datadog | Datadog integration options | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
 | email | Email address of the account | `string` | `null` | no |

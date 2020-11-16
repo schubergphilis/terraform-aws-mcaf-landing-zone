@@ -1,3 +1,9 @@
+variable "account_name" {
+  type        = string
+  default     = null
+  description = "Name of the AWS Service Catalog provisioned account (overrides computed name from the `name` variable)"
+}
+
 variable "aws_config" {
   type = object({
     aggregator_account_id = string
