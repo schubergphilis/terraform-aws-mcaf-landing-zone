@@ -28,7 +28,7 @@ resource "aws_cloudwatch_event_target" "monitor_iam_access_audit" {
 }
 
 resource "aws_config_aggregate_authorization" "audit" {
-  for_each   = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator }
+  for_each   = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator if aggregator.account_id != var.control_tower_account_ids.audit }
   provider   = aws.audit
   account_id = each.value.account_id
   region     = each.value.region
