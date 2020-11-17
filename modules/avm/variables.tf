@@ -25,7 +25,8 @@ variable "datadog" {
 
 variable "defaults" {
   type = object({
-    account_prefix         = string
+    account_iam_prefix     = string
+    email_prefix           = string
     github_organization    = string
     sso_email              = string
     terraform_organization = string
