@@ -74,6 +74,18 @@ variable "provisioned_product_name" {
   description = "A custom name for the provisioned product"
 }
 
+variable "monitor_iam_access" {
+  type = object({
+    sns_topic_arn = string
+    identities = list(object({
+      name = string
+      type = string
+    }))
+  })
+  default     = null
+  description = "Object containing list of IAM Identities that should have their access monitored and the SNS Topic that should be notified"
+}
+
 variable "region" {
   type        = string
   default     = "eu-west-1"
