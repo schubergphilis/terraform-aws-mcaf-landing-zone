@@ -46,7 +46,8 @@ resource "aws_config_configuration_aggregator" "audit" {
 }
 
 resource "aws_sns_topic" "monitor_iam_access" {
-  name = "LandingZone-MonitorIAMAccess"
+  name              = "LandingZone-MonitorIAMAccess"
+  kms_master_key_id = module.kms_key_audit.id
 }
 
 resource "aws_sns_topic_policy" "monitor_iam_access" {
@@ -61,6 +62,14 @@ module "datadog_audit" {
   api_key               = try(var.datadog.api_key, null)
   install_log_forwarder = try(var.datadog.install_log_forwarder, false)
   tags                  = var.tags
+}
+
+module "kms_key_audit" {
+  source      = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.1.5"
+  name        = "audit"
+  description = "KMS key used for encrypting audit-related data"
+  policy      = file("${path.module}/files/kms/audit_key_policy.json")
+  tags        = var.tags
 }
 
 module "security_hub_audit" {
