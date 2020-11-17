@@ -58,7 +58,7 @@ variable "monitor_iam_access" {
 
   validation {
     condition = length(setsubtract(toset([
-      for identity in var.monitor_iam_access : identity.account
+      for identity in coalesce(var.monitor_iam_access, []) : identity.account
     ]), ["audit", "logging", "master"])) == 0
     error_message = "Invalid account. The allowed values are \"audit\", \"logging\" or \"master\"."
   }

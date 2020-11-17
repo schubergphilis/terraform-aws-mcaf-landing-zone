@@ -18,13 +18,13 @@ locals {
   )
   monitor_iam_access = merge(
     {
-      for identity in try(var.monitor_iam_access, []) : identity.name => {
+      for identity in coalesce(var.monitor_iam_access, []) : identity.name => {
         "type"     = [identity.type]
         "userName" = identity.name
       } if identity.type == "IAMUser"
     },
     {
-      for identity in try(var.monitor_iam_access, []) : identity.name => {
+      for identity in coalesce(var.monitor_iam_access, []) : identity.name => {
         "type" = [identity.type]
         "sessionContext" = {
           "sessionIssuer" = {
