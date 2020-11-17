@@ -7,10 +7,11 @@ locals {
       }
     ]
   ]) : []
+
   email               = var.email != null ? var.email : "${local.prefixed_email}@schubergphilis.com"
   name                = var.environment != null ? "${var.name}-${var.environment}" : var.name
-  prefixed_email      = "${var.defaults.account_prefix}-aws-${local.name}"
-  prefixed_name       = "${var.defaults.account_prefix}-${local.name}"
+  prefixed_email      = "${var.defaults.email_prefix}${local.name}"
+  prefixed_name       = "${var.defaults.account_iam_prefix}${local.name}"
   organizational_unit = var.organizational_unit != null ? var.organizational_unit : var.environment == "prod" ? "Production" : "Non-Production"
 
   monitor_iam_access = merge(

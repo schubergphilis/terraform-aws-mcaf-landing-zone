@@ -83,7 +83,7 @@ monitor_iam_access = {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| defaults | Default options for this module | <pre>object({<br>    account_prefix         = string<br>    github_organization    = string<br>    sso_email              = string<br>    terraform_organization = string<br>    terraform_version      = string<br>  })</pre> | n/a | yes |
+| defaults | Default options for this module | <pre>object({<br>    account_iam_prefix     = string<br>    email_prefix           = string<br>    github_organization    = string<br>    sso_email              = string<br>    terraform_organization = string<br>    terraform_version      = string<br>  })</pre> | n/a | yes |
 | name | Stack name | `string` | n/a | yes |
 | oauth\_token\_id | The OAuth token ID of the VCS provider | `string` | n/a | yes |
 | tags | Map of tags | `map(string)` | n/a | yes |
