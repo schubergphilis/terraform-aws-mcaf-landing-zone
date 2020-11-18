@@ -110,7 +110,7 @@ module "security_hub" {
 }
 
 module "workspace" {
-  source                 = "github.com/schubergphilis/terraform-aws-mcaf-workspace?ref=v0.2.2"
+  source                 = "github.com/schubergphilis/terraform-aws-mcaf-workspace?ref=v0.3.0"
   providers              = { aws = aws.managed_by_inception }
   name                   = local.name
   auto_apply             = var.terraform_auto_apply
