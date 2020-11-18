@@ -1,10 +1,10 @@
 resource "aws_cloudwatch_event_rule" "monitor_iam_access_master" {
-  for_each    = local.monitor_iam_access
+  for_each    = { for identity, identity_data in local.monitor_iam_access : identity => identity_data if try(identity_data.account, null) == "master" || identity == "Root" }
   name        = substr("LandingZone-MonitorIAMAccess-${each.key}", 0, 64)
   description = "Monitors IAM access for ${each.key}"
 
   event_pattern = templatefile("${path.module}/files/event_bridge/monitor_iam_access.json.tpl", {
-    userIdentity = jsonencode(each.value)
+    userIdentity = jsonencode(each.value.userIdentity)
   })
 
   depends_on = [data.aws_iam_role.monitor_iam_access_master, data.aws_iam_user.monitor_iam_access_master]

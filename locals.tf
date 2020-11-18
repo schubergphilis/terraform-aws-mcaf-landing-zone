@@ -19,23 +19,33 @@ locals {
   monitor_iam_access = merge(
     {
       for identity in coalesce(var.monitor_iam_access, []) : identity.name => {
-        "type"     = [identity.type]
-        "userName" = identity.name
+        "account" = identity.account
+        "userIdentity" = {
+          "type"     = [identity.type]
+          "userName" = identity.name
+        }
       } if identity.type == "IAMUser"
     },
     {
       for identity in coalesce(var.monitor_iam_access, []) : identity.name => {
-        "type" = [identity.type]
-        "sessionContext" = {
-          "sessionIssuer" = {
-            "userName" = identity.name
+        "account" = identity.account
+        "userIdentity" = {
+          "type" = [identity.type]
+          "sessionContext" = {
+            "sessionIssuer" = {
+              "userName" = identity.name
+            }
           }
         }
       } if identity.type == "AssumedRole"
     },
     {
       "Root" = {
-        "type" = ["Root"]
+        "userIdentity" = {
+          "Root" = {
+            "type" = ["Root"]
+          }
+        }
       }
     }
   )
