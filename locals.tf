@@ -22,7 +22,7 @@ locals {
         "account" = identity.account
         "userIdentity" = {
           "type"     = [identity.type]
-          "userName" = identity.name
+          "userName" = [identity.name]
         }
       } if identity.type == "IAMUser"
     },
@@ -33,7 +33,7 @@ locals {
           "type" = [identity.type]
           "sessionContext" = {
             "sessionIssuer" = {
-              "userName" = identity.name
+              "userName" = [identity.name]
             }
           }
         }
