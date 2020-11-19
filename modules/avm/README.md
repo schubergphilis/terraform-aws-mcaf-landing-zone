@@ -39,9 +39,9 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 
 ## Monitoring IAM Access
 
-This module offers the capability of monitoring IAM activity of both users and roles. To enable this feature, you have to provide the ARN of the SNS Topic that should be notified in case any activity is detected.
+This module offers the capability of monitoring IAM activity of both users and roles. To enable this feature, you have to provide the ARN of the EventBridge Event Bus that should receive events in case any activity is detected.
 
-The topic ARN can be set using the attribute `sns_topic_arn` in the variable `monitor_iam_access`. In case the feature is enabled, the activity of the `root` user will be automatically monitored and reported.
+The event bus ARN can be set using the attribute `event_bus_arn` in the variable `monitor_iam_access`. In case the feature is enabled, the activity of the `root` user will be automatically monitored and reported.
 
 If you would like to monitor other users or roles, a list can be passed using the attribute `identities` in the variable `monitor_iam_access`. All objects in the list should have the attributes `name` and `type` where `name` is either the name of the IAM Role or the IAM User and `type` is either `AssumedRole` or `IAMUser`. 
 
@@ -53,8 +53,8 @@ Example:
 
 ```hcl
 monitor_iam_access = {
-  sns_topic_arn = aws_sns_topic.monitor_iam_access.arn
-  identities = [
+  event_bus_arn = aws_cloudwatch_event_bus.monitor_iam_access.arn
+  identities    = [
     {
       name = "AWSReservedSSO_AWSAdministratorAccess_123abc"
       type = "AssumedRole"

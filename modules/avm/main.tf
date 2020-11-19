@@ -34,7 +34,7 @@ locals {
     {
       for identity in ["Root"] : identity => {
         "type" = [identity]
-      } if try(var.monitor_iam_access.sns_topic_arn, null) != null
+      } if try(var.monitor_iam_access.event_bus_arn, null) != null
     }
   )
 }
@@ -56,6 +56,20 @@ provider "aws" {
 
   assume_role {
     role_arn = "arn:aws:iam::${module.account.id}:role/AWSControlTowerExecution"
+  }
+}
+
+data "aws_iam_policy_document" "monitor_iam_access" {
+  count = length(keys(local.monitor_iam_access)) > 0 ? 1 : 0
+
+  statement {
+    actions = [
+      "events:PutEvents"
+    ]
+
+    resources = [
+      var.monitor_iam_access.event_bus_arn
+    ]
   }
 }
 
@@ -87,9 +101,10 @@ resource "aws_cloudwatch_event_rule" "monitor_iam_access" {
 resource "aws_cloudwatch_event_target" "monitor_iam_access" {
   for_each  = aws_cloudwatch_event_rule.monitor_iam_access
   provider  = aws.managed_by_inception
+  arn       = var.monitor_iam_access.event_bus_arn
+  role_arn  = aws_iam_role.monitor_iam_access[0].arn
   rule      = each.value.name
-  target_id = "SendToSNS"
-  arn       = var.monitor_iam_access.sns_topic_arn
+  target_id = "SendToAuditEventBus"
 }
 
 resource "aws_config_aggregate_authorization" "default" {
@@ -102,6 +117,22 @@ resource "aws_config_aggregate_authorization" "default" {
 resource "aws_iam_account_alias" "alias" {
   provider      = aws.managed_by_inception
   account_alias = local.prefixed_name
+}
+
+resource "aws_iam_role" "monitor_iam_access" {
+  count              = length(keys(local.monitor_iam_access)) > 0 ? 1 : 0
+  provider           = aws.managed_by_inception
+  name               = "LandingZone-MonitorIAMAccess"
+  assume_role_policy = templatefile("${path.module}/files/iam/service_assume_role.json.tpl", { service = "events.amazonaws.com" })
+  tags               = var.tags
+}
+
+resource "aws_iam_role_policy" "monitor_iam_access" {
+  count    = length(keys(local.monitor_iam_access)) > 0 ? 1 : 0
+  provider = aws.managed_by_inception
+  name     = "LandingZone-MonitorIAMAccess"
+  role     = aws_iam_role.monitor_iam_access[0].id
+  policy   = data.aws_iam_policy_document.monitor_iam_access[0].json
 }
 
 module "security_hub" {

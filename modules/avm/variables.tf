@@ -77,14 +77,14 @@ variable "provisioned_product_name" {
 
 variable "monitor_iam_access" {
   type = object({
-    sns_topic_arn = string
+    event_bus_arn = string
     identities = list(object({
       name = string
       type = string
     }))
   })
   default     = null
-  description = "Object containing list of IAM Identities that should have their access monitored and the SNS Topic that should be notified"
+  description = "Object containing list of IAM Identities that should have their access monitored and the EventBridge Event Bus that should receive captured events"
 }
 
 variable "region" {

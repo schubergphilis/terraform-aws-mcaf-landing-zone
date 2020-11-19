@@ -12,9 +12,12 @@ resource "aws_cloudwatch_event_rule" "monitor_iam_access_master" {
 
 resource "aws_cloudwatch_event_target" "monitor_iam_access_master" {
   for_each  = aws_cloudwatch_event_rule.monitor_iam_access_master
+  arn       = aws_cloudwatch_event_bus.monitor_iam_access_audit.arn
+  role_arn  = aws_iam_role.monitor_iam_access_master.arn
   rule      = each.value.name
-  target_id = "SendToSNS"
-  arn       = aws_sns_topic.monitor_iam_access.arn
+  target_id = "SendToAuditEventBus"
+
+  depends_on = [aws_cloudwatch_event_permission.organization_access_audit]
 }
 
 resource "aws_config_aggregate_authorization" "master" {
@@ -65,6 +68,18 @@ resource "aws_iam_role" "config_recorder" {
   assume_role_policy = templatefile("${path.module}/files/iam/service_assume_role.json.tpl", {
     service = "config.amazonaws.com"
   })
+}
+
+resource "aws_iam_role" "monitor_iam_access_master" {
+  name               = "LandingZone-MonitorIAMAccess"
+  assume_role_policy = templatefile("${path.module}/files/iam/service_assume_role.json.tpl", { service = "events.amazonaws.com" })
+  tags               = var.tags
+}
+
+resource "aws_iam_role_policy" "monitor_iam_access_master" {
+  name   = "LandingZone-MonitorIAMAccess"
+  role   = aws_iam_role.monitor_iam_access_logging.id
+  policy = data.aws_iam_policy_document.monitor_iam_access.json
 }
 
 resource "aws_iam_role_policy_attachment" "config_recorder_read_only" {
