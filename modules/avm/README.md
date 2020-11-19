@@ -6,6 +6,8 @@ Terraform module to provision an AWS account with a TFE workspace backed by a VC
 
 If you would like to authorize other accounts to aggregate AWS Config data, the account IDs and regions can be passed via the variable `aws_config` using the attributes `aggregator_account_ids` and `aggregator_regions` respectively.
 
+NOTE: Control Tower already authorizes the `audit` account to aggregate Config data from all other accounts in the organization, so there is no need to specify the `audit` account ID in the `aggregator_account_ids` list.
+
 Example:
 
 ```hcl

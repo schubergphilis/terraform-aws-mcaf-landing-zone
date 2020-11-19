@@ -35,7 +35,8 @@ resource "aws_config_aggregate_authorization" "audit" {
 }
 
 resource "aws_config_configuration_aggregator" "audit" {
-  name = "audit"
+  providers = { aws = aws.audit }
+  name      = "audit"
 
   account_aggregation_source {
     account_ids = [

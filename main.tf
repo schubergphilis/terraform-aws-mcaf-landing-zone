@@ -18,9 +18,15 @@ resource "aws_cloudwatch_event_target" "monitor_iam_access_master" {
 }
 
 resource "aws_config_aggregate_authorization" "master" {
-  for_each   = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator }
+  for_each   = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator if aggregator.account_id != var.control_tower_account_ids.audit }
   account_id = each.value.account_id
   region     = each.value.region
+}
+
+resource "aws_config_aggregate_authorization" "master_to_audit" {
+  for_each   = toset(try(var.aws_config.aggregator_regions, ["eu-central-1", "eu-west-1"]))
+  account_id = var.control_tower_account_ids.audit
+  region     = each.value
 }
 
 resource "aws_config_configuration_recorder" "default" {
