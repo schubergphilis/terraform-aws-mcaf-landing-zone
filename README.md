@@ -83,16 +83,16 @@ aws_allowed_regions = ["eu-west-1"]
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
-| aws | ~> 3.7.0 |
+| aws | ~> 3.16.0 |
 | okta | ~> 3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | ~> 3.7.0 |
-| aws.audit | ~> 3.7.0 |
-| aws.logging | ~> 3.7.0 |
+| aws | ~> 3.16.0 |
+| aws.audit | ~> 3.16.0 |
+| aws.logging | ~> 3.16.0 |
 | okta | ~> 3.0 |
 
 ## Inputs

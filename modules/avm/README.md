@@ -69,7 +69,7 @@ monitor_iam_access = {
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
-| aws | ~> 3.7.0 |
+| aws | ~> 3.16.0 |
 | datadog | ~> 2.14 |
 | github | ~> 3.1.0 |
 | mcaf | ~> 0.1.0 |
@@ -79,7 +79,7 @@ monitor_iam_access = {
 
 | Name | Version |
 |------|---------|
-| aws.managed\_by\_inception | ~> 3.7.0 |
+| aws.managed\_by\_inception | ~> 3.16.0 |
 
 ## Inputs
 
