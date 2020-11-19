@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 data "aws_iam_policy_document" "monitor_iam_access_sns_topic_policy" {
   provider = aws.audit
 
