@@ -1,4 +1,5 @@
 locals {
+  aws_account_emails = { for account in data.aws_organizations_organization.default.accounts : account.id => account.email }
   aws_config_aggregators = flatten([
     for account in toset(try(var.aws_config.aggregator_account_ids, [])) : [
       for region in toset(try(var.aws_config.aggregator_regions, [])) : {

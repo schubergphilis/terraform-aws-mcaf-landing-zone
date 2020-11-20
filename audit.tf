@@ -87,6 +87,48 @@ resource "aws_sns_topic_policy" "monitor_iam_access_audit" {
   policy   = data.aws_iam_policy_document.monitor_iam_access_audit_topic.json
 }
 
+resource "aws_guardduty_detector" "audit" {
+  count    = var.aws_guardduty == true ? 1 : 0
+  provider = aws.audit
+}
+
+resource "aws_guardduty_member" "logging" {
+  count       = var.aws_guardduty == true ? 1 : 0
+  provider    = aws.audit
+  account_id  = aws_guardduty_detector.logging[0].account_id
+  detector_id = aws_guardduty_detector.audit[0].id
+  email       = local.aws_account_emails[aws_guardduty_detector.logging[0].account_id]
+  invite      = true
+
+  depends_on = [aws_guardduty_organization_admin_account.audit]
+  lifecycle {
+    ignore_changes = [email]
+  }
+}
+
+resource "aws_guardduty_member" "master" {
+  count       = var.aws_guardduty == true ? 1 : 0
+  provider    = aws.audit
+  account_id  = aws_guardduty_detector.master[0].account_id
+  detector_id = aws_guardduty_detector.audit[0].id
+  email       = local.aws_account_emails[aws_guardduty_detector.master[0].account_id]
+  invite      = true
+
+  depends_on = [aws_guardduty_organization_admin_account.audit]
+  lifecycle {
+    ignore_changes = [email]
+  }
+}
+
+resource "aws_guardduty_organization_configuration" "default" {
+  count       = var.aws_guardduty == true ? 1 : 0
+  provider    = aws.audit
+  auto_enable = true
+  detector_id = aws_guardduty_detector.audit[0].id
+
+  depends_on = [aws_guardduty_organization_admin_account.audit]
+}
+
 module "datadog_audit" {
   count                 = try(var.datadog.enable_integration, false) == true ? 1 : 0
   source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.2"
@@ -114,6 +156,6 @@ module "security_hub_audit" {
   providers = { aws = aws.audit }
 
   member_accounts = {
-    for account in data.aws_organizations_organization.default.accounts : account.id => account.email if account.id != var.control_tower_account_ids.audit
+    for id, email in local.aws_account_emails : id => email if id != var.control_tower_account_ids.audit
   }
 }

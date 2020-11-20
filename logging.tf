@@ -37,6 +37,11 @@ resource "aws_config_aggregate_authorization" "logging" {
   region     = each.value.region
 }
 
+resource "aws_guardduty_detector" "logging" {
+  count    = var.aws_guardduty == true ? 1 : 0
+  provider = aws.logging
+}
+
 resource "aws_iam_role" "monitor_iam_access_logging" {
   provider           = aws.logging
   name               = "LandingZone-MonitorIAMAccess"

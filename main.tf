@@ -42,6 +42,15 @@ resource "aws_config_configuration_recorder" "default" {
   }
 }
 
+resource "aws_guardduty_detector" "master" {
+  count = var.aws_guardduty == true ? 1 : 0
+}
+
+resource "aws_guardduty_organization_admin_account" "audit" {
+  count            = var.aws_guardduty == true ? 1 : 0
+  admin_account_id = var.control_tower_account_ids.audit
+}
+
 resource "aws_config_configuration_recorder_status" "default" {
   name       = aws_config_configuration_recorder.default.name
   is_enabled = true
