@@ -7,16 +7,18 @@ resource "aws_cloudwatch_event_rule" "monitor_iam_access_master" {
     userIdentity = jsonencode(each.value.userIdentity)
   })
 
-  depends_on = [data.aws_iam_role.monitor_iam_access_master, data.aws_iam_user.monitor_iam_access_master]
+  depends_on = [
+    data.aws_iam_role.monitor_iam_access_master,
+    data.aws_iam_user.monitor_iam_access_master
+  ]
 }
 
 resource "aws_cloudwatch_event_target" "monitor_iam_access_master" {
-  for_each  = aws_cloudwatch_event_rule.monitor_iam_access_master
-  arn       = aws_cloudwatch_event_bus.monitor_iam_access_audit.arn
-  role_arn  = aws_iam_role.monitor_iam_access_master.arn
-  rule      = each.value.name
-  target_id = "SendToAuditEventBus"
-
+  for_each   = aws_cloudwatch_event_rule.monitor_iam_access_master
+  arn        = aws_cloudwatch_event_bus.monitor_iam_access_audit.arn
+  role_arn   = aws_iam_role.monitor_iam_access_master.arn
+  rule       = each.value.name
+  target_id  = "SendToAuditEventBus"
   depends_on = [aws_cloudwatch_event_permission.organization_access_audit]
 }
 

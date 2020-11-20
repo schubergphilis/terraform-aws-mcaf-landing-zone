@@ -29,7 +29,10 @@ resource "aws_cloudwatch_event_rule" "monitor_iam_access_audit" {
     userIdentity = jsonencode(each.value.userIdentity)
   })
 
-  depends_on = [data.aws_iam_role.monitor_iam_access_audit, data.aws_iam_user.monitor_iam_access_audit]
+  depends_on = [
+    data.aws_iam_role.monitor_iam_access_audit,
+    data.aws_iam_user.monitor_iam_access_audit
+  ]
 }
 
 resource "aws_cloudwatch_event_target" "monitor_iam_access_audit" {
@@ -99,8 +102,8 @@ resource "aws_guardduty_member" "logging" {
   detector_id = aws_guardduty_detector.audit[0].id
   email       = local.aws_account_emails[aws_guardduty_detector.logging[0].account_id]
   invite      = true
+  depends_on  = [aws_guardduty_organization_admin_account.audit]
 
-  depends_on = [aws_guardduty_organization_admin_account.audit]
   lifecycle {
     ignore_changes = [email]
   }
@@ -113,8 +116,8 @@ resource "aws_guardduty_member" "master" {
   detector_id = aws_guardduty_detector.audit[0].id
   email       = local.aws_account_emails[aws_guardduty_detector.master[0].account_id]
   invite      = true
+  depends_on  = [aws_guardduty_organization_admin_account.audit]
 
-  depends_on = [aws_guardduty_organization_admin_account.audit]
   lifecycle {
     ignore_changes = [email]
   }
@@ -125,8 +128,7 @@ resource "aws_guardduty_organization_configuration" "default" {
   provider    = aws.audit
   auto_enable = true
   detector_id = aws_guardduty_detector.audit[0].id
-
-  depends_on = [aws_guardduty_organization_admin_account.audit]
+  depends_on  = [aws_guardduty_organization_admin_account.audit]
 }
 
 module "datadog_audit" {

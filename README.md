@@ -23,7 +23,7 @@ aws_config = {
 
 This module supports enabling GuardDuty at the organization level which means that all new accounts that are created in, or added to, the organization are added as a member accounts of the `audit` account GuardDuty detector.
 
-This feature can be controlled via the variable `aws_guardduty` and is enabled by default.
+This feature can be controlled via the `aws_guardduty` variable and is enabled by default.
 
 Note: In case you are migrating an existing AWS organization to this module, all existing accounts except for the `master` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
 
