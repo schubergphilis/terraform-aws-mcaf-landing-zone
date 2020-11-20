@@ -113,6 +113,7 @@ aws_allowed_regions = ["eu-west-1"]
 | tags | Map of tags | `map` | n/a | yes |
 | aws\_allowed\_regions | List of allowed AWS regions | `list(string)` | `null` | no |
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
+| aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
 | aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list` | `[]` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
 | monitor\_iam\_access | List of IAM Identities that should have their access monitored | <pre>list(object({<br>    account = string<br>    name    = string<br>    type    = string<br>  }))</pre> | `null` | no |
