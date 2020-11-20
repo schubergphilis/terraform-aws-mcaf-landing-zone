@@ -13,6 +13,12 @@ variable "aws_config" {
   description = "AWS Config settings"
 }
 
+variable "aws_guardduty" {
+  type        = bool
+  default     = true
+  description = "Whether AWS GuardDuty should be enabled"
+}
+
 variable "aws_okta_group_ids" {
   type        = list
   default     = []

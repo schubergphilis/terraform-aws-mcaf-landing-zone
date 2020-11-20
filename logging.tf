@@ -16,17 +16,19 @@ resource "aws_cloudwatch_event_rule" "monitor_iam_access_logging" {
     userIdentity = jsonencode(each.value.userIdentity)
   })
 
-  depends_on = [data.aws_iam_role.monitor_iam_access_logging, data.aws_iam_user.monitor_iam_access_logging]
+  depends_on = [
+    data.aws_iam_role.monitor_iam_access_logging,
+    data.aws_iam_user.monitor_iam_access_logging
+  ]
 }
 
 resource "aws_cloudwatch_event_target" "monitor_iam_access_logging" {
-  for_each  = aws_cloudwatch_event_rule.monitor_iam_access_logging
-  provider  = aws.logging
-  arn       = aws_cloudwatch_event_bus.monitor_iam_access_audit.arn
-  role_arn  = aws_iam_role.monitor_iam_access_logging.arn
-  rule      = each.value.name
-  target_id = "SendToAuditEventBus"
-
+  for_each   = aws_cloudwatch_event_rule.monitor_iam_access_logging
+  provider   = aws.logging
+  arn        = aws_cloudwatch_event_bus.monitor_iam_access_audit.arn
+  role_arn   = aws_iam_role.monitor_iam_access_logging.arn
+  rule       = each.value.name
+  target_id  = "SendToAuditEventBus"
   depends_on = [aws_cloudwatch_event_permission.organization_access_audit]
 }
 
@@ -35,6 +37,11 @@ resource "aws_config_aggregate_authorization" "logging" {
   provider   = aws.logging
   account_id = each.value.account_id
   region     = each.value.region
+}
+
+resource "aws_guardduty_detector" "logging" {
+  count    = var.aws_guardduty == true ? 1 : 0
+  provider = aws.logging
 }
 
 resource "aws_iam_role" "monitor_iam_access_logging" {

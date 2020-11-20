@@ -95,7 +95,10 @@ resource "aws_cloudwatch_event_rule" "monitor_iam_access" {
     userIdentity = jsonencode(each.value)
   })
 
-  depends_on = [data.aws_iam_role.monitor_iam_access, data.aws_iam_user.monitor_iam_access]
+  depends_on = [
+    data.aws_iam_role.monitor_iam_access,
+    data.aws_iam_user.monitor_iam_access
+  ]
 }
 
 resource "aws_cloudwatch_event_target" "monitor_iam_access" {
