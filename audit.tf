@@ -6,6 +6,19 @@ provider "aws" {
   }
 }
 
+resource "aws_cloudwatch_event_bus" "monitor_iam_access_audit" {
+  provider = aws.audit
+  name     = "LandingZone-MonitorIAMAccess"
+}
+
+resource "aws_cloudwatch_event_permission" "organization_access_audit" {
+  for_each       = { for account in data.aws_organizations_organization.default.accounts : account.id => account.name if account.id != var.control_tower_account_ids.audit }
+  provider       = aws.audit
+  event_bus_name = aws_cloudwatch_event_bus.monitor_iam_access_audit.name
+  principal      = each.key
+  statement_id   = "${each.value}Access"
+}
+
 resource "aws_cloudwatch_event_rule" "monitor_iam_access_audit" {
   for_each    = { for identity, identity_data in local.monitor_iam_access : identity => identity_data if try(identity_data.account, null) == "audit" || identity == "Root" }
   provider    = aws.audit
@@ -24,7 +37,23 @@ resource "aws_cloudwatch_event_target" "monitor_iam_access_audit" {
   provider  = aws.audit
   rule      = each.value.name
   target_id = "SendToSNS"
-  arn       = aws_sns_topic.monitor_iam_access.arn
+  arn       = aws_sns_topic.monitor_iam_access_audit.arn
+}
+
+resource "aws_cloudwatch_event_rule" "notify_iam_access_member_accounts" {
+  provider       = aws.audit
+  name           = "LandingZone-NotifyIAMAccessMemberAccounts"
+  description    = "Monitors IAM access in member accounts"
+  event_bus_name = aws_cloudwatch_event_bus.monitor_iam_access_audit.name
+  event_pattern  = file("${path.module}/files/event_bridge/notify_iam_access.json.tpl")
+}
+
+resource "aws_cloudwatch_event_target" "notify_iam_access_member_accounts" {
+  provider       = aws.audit
+  arn            = aws_sns_topic.monitor_iam_access_audit.arn
+  event_bus_name = aws_cloudwatch_event_bus.monitor_iam_access_audit.name
+  rule           = aws_cloudwatch_event_rule.notify_iam_access_member_accounts.name
+  target_id      = "SendToSNS"
 }
 
 resource "aws_config_aggregate_authorization" "audit" {
@@ -35,7 +64,8 @@ resource "aws_config_aggregate_authorization" "audit" {
 }
 
 resource "aws_config_configuration_aggregator" "audit" {
-  name = "audit"
+  provider = aws.audit
+  name     = "audit"
 
   account_aggregation_source {
     account_ids = [
@@ -45,14 +75,16 @@ resource "aws_config_configuration_aggregator" "audit" {
   }
 }
 
-resource "aws_sns_topic" "monitor_iam_access" {
+resource "aws_sns_topic" "monitor_iam_access_audit" {
+  provider          = aws.audit
   name              = "LandingZone-MonitorIAMAccess"
   kms_master_key_id = module.kms_key_audit.id
 }
 
-resource "aws_sns_topic_policy" "monitor_iam_access" {
-  arn    = aws_sns_topic.monitor_iam_access.arn
-  policy = data.aws_iam_policy_document.monitor_iam_access_sns_topic_policy.json
+resource "aws_sns_topic_policy" "monitor_iam_access_audit" {
+  provider = aws.audit
+  arn      = aws_sns_topic.monitor_iam_access_audit.arn
+  policy   = data.aws_iam_policy_document.monitor_iam_access_audit_topic.json
 }
 
 module "datadog_audit" {
@@ -66,10 +98,15 @@ module "datadog_audit" {
 
 module "kms_key_audit" {
   source      = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.1.5"
+  providers   = { aws = aws.audit }
   name        = "audit"
   description = "KMS key used for encrypting audit-related data"
-  policy      = file("${path.module}/files/kms/audit_key_policy.json")
   tags        = var.tags
+
+  policy = templatefile("${path.module}/files/kms/audit_key_policy.json", {
+    audit_account_id  = var.control_tower_account_ids.audit
+    master_account_id = data.aws_caller_identity.current.account_id
+  })
 }
 
 module "security_hub_audit" {

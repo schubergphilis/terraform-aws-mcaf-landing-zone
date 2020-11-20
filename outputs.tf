@@ -10,5 +10,5 @@ output "kms_key_id" {
 
 output "monitor_iam_access_sns_topic_arn" {
   description = "ARN of the SNS Topic in the Audit account for IAM access monitoring notifications"
-  value       = aws_sns_topic.monitor_iam_access.arn
+  value       = aws_sns_topic.monitor_iam_access_audit.arn
 }

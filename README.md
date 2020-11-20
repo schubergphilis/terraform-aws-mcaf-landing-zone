@@ -7,7 +7,7 @@ This module provisions by default a set of basic AWS Config Rules. In order to a
 
 If you would like to authorize other accounts to aggregate AWS Config data, the account IDs and regions can also be passed via the variable `aws_config` using the attributes `aggregator_account_ids` and `aggregator_regions` respectively. 
 
-NOTE: The `audit` account will be automatically authorized to aggregate AWS Config data from the other 2 core acccounts in the following regions: `eu-central-1` and `eu-west-1`.
+NOTE: This module already authorizes the `audit` account to aggregate Config data from all other accounts in the organization, so there is no need to specify the `audit` account ID in the `aggregator_account_ids` list.
 
 Example:
 
@@ -83,16 +83,16 @@ aws_allowed_regions = ["eu-west-1"]
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
-| aws | ~> 3.7.0 |
+| aws | ~> 3.16.0 |
 | okta | ~> 3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | ~> 3.7.0 |
-| aws.audit | ~> 3.7.0 |
-| aws.logging | ~> 3.7.0 |
+| aws | ~> 3.16.0 |
+| aws.audit | ~> 3.16.0 |
+| aws.logging | ~> 3.16.0 |
 | okta | ~> 3.0 |
 
 ## Inputs

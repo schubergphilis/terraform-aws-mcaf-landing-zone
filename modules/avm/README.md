@@ -6,6 +6,8 @@ Terraform module to provision an AWS account with a TFE workspace backed by a VC
 
 If you would like to authorize other accounts to aggregate AWS Config data, the account IDs and regions can be passed via the variable `aws_config` using the attributes `aggregator_account_ids` and `aggregator_regions` respectively.
 
+NOTE: Control Tower already authorizes the `audit` account to aggregate Config data from all other accounts in the organization, so there is no need to specify the `audit` account ID in the `aggregator_account_ids` list.
+
 Example:
 
 ```hcl
@@ -37,9 +39,9 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 
 ## Monitoring IAM Access
 
-This module offers the capability of monitoring IAM activity of both users and roles. To enable this feature, you have to provide the ARN of the SNS Topic that should be notified in case any activity is detected.
+This module offers the capability of monitoring IAM activity of both users and roles. To enable this feature, you have to provide the ARN of the EventBridge Event Bus that should receive events in case any activity is detected.
 
-The topic ARN can be set using the attribute `sns_topic_arn` in the variable `monitor_iam_access`. In case the feature is enabled, the activity of the `root` user will be automatically monitored and reported.
+The event bus ARN can be set using the attribute `event_bus_arn` in the variable `monitor_iam_access`. In case the feature is enabled, the activity of the `root` user will be automatically monitored and reported.
 
 If you would like to monitor other users or roles, a list can be passed using the attribute `identities` in the variable `monitor_iam_access`. All objects in the list should have the attributes `name` and `type` where `name` is either the name of the IAM Role or the IAM User and `type` is either `AssumedRole` or `IAMUser`. 
 
@@ -51,8 +53,8 @@ Example:
 
 ```hcl
 monitor_iam_access = {
-  sns_topic_arn = aws_sns_topic.monitor_iam_access.arn
-  identities = [
+  event_bus_arn = aws_cloudwatch_event_bus.monitor_iam_access.arn
+  identities    = [
     {
       name = "AWSReservedSSO_AWSAdministratorAccess_123abc"
       type = "AssumedRole"
@@ -67,7 +69,7 @@ monitor_iam_access = {
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
-| aws | ~> 3.7.0 |
+| aws | ~> 3.16.0 |
 | datadog | ~> 2.14 |
 | github | ~> 3.1.0 |
 | mcaf | ~> 0.1.0 |
@@ -77,7 +79,8 @@ monitor_iam_access = {
 
 | Name | Version |
 |------|---------|
-| aws.managed\_by\_inception | ~> 3.7.0 |
+| aws | ~> 3.16.0 |
+| aws.managed\_by\_inception | ~> 3.16.0 |
 
 ## Inputs
 
@@ -93,7 +96,7 @@ monitor_iam_access = {
 | email | Email address of the account | `string` | `null` | no |
 | environment | Stack environment | `string` | `null` | no |
 | kms\_key\_id | The KMS key ID used to encrypt the SSM parameters | `string` | `null` | no |
-| monitor\_iam\_access | Object containing list of IAM Identities that should have their access monitored and the SNS Topic that should be notified | <pre>object({<br>    sns_topic_arn = string<br>    identities = list(object({<br>      name = string<br>      type = string<br>    }))<br>  })</pre> | `null` | no |
+| monitor\_iam\_access | Object containing list of IAM Identities that should have their access monitored and the EventBridge Event Bus that should receive captured events | <pre>object({<br>    event_bus_arn = string<br>    identities = list(object({<br>      name = string<br>      type = string<br>    }))<br>  })</pre> | `null` | no |
 | organizational\_unit | Organizational Unit to place account in | `string` | `null` | no |
 | provisioned\_product\_name | A custom name for the provisioned product | `string` | `null` | no |
 | region | The default region of the account | `string` | `"eu-west-1"` | no |

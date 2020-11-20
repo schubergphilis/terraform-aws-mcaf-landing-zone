@@ -1,25 +1,67 @@
-data "aws_iam_policy_document" "monitor_iam_access_sns_topic_policy" {
-  provider = aws.audit
+data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy_document" "monitor_iam_access_audit_topic" {
+  statement {
+    actions = [
+      "SNS:AddPermission",
+      "SNS:DeleteTopic",
+      "SNS:GetTopicAttributes",
+      "SNS:ListSubscriptionsByTopic",
+      "SNS:Publish",
+      "SNS:Receive",
+      "SNS:RemovePermission",
+      "SNS:SetTopicAttributes",
+      "SNS:Subscribe"
+    ]
+
+    resources = [
+      aws_sns_topic.monitor_iam_access_audit.arn
+    ]
+
+    sid = "__default_statement_ID"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceOwner"
+
+      values = [
+        var.control_tower_account_ids.audit
+      ]
+    }
+  }
 
   statement {
-    effect  = "Allow"
-    actions = ["SNS:Publish"]
+    actions = [
+      "sns:Publish"
+    ]
+
+    resources = [
+      aws_sns_topic.monitor_iam_access_audit.arn
+    ]
+
+    sid = "__events"
 
     principals {
       type        = "Service"
       identifiers = ["events.amazonaws.com"]
     }
+  }
+}
 
-    condition {
-      test     = "StringEquals"
-      variable = "aws:PrincipalOrgID"
+data "aws_iam_policy_document" "monitor_iam_access" {
+  statement {
+    actions = [
+      "events:PutEvents"
+    ]
 
-      values = [
-        data.aws_organizations_organization.default.id
-      ]
-    }
-
-    resources = [aws_sns_topic.monitor_iam_access.arn]
+    resources = [
+      aws_cloudwatch_event_bus.monitor_iam_access_audit.arn
+    ]
   }
 }
 
