@@ -12,7 +12,6 @@ resource "aws_securityhub_member" "default" {
   for_each   = var.member_accounts
   account_id = each.key
   email      = each.value
-  invite     = true
   depends_on = [aws_securityhub_account.default]
 }
 
