@@ -124,6 +124,7 @@ aws_allowed_regions = ["eu-west-1"]
 | aws\_sso\_entity\_id | AWS SSO Entity ID for the Okta App | `string` | n/a | yes |
 | control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
 | tags | Map of tags | `map` | n/a | yes |
+| additional\_auditing\_trail | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name   = string<br>    bucket = string<br>  })</pre> | `null` | no |
 | aws\_allowed\_regions | List of allowed AWS regions | `list(string)` | `null` | no |
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
