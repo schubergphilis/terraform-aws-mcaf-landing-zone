@@ -1,3 +1,12 @@
+variable "additional_auditing_trail" {
+  type = object({
+    name   = string
+    bucket = string
+  })
+  default     = null
+  description = "CloudTrail configuration for additional auditing trail"
+}
+
 variable "aws_allowed_regions" {
   type        = list(string)
   default     = null
