@@ -1,3 +1,12 @@
+variable "additional_auditing_trail" {
+  type = object({
+    name   = string
+    bucket = string
+  })
+  default     = null
+  description = "CloudTrail configuration for additional auditing trail"
+}
+
 variable "aws_allowed_regions" {
   type        = list(string)
   default     = null
@@ -20,7 +29,7 @@ variable "aws_guardduty" {
 }
 
 variable "aws_okta_group_ids" {
-  type        = list
+  type        = list(string)
   default     = []
   description = "List of Okta group IDs that should be assigned the AWS SSO Okta app"
 }
@@ -71,6 +80,6 @@ variable "monitor_iam_access" {
 }
 
 variable "tags" {
-  type        = map
+  type        = map(string)
   description = "Map of tags"
 }

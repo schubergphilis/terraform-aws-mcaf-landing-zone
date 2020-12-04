@@ -1,3 +1,10 @@
+resource "aws_cloudtrail" "additional_auditing_trail" {
+  count                 = var.additional_auditing_trail != null ? 1 : 0
+  name                  = var.additional_auditing_trail.name
+  s3_bucket_name        = var.additional_auditing_trail.bucket
+  is_organization_trail = true
+}
+
 resource "aws_cloudwatch_event_rule" "monitor_iam_access_master" {
   for_each    = { for identity, identity_data in local.monitor_iam_access : identity => identity_data if try(identity_data.account, null) == "master" || identity == "Root" }
   name        = substr("LandingZone-MonitorIAMAccess-${each.key}", 0, 64)

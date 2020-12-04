@@ -1,6 +1,19 @@
 # terraform-aws-mcaf-landing-zone
 Terraform module to setup and manage various components of the AWS Landing Zone.
 
+## AWS CloudTrail
+
+By default, all CloudTrail logs will be stored in a S3 bucket in the `logging` account of your AWS Organization. However, this module also supports creating an additional CloudTrail configuration to publish logs to any S3 bucket chosen by you. This trail will be set at the Organization level, meaning that logs from all accounts will be published to the provided bucket.
+
+Example:
+
+```hcl
+additional_auditing_trail = {
+  name   = "additional_auditing_trail"
+  bucket = "bucket_name"
+}
+```
+
 ## AWS Config Rules
 
 This module provisions by default a set of basic AWS Config Rules. In order to add extra rules, a list of [rule identifiers](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html) can be passed via the variable `aws_config` using the attribute `rule_identifiers`.
@@ -110,11 +123,12 @@ aws_allowed_regions = ["eu-west-1"]
 | aws\_sso\_acs\_url | AWS SSO ACS URL for the Okta App | `string` | n/a | yes |
 | aws\_sso\_entity\_id | AWS SSO Entity ID for the Okta App | `string` | n/a | yes |
 | control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
-| tags | Map of tags | `map` | n/a | yes |
+| tags | Map of tags | `map(string)` | n/a | yes |
+| additional\_auditing\_trail | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name   = string<br>    bucket = string<br>  })</pre> | `null` | no |
 | aws\_allowed\_regions | List of allowed AWS regions | `list(string)` | `null` | no |
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
-| aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list` | `[]` | no |
+| aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list(string)` | `[]` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
 | monitor\_iam\_access | List of IAM Identities that should have their access monitored | <pre>list(object({<br>    account = string<br>    name    = string<br>    type    = string<br>  }))</pre> | `null` | no |
 
