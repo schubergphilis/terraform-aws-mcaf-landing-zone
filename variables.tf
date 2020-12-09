@@ -57,6 +57,7 @@ variable "datadog" {
     api_key               = string
     enable_integration    = bool
     install_log_forwarder = bool
+    site_url              = string
   })
   default     = null
   description = "Datadog integration options for the core accounts"
