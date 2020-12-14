@@ -22,6 +22,12 @@ variable "aws_config" {
   description = "AWS Config settings"
 }
 
+variable "aws_deny_root_user_ous" {
+  type        = list(string)
+  default     = []
+  description = "List of AWS Organisation OUs to apply the \"DenyRootUser\" SCP to"
+}
+
 variable "aws_guardduty" {
   type        = bool
   default     = true

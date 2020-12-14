@@ -90,7 +90,13 @@ monitor_iam_access = [
 ]
 ```
 
-## Restricting AWS Regions
+## Service Control Policies (SCPs)
+
+Service control policies (SCPs) are a type of organization policy that you can use to manage permissions in your organization. See [this page](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html) for an introduction to SCPs and the value they add.
+
+This module allows using various SCPs as described below. We try to adhere to best practices of not attaching SCPs to the root of the organisation when possible; in the event you need to pass a list of OU names, be sure to have the exact name as the matching is case sensitive.
+
+### Restricting AWS Regions
 
 If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_allowed_regions`. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.
 
@@ -98,6 +104,27 @@ Example:
 
 ```hcl
 aws_allowed_regions = ["eu-west-1"]
+```
+
+### Restricting Root User Access
+
+If you would like to restrict the root user's ability to log into accounts in an OU, you can pass a list of OU names to the `aws_deny_root_user_ous` variable.
+
+Example showing SCP applied to all OUs except the Root OU:
+
+```hcl
+data "aws_organizations_organization" "default" {}
+
+data "aws_organizations_organizational_units" "default" {
+  parent_id = data.aws_organizations_organization.default.roots[0].id
+}
+
+module "landing_zone" {
+  ...
+
+  aws_deny_root_user_ous = [
+    for ou in data.aws_organizations_organizational_units.default.children : ou.name if ou.name != "Root"
+  ]
 ```
 
 <!--- BEGIN_TF_DOCS --->
