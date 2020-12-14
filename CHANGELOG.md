@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased (2020-12-14)
+
+* Fix support for Datadog region ([#34]https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/32)
+
 ## 0.3.1 (2020-12-09)
 
 * Add support for usage of different Datadog region ([#32](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/32))
