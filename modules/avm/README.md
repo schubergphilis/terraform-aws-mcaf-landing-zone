@@ -26,7 +26,7 @@ In order to enable the integration, you can pass an object to the variable `data
 - `api_key`: sets the Datadog API key
 - `enable_integration`: set to `true` to configure the [Datadog AWS integration](https://docs.datadoghq.com/integrations/amazon_web_services/)
 - `install_log_forwarder`: set to `true` to install the [Datadog Forwarder](https://docs.datadoghq.com/serverless/forwarder/)
-- `site_url`: set to `datadoghq.com` for US region or set to `datadoghq.eu` for EU region [Datadog Forwarder](https://docs.datadoghq.com/serverless/forwarder/)
+- `site_url`: set to `datadoghq.com` for US region or `datadoghq.eu` for EU region [Datadog Forwarder](https://docs.datadoghq.com/serverless/forwarder/)
 
 In case you don't want to use the integration, you can configure the Datadog provider like in the example below:
 

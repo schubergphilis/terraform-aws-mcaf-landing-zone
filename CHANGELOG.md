@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased (2020-12-14)
 
-* Fix support for Datadog region ([#34]https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/32)
+* Fix support for Datadog region ([#34]https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/34)
 
 ## 0.3.1 (2020-12-09)
 
