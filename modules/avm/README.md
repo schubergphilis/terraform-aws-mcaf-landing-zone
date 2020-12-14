@@ -26,6 +26,7 @@ In order to enable the integration, you can pass an object to the variable `data
 - `api_key`: sets the Datadog API key
 - `enable_integration`: set to `true` to configure the [Datadog AWS integration](https://docs.datadoghq.com/integrations/amazon_web_services/)
 - `install_log_forwarder`: set to `true` to install the [Datadog Forwarder](https://docs.datadoghq.com/serverless/forwarder/)
+- `site_url`: set to `datadoghq.com` for US region or `datadoghq.eu` for EU region [Datadog Forwarder](https://docs.datadoghq.com/serverless/forwarder/)
 
 In case you don't want to use the integration, you can configure the Datadog provider like in the example below:
 
@@ -91,7 +92,7 @@ monitor_iam_access = {
 | tags | Map of tags | `map(string)` | n/a | yes |
 | account\_name | Name of the AWS Service Catalog provisioned account (overrides computed name from the `name` variable) | `string` | `null` | no |
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
-| datadog | Datadog integration options | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>  })</pre> | `null` | no |
+| datadog | Datadog integration options | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | email | Email address of the account | `string` | `null` | no |
 | environment | Stack environment | `string` | `null` | no |
 | kms\_key\_id | The KMS key ID used to encrypt the SSM parameters | `string` | `null` | no |
