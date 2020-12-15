@@ -40,6 +40,12 @@ variable "aws_okta_group_ids" {
   description = "List of Okta group IDs that should be assigned the AWS SSO Okta app"
 }
 
+variable "aws_require_imdsv2" {
+  type        = bool
+  default     = true
+  description = "Enable SCP that requires EC2 instances to use V2 of the Instance Metadata Service"
+}
+
 variable "aws_sso_acs_url" {
   type        = string
   description = "AWS SSO ACS URL for the Okta App"
