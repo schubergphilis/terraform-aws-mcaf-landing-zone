@@ -101,6 +101,10 @@ data "aws_iam_user" "monitor_iam_access_master" {
 
 data "aws_organizations_organization" "default" {}
 
+data "aws_organizations_organizational_units" "default" {
+  parent_id = data.aws_organizations_organization.default.roots[0].id
+}
+
 data "aws_region" "current" {}
 
 data "aws_sns_topic" "all_config_notifications" {
