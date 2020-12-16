@@ -4,25 +4,35 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.4.0 (2020-12-16)
 
-* Add a `DenyLeavingOrg` SCP that is attached to all AWS Organisation OUs
-* Add a `DenyRootUser` SCP that can be attached to AWS Organisation OUs
-* Add a `RequireUseOfIMDSv2` SCP that is attached to all AWS Organisation OUs by default
+ENHANCEMENTS
+
+* Add a `DenyLeavingOrg` SCP that is attached to all AWS Organisation OUs ([#39](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/39))
+* Add a `RequireUseOfIMDSv2` SCP that is attached to all AWS Organisation OUs by default ([#38](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/38))
+* Add a `DenyRootUser` SCP that can be attached to AWS Organisation OUs ([#37](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/37))
 
 ## 0.3.2 (2020-12-14)
 
-* Fix support for Datadog region ([#34]https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/34)
+BUG FIXES
+
+* Fix support for Datadog region ([#36]https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/36))
 
 ## 0.3.1 (2020-12-09)
 
-* Add support for usage of different Datadog region ([#32](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/32))
+ENHANCEMENTS
+
+* Add support for usage of different Datadog region ([#32](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/32)) ([#34](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/34))
 
 ## 0.3.0 (2020-12-04)
+
+ENHANCEMENTS
 
 * Add support for an additional CloudTrail Trail configuration ([#28](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/28))
 
 ## 0.2.1 (2020-11-30)
+
+BUG FIXES
 
 * Fix recreation of the aws_securityhub_member resource ([#25](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/25))
 * Remove MCAF provider version pin in AVM module ([#26](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/26))
