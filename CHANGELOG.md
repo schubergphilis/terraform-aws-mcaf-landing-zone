@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## Unreleased
 
 * Add a `DenyRootUser` SCP that can be attached to AWS Organisation OUs
+* Add a `RequireUseOfIMDSv2` SCP that is attached to all AWS Organisation OUs by default
 
 ## 0.3.2 (2020-12-14)
 
