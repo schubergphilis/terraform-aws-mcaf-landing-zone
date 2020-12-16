@@ -96,6 +96,12 @@ Service control policies (SCPs) are a type of organization policy that you can u
 
 This module allows using various SCPs as described below. We try to adhere to best practices of not attaching SCPs to the root of the organisation when possible; in the event you need to pass a list of OU names, be sure to have the exact name as the matching is case sensitive.
 
+### Deny ability to leave Organization
+
+Enabling this SCP removes a member account's ability to leave the AWS organisation.
+
+This is SCP is enabled by default, but can be disabled by setting `aws_deny_leaving_org` variable to `false`.
+
 ### Require the use of Instance Metadata Service Version 2
 
 By default, all EC2s still allow access to the original metadata service, which means that if an attacker finds an EC2 running a proxy or WAF, or finds and SSRF vulnerability, they likely can steal the IAM role of the EC2. By enforcing IMDSv2, you can mitigate that risk. Be aware that this potentially could break some applications that have not yet been updated to work with the new IMDSv2.

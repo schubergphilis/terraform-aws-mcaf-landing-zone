@@ -40,3 +40,16 @@ resource "aws_organizations_policy_attachment" "require_use_of_imdsv2" {
   policy_id = aws_organizations_policy.require_use_of_imdsv2.0.id
   target_id = data.aws_organizations_organization.default.roots.0.id
 }
+
+// https://summitroute.com/blog/2020/03/25/aws_scp_best_practices/#deny-ability-to-leave-organization
+resource "aws_organizations_policy" "deny_leaving_org" {
+  count   = var.aws_deny_leaving_org == true ? 1 : 0
+  name    = "LandingZone-DenyLeavingOrg"
+  content = file("${path.module}/files/organizations/deny_leaving_org.json")
+}
+
+resource "aws_organizations_policy_attachment" "deny_leaving_org" {
+  count     = var.aws_deny_leaving_org == true ? 1 : 0
+  policy_id = aws_organizations_policy.deny_leaving_org.0.id
+  target_id = data.aws_organizations_organization.default.roots.0.id
+}
