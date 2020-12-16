@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 
+* Add a `DenyLeavingOrg` SCP that is attached to all AWS Organisation OUs
 * Add a `DenyRootUser` SCP that can be attached to AWS Organisation OUs
 * Add a `RequireUseOfIMDSv2` SCP that is attached to all AWS Organisation OUs by default
 

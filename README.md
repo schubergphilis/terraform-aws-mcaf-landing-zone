@@ -96,6 +96,12 @@ Service control policies (SCPs) are a type of organization policy that you can u
 
 This module allows using various SCPs as described below. We try to adhere to best practices of not attaching SCPs to the root of the organisation when possible; in the event you need to pass a list of OU names, be sure to have the exact name as the matching is case sensitive.
 
+### Deny ability to leave Organization
+
+Enabling this SCP removes a member account's ability to leave the AWS organisation.
+
+This is SCP is enabled by default, but can be disabled by setting `aws_deny_leaving_org` variable to `false`.
+
 ### Require the use of Instance Metadata Service Version 2
 
 By default, all EC2s still allow access to the original metadata service, which means that if an attacker finds an EC2 running a proxy or WAF, or finds and SSRF vulnerability, they likely can steal the IAM role of the EC2. By enforcing IMDSv2, you can mitigate that risk. Be aware that this potentially could break some applications that have not yet been updated to work with the new IMDSv2.
@@ -162,6 +168,7 @@ module "landing_zone" {
 | additional\_auditing\_trail | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name   = string<br>    bucket = string<br>  })</pre> | `null` | no |
 | aws\_allowed\_regions | List of allowed AWS regions | `list(string)` | `null` | no |
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
+| aws\_deny\_leaving\_org | Enable SCP that denies accounts the ability to leave the AWS organisation | `bool` | `true` | no |
 | aws\_deny\_root\_user\_ous | List of AWS Organisation OUs to apply the "DenyRootUser" SCP to | `list(string)` | `[]` | no |
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
 | aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list(string)` | `[]` | no |

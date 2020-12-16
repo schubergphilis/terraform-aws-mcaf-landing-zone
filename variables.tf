@@ -22,6 +22,12 @@ variable "aws_config" {
   description = "AWS Config settings"
 }
 
+variable "aws_deny_leaving_org" {
+  type        = bool
+  default     = true
+  description = "Enable SCP that denies accounts the ability to leave the AWS organisation"
+}
+
 variable "aws_deny_root_user_ous" {
   type        = list(string)
   default     = []
