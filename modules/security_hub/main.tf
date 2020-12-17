@@ -26,3 +26,12 @@ resource "aws_securityhub_standards_subscription" "default" {
   standards_arn = each.value
   depends_on    = [aws_securityhub_account.default]
 }
+
+resource "aws_sns_topic_subscription" "datadog-security" {
+  count      = var.sns_security_topic_subscription != false ? 1 : 0
+  endpoint   = var.sns_endpoint
+  protocol   = var.sns_endpoint_protocol
+  topic_arn  = "arn:aws:sns:${var.region}:${var.account_id}:aws-controltower-AggregateSecurityNotifications"
+  depends_on = [aws_securityhub_account.default]
+}
+

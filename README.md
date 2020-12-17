@@ -184,6 +184,9 @@ module "landing_zone" {
 | aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | monitor\_iam\_access | List of IAM Identities that should have their access monitored | <pre>list(object({<br>    account = string<br>    name    = string<br>    type    = string<br>  }))</pre> | `null` | no |
+| sns\_endpoint | Endpoint for SNS topic subscription | `string` | n/a | no |
+| sns\_endpoint\_protocol | Endpoint protocol for SNS topic subscription | `string` | n/a | no |
+| sns\_security\_topic\_subscription | Enable SNS aggregated security topic subscription | `bool` | false | no |
 
 ## Outputs
 

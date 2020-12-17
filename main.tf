@@ -127,5 +127,9 @@ module "kms_key" {
 }
 
 module "security_hub_master" {
-  source = "./modules/security_hub"
+  source                          = "./modules/security_hub"
+  account_id                      = data.aws_caller_identity.current.account_id
+  sns_endpoint                    = var.sns_endpoint
+  sns_endpoint_protocol           = var.sns_endpoint_protocol
+  sns_security_topic_subscription = var.sns_security_topic_subscription
 }
