@@ -148,6 +148,11 @@ module "landing_zone" {
   ]
 ```
 
+### Enable SNS topic subscription
+
+If you would like to subscribe to aggregated security SNS topic created by Control Tower, set `sns_security_topic_subscription` variable to `true`.
+And provide values for your endpoint to receive notifications, variable `sns_endpoint` and protocol to be used, variable `sns_endpoint_protocol`.
+
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
 

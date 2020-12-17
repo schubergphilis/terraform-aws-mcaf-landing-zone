@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## Unreleased (2020-12-29)
+
+ENHANCEMENTS
+
+* Add support for subscribing to aggregated security SNS topic ([#41](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/41))
 
 ## 0.4.1 (2020-12-29)
 
