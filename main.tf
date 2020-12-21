@@ -129,3 +129,15 @@ module "kms_key" {
 module "security_hub_master" {
   source = "./modules/security_hub"
 }
+
+resource "aws_iam_account_password_policy" "default" {
+  minimum_password_length        = var.minimum_password_length
+  password_reuse_prevention      = var.password_reuse_prevention
+  require_lowercase_characters   = var.require_lowercase_characters_in_passwords
+  require_numbers                = var.require_numbers_in_passwords
+  require_uppercase_characters   = var.require_uppercase_characters_in_passwords
+  require_symbols                = var.require_symbols_in_passwords
+  allow_users_to_change_password = var.allow_users_to_change_password
+  max_password_age               = var.max_password_age
+  count                          = var.create_password_policy ? 1 : 0
+}

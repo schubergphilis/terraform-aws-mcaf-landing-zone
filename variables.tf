@@ -98,6 +98,52 @@ variable "monitor_iam_access" {
   }
 }
 
+variable "max_password_age" {
+  description = "The number of days that an user password is valid."
+  default     = 90
+}
+
+variable "minimum_password_length" {
+  description = "Minimum length to require for user passwords."
+  default     = 14
+}
+
+variable "password_reuse_prevention" {
+  description = "The number of previous passwords that users are prevented from reusing."
+  default     = 24
+}
+
+variable "require_lowercase_characters_in_passwords" {
+  description = "Whether to require lowercase characters for user passwords."
+  default     = true
+}
+
+variable "require_numbers_in_passwords" {
+  description = "Whether to require numbers for user passwords."
+  default     = true
+}
+
+variable "require_uppercase_characters_in_passwords" {
+  description = "Whether to require uppercase characters for user passwords."
+  default     = true
+}
+
+variable "require_symbols_in_passwords" {
+  description = "Whether to require symbols for user passwords."
+  default     = true
+}
+
+variable "allow_users_to_change_password" {
+  description = "Whether to allow users to change their own password."
+  default     = true
+}
+
+variable "create_password_policy" {
+  type        = bool
+  description = "Define if the password policy should be created."
+  default     = false
+}
+
 variable "tags" {
   type        = map(string)
   description = "Map of tags"
