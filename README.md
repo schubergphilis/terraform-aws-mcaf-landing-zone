@@ -110,12 +110,17 @@ This is SCP is enabled by default, but can be disabled by setting `aws_require_i
 
 ### Restricting AWS Regions
 
-If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_allowed_regions`. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.
+If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_region_restrictions` using the `allowed` attribute. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.
+
+In case you would like to exempt specific IAM entities from the region restriction, you can pass a list of ARN patterns using the `exceptions` attribute. This can be useful for roles used by AWS ControlTower, for example, to avoid preventing it from managing all regions properly.
 
 Example:
 
 ```hcl
-aws_allowed_regions = ["eu-west-1"]
+aws_region_restrictions = {
+  allowed    = ["eu-west-1"]
+  exceptions = ["arn:aws:iam::*:role/RoleAllowedToBypassRegionRestrictions"]
+}
 ```
 
 ### Restricting Root User Access

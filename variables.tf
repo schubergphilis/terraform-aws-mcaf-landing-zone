@@ -7,12 +7,6 @@ variable "additional_auditing_trail" {
   description = "CloudTrail configuration for additional auditing trail"
 }
 
-variable "aws_allowed_regions" {
-  type        = list(string)
-  default     = null
-  description = "List of allowed AWS regions"
-}
-
 variable "aws_config" {
   type = object({
     aggregator_account_ids = list(string)
@@ -44,6 +38,15 @@ variable "aws_okta_group_ids" {
   type        = list(string)
   default     = []
   description = "List of Okta group IDs that should be assigned the AWS SSO Okta app"
+}
+
+variable "aws_region_restrictions" {
+  type = object({
+    allowed    = list(string)
+    exceptions = list(string)
+  })
+  default     = null
+  description = "List of allowed AWS regions and principals that are exempt from the restriction"
 }
 
 variable "aws_require_imdsv2" {
