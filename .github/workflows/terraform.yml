@@ -3,16 +3,12 @@ name: Terraform
 
 on:
   pull_request:
-  push:
-    branch:
-      - master
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   terraform-fmt:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -25,7 +21,6 @@ jobs:
           tf_actions_comment: true
 
   terraform-validate:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -46,11 +41,12 @@ jobs:
           tf_actions_comment: true
 
   terraform-docs:
-    if: github.repository_owner == 'schubergphilis' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Update module usage docs and push any changes back to PR branch
         uses: Dirrk/terraform-docs@v1.0.8
         with:
@@ -60,9 +56,9 @@ jobs:
           tf_docs_output_file: README.md
           tf_docs_output_method: inject
           tf_docs_find_dir: .
+        continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
 
   tfsec:
-    if: github.event_name == 'pull_request'
     name: tfsec
     runs-on: ubuntu-latest
     steps:
