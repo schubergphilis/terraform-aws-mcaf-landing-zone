@@ -1,6 +1,10 @@
 # terraform-aws-mcaf-landing-zone
 Terraform module to setup and manage various components of the AWS Landing Zone.
 
+Overview of Landing Zone tools & services: 
+
+<img src="images/MCAF_landing_zone_tools_and_services_v040.png" width="600"> 
+
 ## AWS CloudTrail
 
 By default, all CloudTrail logs will be stored in a S3 bucket in the `logging` account of your AWS Organization. However, this module also supports creating an additional CloudTrail configuration to publish logs to any S3 bucket chosen by you. This trail will be set at the Organization level, meaning that logs from all accounts will be published to the provided bucket.

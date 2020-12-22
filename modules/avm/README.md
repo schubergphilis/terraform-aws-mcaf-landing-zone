@@ -2,6 +2,10 @@
 
 Terraform module to provision an AWS account with a TFE workspace backed by a VCS project.
 
+Overview of Account setup: 
+
+<img src="../../images/MCAF_landing_zone_account_setup_v040.png" width="800"> 
+
 ## AWS Config Rules
 
 If you would like to authorize other accounts to aggregate AWS Config data, the account IDs and regions can be passed via the variable `aws_config` using the attributes `aggregator_account_ids` and `aggregator_regions` respectively.
