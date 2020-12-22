@@ -56,6 +56,7 @@ jobs:
           tf_docs_output_file: README.md
           tf_docs_output_method: inject
           tf_docs_find_dir: .
+        continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
 
   tfsec:
     name: tfsec
