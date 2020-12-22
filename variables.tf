@@ -52,7 +52,7 @@ variable "aws_region_restrictions" {
 variable "aws_require_imdsv2" {
   type        = bool
   default     = true
-  description = "Enable SCP that requires EC2 instances to use V2 of the Instance Metadata Service"
+  description = "Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service"
 }
 
 variable "aws_sso_acs_url" {
