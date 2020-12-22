@@ -101,19 +101,13 @@ variable "monitor_iam_access" {
   }
 }
 
-variable "sns_endpoint" {
-  type        = string
-  description = "Endpoint for SNS topic subscription"
-}
-
-variable "sns_endpoint_protocol" {
-  type        = string
-  description = "Endpoint protocol for SNS topic subscription"
-}
-
-variable "sns_security_topic_subscription" {
-  type        = bool
-  description = "Enable SNS aggregated security topic subscription"
+variable "sns_security_subscription" {
+  type = list(object({
+    sns_endpoint                    = string
+    sns_endpoint_protocol           = string
+  }))
+  default     = null
+  description = "Aggregated security SNS topic subscription options"
 }
 
 variable "tags" {
