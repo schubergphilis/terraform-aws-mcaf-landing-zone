@@ -20,30 +20,30 @@ jobs:
           tf_actions_subcommand: fmt
           tf_actions_comment: true
 
-  terraform-validate:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: [ ., ./modules/avm, ./modules/security_hub ]
-    steps:
-      - name: Check out code for ${{ matrix.module }}
-        uses: actions/checkout@master
-      - name: Terraform Init
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: latest
-          tf_actions_subcommand: init
-          tf_actions_comment: true
-          tf_actions_working_dir: ${{ matrix.module }}
-      - name: Terraform Validate for ${{ matrix.module }}
-        uses: hashicorp/terraform-github-actions@master
-        env:
-          AWS_DEFAULT_REGION: eu-west-1
-        with:
-          tf_actions_version: latest
-          tf_actions_subcommand: validate
-          tf_actions_comment: true
-          tf_actions_working_dir: ${{ matrix.module }}
+          #  terraform-validate:
+          #    runs-on: ubuntu-latest
+          #    strategy:
+          #      matrix:
+          #        module: [ ., ./modules/avm, ./modules/security_hub ]
+          #    steps:
+          #      - name: Check out code for ${{ matrix.module }}
+          #        uses: actions/checkout@master
+          #      - name: Terraform Init
+          #        uses: hashicorp/terraform-github-actions@master
+          #        with:
+          #          tf_actions_version: latest
+          #          tf_actions_subcommand: init
+          #          tf_actions_comment: true
+          #          tf_actions_working_dir: ${{ matrix.module }}
+          #      - name: Terraform Validate for ${{ matrix.module }}
+          #        uses: hashicorp/terraform-github-actions@master
+          #        env:
+          #          AWS_DEFAULT_REGION: eu-west-1
+          #        with:
+          #          tf_actions_version: latest
+          #          tf_actions_subcommand: validate
+          #          tf_actions_comment: true
+          #          tf_actions_working_dir: ${{ matrix.module }}
 
 
   terraform-docs:
