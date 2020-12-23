@@ -47,6 +47,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+        continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
       - name: Update module usage docs and push any changes back to PR branch
         uses: Dirrk/terraform-docs@v1.0.8
         with:
