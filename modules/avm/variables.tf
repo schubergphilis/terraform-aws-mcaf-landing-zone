@@ -141,48 +141,32 @@ variable "trigger_prefixes" {
   description = "List of repository-root-relative paths which should be tracked for changes"
 }
 
-variable "max_password_age" {
-  description = "The number of days that an user password is valid."
-  default     = 90
-}
-
-variable "minimum_password_length" {
-  description = "Minimum length to require for user passwords."
-  default     = 14
-}
-
-variable "password_reuse_prevention" {
-  description = "The number of previous passwords that users are prevented from reusing."
-  default     = 24
-}
-
-variable "require_lowercase_characters_in_passwords" {
-  description = "Whether to require lowercase characters for user passwords."
-  default     = true
-}
-
-variable "require_numbers_in_passwords" {
-  description = "Whether to require numbers for user passwords."
-  default     = true
-}
-
-variable "require_uppercase_characters_in_passwords" {
-  description = "Whether to require uppercase characters for user passwords."
-  default     = true
-}
-
-variable "require_symbols_in_passwords" {
-  description = "Whether to require symbols for user passwords."
-  default     = true
-}
-
-variable "allow_users_to_change_password" {
-  description = "Whether to allow users to change their own password."
-  default     = true
-}
-
 variable "create_password_policy" {
   type        = bool
   description = "Define if the password policy should be created."
   default     = false
+}
+
+variable "password_policy" {
+  type        = object({
+    allow_users_to_change        = bool
+    max_age                      = int
+    minimum_length               = int
+    require_lowercase_characters = bool
+    require_numbers              = bool
+    require_symbols              = bool
+    require_uppercase_characters = bool
+    reuse_prevention_history     = int
+  })
+  description = "The password policy parameters to set."
+  default     = object({
+    allow_users_to_change        = true
+    max_age                      = 90
+    minimum_length               = 14
+    require_lowercase_characters = true
+    require_numbers              = true
+    require_symbols              = true
+    require_uppercase_characters = true
+    reuse_prevention_history     = 24
+  })
 }
