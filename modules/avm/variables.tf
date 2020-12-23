@@ -150,16 +150,15 @@ variable "create_password_policy" {
 variable "password_policy" {
   type = object({
     allow_users_to_change        = bool
-    max_age                      = int
-    minimum_length               = int
+    max_age                      = number
+    minimum_length               = number
     require_lowercase_characters = bool
     require_numbers              = bool
     require_symbols              = bool
     require_uppercase_characters = bool
-    reuse_prevention_history     = int
+    reuse_prevention_history     = number
   })
-  description = "The password policy parameters to set."
-  default = object({
+  default = {
     allow_users_to_change        = true
     max_age                      = 90
     minimum_length               = 14
@@ -168,5 +167,6 @@ variable "password_policy" {
     require_symbols              = true
     require_uppercase_characters = true
     reuse_prevention_history     = 24
-  })
+  }
+  description = "The password policy parameters to set."
 }
