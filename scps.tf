@@ -1,14 +1,15 @@
 resource "aws_organizations_policy" "allowed_regions" {
-  count = var.aws_allowed_regions != null ? 1 : 0
+  count = var.aws_region_restrictions != null ? 1 : 0
   name  = "LandingZone-AllowedRegions"
 
   content = templatefile("${path.module}/files/organizations/allowed_regions_scp.json.tpl", {
-    allowed_regions = jsonencode(var.aws_allowed_regions)
+    allowed    = var.aws_region_restrictions.allowed
+    exceptions = var.aws_region_restrictions.exceptions
   })
 }
 
 resource "aws_organizations_policy_attachment" "allowed_regions" {
-  count     = var.aws_allowed_regions != null ? 1 : 0
+  count     = var.aws_region_restrictions != null ? 1 : 0
   policy_id = aws_organizations_policy.allowed_regions.0.id
   target_id = data.aws_organizations_organization.default.roots.0.id
 }

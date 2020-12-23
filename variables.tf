@@ -7,12 +7,6 @@ variable "additional_auditing_trail" {
   description = "CloudTrail configuration for additional auditing trail"
 }
 
-variable "aws_allowed_regions" {
-  type        = list(string)
-  default     = null
-  description = "List of allowed AWS regions"
-}
-
 variable "aws_config" {
   type = object({
     aggregator_account_ids = list(string)
@@ -46,10 +40,19 @@ variable "aws_okta_group_ids" {
   description = "List of Okta group IDs that should be assigned the AWS SSO Okta app"
 }
 
+variable "aws_region_restrictions" {
+  type = object({
+    allowed    = list(string)
+    exceptions = list(string)
+  })
+  default     = null
+  description = "List of allowed AWS regions and principals that are exempt from the restriction"
+}
+
 variable "aws_require_imdsv2" {
   type        = bool
   default     = true
-  description = "Enable SCP that requires EC2 instances to use V2 of the Instance Metadata Service"
+  description = "Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service"
 }
 
 variable "aws_sso_acs_url" {

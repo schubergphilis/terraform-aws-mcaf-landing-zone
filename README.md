@@ -1,6 +1,10 @@
 # terraform-aws-mcaf-landing-zone
 Terraform module to setup and manage various components of the AWS Landing Zone.
 
+Overview of Landing Zone tools & services: 
+
+<img src="images/MCAF_landing_zone_tools_and_services_v040.png" width="600"> 
+
 ## AWS CloudTrail
 
 By default, all CloudTrail logs will be stored in a S3 bucket in the `logging` account of your AWS Organization. However, this module also supports creating an additional CloudTrail configuration to publish logs to any S3 bucket chosen by you. This trail will be set at the Organization level, meaning that logs from all accounts will be published to the provided bucket.
@@ -110,12 +114,17 @@ This is SCP is enabled by default, but can be disabled by setting `aws_require_i
 
 ### Restricting AWS Regions
 
-If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_allowed_regions`. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.
+If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_region_restrictions` using the `allowed` attribute. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.
+
+In case you would like to exempt specific IAM entities from the region restriction, you can pass a list of ARN patterns using the `exceptions` attribute. This can be useful for roles used by AWS ControlTower, for example, to avoid preventing it from managing all regions properly.
 
 Example:
 
 ```hcl
-aws_allowed_regions = ["eu-west-1"]
+aws_region_restrictions = {
+  allowed    = ["eu-west-1"]
+  exceptions = ["arn:aws:iam::*:role/RoleAllowedToBypassRegionRestrictions"]
+}
 ```
 
 ### Restricting Root User Access
@@ -166,13 +175,13 @@ module "landing_zone" {
 | control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
 | tags | Map of tags | `map(string)` | n/a | yes |
 | additional\_auditing\_trail | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name   = string<br>    bucket = string<br>  })</pre> | `null` | no |
-| aws\_allowed\_regions | List of allowed AWS regions | `list(string)` | `null` | no |
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
 | aws\_deny\_leaving\_org | Enable SCP that denies accounts the ability to leave the AWS organisation | `bool` | `true` | no |
 | aws\_deny\_root\_user\_ous | List of AWS Organisation OUs to apply the "DenyRootUser" SCP to | `list(string)` | `[]` | no |
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
 | aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list(string)` | `[]` | no |
-| aws\_require\_imdsv2 | Enable SCP that requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
+| aws\_region\_restrictions | List of allowed AWS regions and principals that are exempt from the restriction | <pre>object({<br>    allowed    = list(string)<br>    exceptions = list(string)<br>  })</pre> | `null` | no |
+| aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | monitor\_iam\_access | List of IAM Identities that should have their access monitored | <pre>list(object({<br>    account = string<br>    name    = string<br>    type    = string<br>  }))</pre> | `null` | no |
 
