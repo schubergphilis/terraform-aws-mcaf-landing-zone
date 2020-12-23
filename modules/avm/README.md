@@ -69,54 +69,6 @@ monitor_iam_access = {
 ```
 
 <!--- BEGIN_TF_DOCS --->
-## Requirements
-
-| Name | Version |
-|------|---------|
-| terraform | >= 0.13 |
-| aws | ~> 3.16.0 |
-| datadog | ~> 2.14 |
-| github | ~> 3.1.0 |
-| tfe | ~> 0.21.0 |
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| aws | ~> 3.16.0 |
-| aws.managed\_by\_inception | ~> 3.16.0 |
-
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| defaults | Default options for this module | <pre>object({<br>    account_iam_prefix     = string<br>    email_prefix           = string<br>    github_organization    = string<br>    sso_email              = string<br>    terraform_organization = string<br>    terraform_version      = string<br>  })</pre> | n/a | yes |
-| name | Stack name | `string` | n/a | yes |
-| oauth\_token\_id | The OAuth token ID of the VCS provider | `string` | n/a | yes |
-| tags | Map of tags | `map(string)` | n/a | yes |
-| account\_name | Name of the AWS Service Catalog provisioned account (overrides computed name from the `name` variable) | `string` | `null` | no |
-| aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
-| datadog | Datadog integration options | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
-| email | Email address of the account | `string` | `null` | no |
-| environment | Stack environment | `string` | `null` | no |
-| kms\_key\_id | The KMS key ID used to encrypt the SSM parameters | `string` | `null` | no |
-| monitor\_iam\_access | Object containing list of IAM Identities that should have their access monitored and the EventBridge Event Bus that should receive captured events | <pre>object({<br>    event_bus_arn = string<br>    identities = list(object({<br>      name = string<br>      type = string<br>    }))<br>  })</pre> | `null` | no |
-| organizational\_unit | Organizational Unit to place account in | `string` | `null` | no |
-| provisioned\_product\_name | A custom name for the provisioned product | `string` | `null` | no |
-| region | The default region of the account | `string` | `"eu-west-1"` | no |
-| ssh\_key\_id | The SSH key ID to assign to the TFE workspace | `string` | `null` | no |
-| sso\_firstname | The firstname of the Control Tower SSO account | `string` | `"AWS Control Tower"` | no |
-| sso\_lastname | The lastname of the Control Tower SSO account | `string` | `"Admin"` | no |
-| terraform\_auto\_apply | Whether to automatically apply changes when a Terraform plan is successful | `bool` | `false` | no |
-| terraform\_version | Terraform version to use | `string` | `null` | no |
-| tfe\_vcs\_branch | Terraform VCS branch to use | `string` | `"master"` | no |
-| trigger\_prefixes | List of repository-root-relative paths which should be tracked for changes | `list(string)` | <pre>[<br>  "modules"<br>]</pre> | no |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| id | The AWS account ID |
-| workspace\_id | The TFE workspace ID |
+Error: Function calls not allowed: Functions may not be called here.
 
 <!--- END_TF_DOCS --->
