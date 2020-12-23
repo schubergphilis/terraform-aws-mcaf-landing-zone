@@ -140,3 +140,33 @@ variable "trigger_prefixes" {
   default     = ["modules"]
   description = "List of repository-root-relative paths which should be tracked for changes"
 }
+
+variable "create_password_policy" {
+  type        = bool
+  description = "Define if the password policy should be created."
+  default     = false
+}
+
+variable "password_policy" {
+  type = object({
+    allow_users_to_change        = bool
+    max_age                      = int
+    minimum_length               = int
+    require_lowercase_characters = bool
+    require_numbers              = bool
+    require_symbols              = bool
+    require_uppercase_characters = bool
+    reuse_prevention_history     = int
+  })
+  description = "The password policy parameters to set."
+  default = object({
+    allow_users_to_change        = true
+    max_age                      = 90
+    minimum_length               = 14
+    require_lowercase_characters = true
+    require_numbers              = true
+    require_symbols              = true
+    require_uppercase_characters = true
+    reuse_prevention_history     = 24
+  })
+}
