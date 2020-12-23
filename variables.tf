@@ -37,7 +37,7 @@ variable "aws_guardduty" {
 variable "aws_okta_group_ids" {
   type        = list(string)
   default     = []
-  description = "List of Okta group IDs that should be assigned the AWS SSO Okta app"
+  description = "List of Okta group IDs that should be assigned to the AWS SSO Okta app"
 }
 
 variable "aws_region_restrictions" {
