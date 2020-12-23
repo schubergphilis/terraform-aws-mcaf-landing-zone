@@ -148,7 +148,7 @@ variable "create_password_policy" {
 }
 
 variable "password_policy" {
-  type        = object({
+  type = object({
     allow_users_to_change        = bool
     max_age                      = int
     minimum_length               = int
@@ -159,7 +159,7 @@ variable "password_policy" {
     reuse_prevention_history     = int
   })
   description = "The password policy parameters to set."
-  default     = object({
+  default = object({
     allow_users_to_change        = true
     max_age                      = 90
     minimum_length               = 14
