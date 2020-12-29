@@ -154,10 +154,10 @@ module "kms_key_audit" {
 }
 
 module "security_hub_audit" {
-  source                          = "./modules/security_hub"
-  providers                       = { aws = aws.audit }
-  account_id                      = data.aws_caller_identity.current.account_id
-  sns_security_subscription       = var.sns_security_subscription
+  source                    = "./modules/security_hub"
+  providers                 = { aws = aws.audit }
+  account_id                = data.aws_caller_identity.current.account_id
+  sns_security_subscription = var.sns_security_subscription
 
   member_accounts = {
     for id, email in local.aws_account_emails : id => email if id != var.control_tower_account_ids.audit
