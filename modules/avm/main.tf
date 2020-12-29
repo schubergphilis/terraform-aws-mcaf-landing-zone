@@ -39,17 +39,6 @@ locals {
   )
 }
 
-module "account" {
-  source                   = "github.com/schubergphilis/terraform-aws-mcaf-account?ref=v0.3.0"
-  account                  = coalesce(var.account_name, local.name)
-  email                    = local.email
-  organizational_unit      = local.organizational_unit
-  provisioned_product_name = var.provisioned_product_name
-  sso_email                = var.defaults.sso_email
-  sso_firstname            = var.sso_firstname
-  sso_lastname             = var.sso_lastname
-}
-
 provider "aws" {
   alias  = "managed_by_inception"
   region = var.region
@@ -83,6 +72,44 @@ data "aws_iam_user" "monitor_iam_access" {
   for_each  = toset([for identity in try(var.monitor_iam_access.identities, []) : identity.name if identity.type == "IAMUser"])
   provider  = aws.managed_by_inception
   user_name = each.value
+}
+
+module "account" {
+  source                   = "github.com/schubergphilis/terraform-aws-mcaf-account?ref=v0.3.0"
+  account                  = coalesce(var.account_name, local.name)
+  email                    = local.email
+  organizational_unit      = local.organizational_unit
+  provisioned_product_name = var.provisioned_product_name
+  sso_email                = var.defaults.sso_email
+  sso_firstname            = var.sso_firstname
+  sso_lastname             = var.sso_lastname
+}
+
+module "security_hub" {
+  source    = "../security_hub"
+  providers = { aws = aws.managed_by_inception }
+}
+
+module "workspace" {
+  source                 = "github.com/schubergphilis/terraform-aws-mcaf-workspace?ref=v0.3.0"
+  providers              = { aws = aws.managed_by_inception }
+  name                   = local.name
+  auto_apply             = var.terraform_auto_apply
+  branch                 = var.tfe_vcs_branch
+  create_repository      = false
+  github_organization    = var.defaults.github_organization
+  github_repository      = var.name
+  kms_key_id             = var.kms_key_id
+  oauth_token_id         = var.oauth_token_id
+  policy_arns            = ["arn:aws:iam::aws:policy/AdministratorAccess"]
+  region                 = var.region
+  ssh_key_id             = var.ssh_key_id
+  terraform_organization = var.defaults.terraform_organization
+  terraform_version      = var.terraform_version != null ? var.terraform_version : var.defaults.terraform_version
+  trigger_prefixes       = var.trigger_prefixes
+  username               = "TFEPipeline"
+  working_directory      = var.environment != null ? "terraform/${var.environment}" : "terraform"
+  tags                   = var.tags
 }
 
 resource "aws_cloudwatch_event_rule" "monitor_iam_access" {
@@ -138,41 +165,15 @@ resource "aws_iam_role_policy" "monitor_iam_access" {
   policy   = data.aws_iam_policy_document.monitor_iam_access[0].json
 }
 
-module "security_hub" {
-  source    = "../security_hub"
-  providers = { aws = aws.managed_by_inception }
-}
-
-module "workspace" {
-  source                 = "github.com/schubergphilis/terraform-aws-mcaf-workspace?ref=v0.3.0"
-  providers              = { aws = aws.managed_by_inception }
-  name                   = local.name
-  auto_apply             = var.terraform_auto_apply
-  branch                 = var.tfe_vcs_branch
-  create_repository      = false
-  github_organization    = var.defaults.github_organization
-  github_repository      = var.name
-  kms_key_id             = var.kms_key_id
-  oauth_token_id         = var.oauth_token_id
-  policy_arns            = ["arn:aws:iam::aws:policy/AdministratorAccess"]
-  region                 = var.region
-  ssh_key_id             = var.ssh_key_id
-  terraform_organization = var.defaults.terraform_organization
-  terraform_version      = var.terraform_version != null ? var.terraform_version : var.defaults.terraform_version
-  trigger_prefixes       = var.trigger_prefixes
-  username               = "TFEPipeline"
-  working_directory      = var.environment != null ? "terraform/${var.environment}" : "terraform"
-  tags                   = var.tags
-}
-
 resource "aws_iam_account_password_policy" "default" {
-  count                          = var.create_password_policy ? 1 : 0
-  allow_users_to_change_password = var.password_policy.allow_users_to_change
-  max_password_age               = var.password_policy.max_age
-  minimum_password_length        = var.password_policy.minimum_length
-  password_reuse_prevention      = var.password_policy.reuse_prevention_history
-  require_lowercase_characters   = var.password_policy.require_lowercase_characters
-  require_numbers                = var.password_policy.require_numbers
-  require_symbols                = var.password_policy.require_symbols
-  require_uppercase_characters   = var.password_policy.require_uppercase_characters
+  count                          = var.create_account_password_policy ? 1 : 0
+  allow_users_to_change_password = var.account_password_policy.allow_users_to_change
+  max_password_age               = var.account_password_policy.max_age
+  minimum_password_length        = var.account_password_policy.minimum_length
+  password_reuse_prevention      = var.account_password_policy.reuse_prevention_history
+  require_lowercase_characters   = var.account_password_policy.require_lowercase_characters
+  require_numbers                = var.account_password_policy.require_numbers
+  require_symbols                = var.account_password_policy.require_symbols
+  require_uppercase_characters   = var.account_password_policy.require_uppercase_characters
 }
+

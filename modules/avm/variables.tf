@@ -4,6 +4,30 @@ variable "account_name" {
   description = "Name of the AWS Service Catalog provisioned account (overrides computed name from the `name` variable)"
 }
 
+variable "account_password_policy" {
+  type = object({
+    allow_users_to_change        = bool
+    max_age                      = number
+    minimum_length               = number
+    require_lowercase_characters = bool
+    require_numbers              = bool
+    require_symbols              = bool
+    require_uppercase_characters = bool
+    reuse_prevention_history     = number
+  })
+  default = {
+    allow_users_to_change        = true
+    max_age                      = 90
+    minimum_length               = 14
+    require_lowercase_characters = true
+    require_numbers              = true
+    require_symbols              = true
+    require_uppercase_characters = true
+    reuse_prevention_history     = 24
+  }
+  description = "AWS account password policy parameters"
+}
+
 variable "aws_config" {
   type = object({
     aggregator_account_ids = list(string)
@@ -11,6 +35,12 @@ variable "aws_config" {
   })
   default     = null
   description = "AWS Config settings"
+}
+
+variable "create_account_password_policy" {
+  type        = bool
+  default     = true
+  description = "Set to false to prevent the AWS account policy from being created"
 }
 
 variable "datadog" {
@@ -139,34 +169,4 @@ variable "trigger_prefixes" {
   type        = list(string)
   default     = ["modules"]
   description = "List of repository-root-relative paths which should be tracked for changes"
-}
-
-variable "create_password_policy" {
-  type        = bool
-  description = "Define if the password policy should be created."
-  default     = false
-}
-
-variable "password_policy" {
-  type = object({
-    allow_users_to_change        = bool
-    max_age                      = number
-    minimum_length               = number
-    require_lowercase_characters = bool
-    require_numbers              = bool
-    require_symbols              = bool
-    require_uppercase_characters = bool
-    reuse_prevention_history     = number
-  })
-  default = {
-    allow_users_to_change        = true
-    max_age                      = 90
-    minimum_length               = 14
-    require_lowercase_characters = true
-    require_numbers              = true
-    require_symbols              = true
-    require_uppercase_characters = true
-    reuse_prevention_history     = 24
-  }
-  description = "The password policy parameters to set."
 }
