@@ -150,8 +150,19 @@ module "landing_zone" {
 
 ### Enable SNS topic subscription
 
-If you would like to subscribe to aggregated security SNS topic created by Control Tower, set `sns_security_topic_subscription` variable to `true`.
-And provide values for your endpoint to receive notifications, variable `sns_endpoint` and protocol to be used, variable `sns_endpoint_protocol`.
+If you need to subscribe to AggregatedSecurityNotifications topic in order to receive security findings, please set values for `sns_endpoint` and `sns_endpoint_protocol` variables.
+
+Example for https protocol and specified webhook endpoint:
+
+```hcl
+module "landing_zone"{
+  ...
+  
+  sns_endpoint          = "https://app.datadoghq.com/intake/webhook/sns?api_key=qwerty0123456789"
+  sns_endpoint_protocol = "https"
+}
+```
+
 
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
@@ -189,9 +200,7 @@ And provide values for your endpoint to receive notifications, variable `sns_end
 | aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | monitor\_iam\_access | List of IAM Identities that should have their access monitored | <pre>list(object({<br>    account = string<br>    name    = string<br>    type    = string<br>  }))</pre> | `null` | no |
-| sns\_endpoint | Endpoint for SNS topic subscription | `string` | n/a | no |
-| sns\_endpoint\_protocol | Endpoint protocol for SNS topic subscription | `string` | n/a | no |
-| sns\_security\_topic\_subscription | Enable SNS aggregated security topic subscription | `bool` | false | no |
+|sns_security_subscription | Aggregated security SNS topic subscription | <pre>list(object({<br>    sns_endpoint          = string<br>    sns_endpoint_protocol = string<br>  }))</pre> | `null` | no |
 
 ## Outputs
 
