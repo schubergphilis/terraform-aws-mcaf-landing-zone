@@ -101,6 +101,15 @@ variable "monitor_iam_access" {
   }
 }
 
+variable "sns_security_subscription" {
+  type = list(object({
+    endpoint = string
+    protocol = string
+  }))
+  default     = null
+  description = "Aggregated security SNS topic subscription options"
+}
+
 variable "tags" {
   type        = map(string)
   description = "Map of tags"

@@ -1,3 +1,10 @@
+locals {
+  sns_security_subscription = [
+    for sub in var.sns_security_subscription :
+    merge(sub, { account_id = var.control_tower_account_ids.audit })
+  ]
+}
+
 provider "aws" {
   alias = "audit"
 
@@ -154,8 +161,9 @@ module "kms_key_audit" {
 }
 
 module "security_hub_audit" {
-  source    = "./modules/security_hub"
-  providers = { aws = aws.audit }
+  source           = "./modules/security_hub"
+  providers        = { aws = aws.audit }
+  sns_subscription = local.sns_security_subscription
 
   member_accounts = {
     for id, email in local.aws_account_emails : id => email if id != var.control_tower_account_ids.audit
