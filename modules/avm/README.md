@@ -70,17 +70,17 @@ monitor_iam_access = {
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
-| aws | ~> 3.16.0 |
-| datadog | ~> 2.14 |
-| github | ~> 3.1.0 |
-| tfe | ~> 0.21.0 |
+| aws | >= 3.16.0 |
+| datadog | >= 2.14 |
+| github | >= 3.1.0 |
+| tfe | >= 0.21.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | ~> 3.16.0 |
-| aws.managed\_by\_inception | ~> 3.16.0 |
+| aws | >= 3.16.0 |
+| aws.managed\_by\_inception | >= 3.16.0 |
 
 ## Inputs
 

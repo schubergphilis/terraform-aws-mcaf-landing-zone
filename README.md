@@ -150,17 +150,17 @@ module "landing_zone" {
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
-| aws | ~> 3.16.0 |
-| okta | ~> 3.0 |
+| aws | >= 3.16.0 |
+| okta | >= 3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | ~> 3.16.0 |
-| aws.audit | ~> 3.16.0 |
-| aws.logging | ~> 3.16.0 |
-| okta | ~> 3.0 |
+| aws | >= 3.16.0 |
+| aws.audit | >= 3.16.0 |
+| aws.logging | >= 3.16.0 |
+| okta | >= 3.0 |
 
 ## Inputs
 
@@ -177,7 +177,7 @@ module "landing_zone" {
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
 | aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list(string)` | `[]` | no |
 | aws\_region\_restrictions | List of allowed AWS regions and principals that are exempt from the restriction | <pre>object({<br>    allowed    = list(string)<br>    exceptions = list(string)<br>  })</pre> | `null` | no |
-| aws\_require\_imdsv2 | Enable SCP that requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
+| aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | monitor\_iam\_access | List of IAM Identities that should have their access monitored | <pre>list(object({<br>    account = string<br>    name    = string<br>    type    = string<br>  }))</pre> | `null` | no |
 
