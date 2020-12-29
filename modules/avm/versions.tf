@@ -10,7 +10,7 @@ terraform {
     }
     github = {
       source  = "hashicorp/github"
-      version = "~> 3.1.0"
+      version = ">= 3.1.0"
     }
     mcaf = {
       source = "schubergphilis/mcaf"
