@@ -1,5 +1,6 @@
 variable "account_id" {
   type        = string
+  default     = null
   description = "AWS Account ID"
 }
 
