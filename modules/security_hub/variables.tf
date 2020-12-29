@@ -1,9 +1,3 @@
-variable "account_id" {
-  type        = string
-  default     = null
-  description = "AWS Audit Account ID"
-}
-
 variable "member_accounts" {
   type        = map(string)
   default     = {}
@@ -24,8 +18,9 @@ variable "region" {
 
 variable "sns_subscription" {
   type = list(object({
-    endpoint = string
-    protocol = string
+    account_id = string
+    endpoint   = string
+    protocol   = string
   }))
   default     = null
   description = "Aggregated security SNS topic subscription options"

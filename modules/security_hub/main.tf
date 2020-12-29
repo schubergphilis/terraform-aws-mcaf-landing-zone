@@ -31,6 +31,6 @@ resource "aws_sns_topic_subscription" "datadog_security" {
   for_each   = toset(try(var.sns_subscription, []))
   endpoint   = each.value.endpoint
   protocol   = each.value.protocol
-  topic_arn  = "arn:aws:sns:${var.region}:${var.account_id}:aws-controltower-AggregateSecurityNotifications"
+  topic_arn  = "arn:aws:sns:${var.region}:${each.value.account_id}:aws-controltower-AggregateSecurityNotifications"
   depends_on = [aws_securityhub_account.default]
 }
