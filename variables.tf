@@ -103,8 +103,8 @@ variable "monitor_iam_access" {
 
 variable "sns_security_subscription" {
   type = list(object({
-    sns_endpoint          = string
-    sns_endpoint_protocol = string
+    endpoint = string
+    protocol = string
   }))
   default     = null
   description = "Aggregated security SNS topic subscription options"

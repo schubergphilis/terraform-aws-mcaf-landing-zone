@@ -1,7 +1,7 @@
 variable "account_id" {
   type        = string
   default     = null
-  description = "AWS Account ID"
+  description = "AWS Audit Account ID"
 }
 
 variable "member_accounts" {
@@ -22,10 +22,10 @@ variable "region" {
   description = "The name of the AWS region where SecurityHub will be enabled"
 }
 
-variable "sns_security_subscription" {
+variable "sns_subscription" {
   type = list(object({
-    sns_endpoint          = string
-    sns_endpoint_protocol = string
+    endpoint = string
+    protocol = string
   }))
   default     = null
   description = "Aggregated security SNS topic subscription options"

@@ -27,10 +27,10 @@ resource "aws_securityhub_standards_subscription" "default" {
   depends_on    = [aws_securityhub_account.default]
 }
 
-resource "aws_sns_topic_subscription" "datadog-security" {
-  for_each   = toset(try(var.sns_security_subscription, []))
-  endpoint   = each.value.sns_endpoint
-  protocol   = each.value.sns_endpoint_protocol
+resource "aws_sns_topic_subscription" "datadog_security" {
+  for_each   = toset(try(var.sns_subscription, []))
+  endpoint   = each.value.endpoint
+  protocol   = each.value.protocol
   topic_arn  = "arn:aws:sns:${var.region}:${var.account_id}:aws-controltower-AggregateSecurityNotifications"
   depends_on = [aws_securityhub_account.default]
 }

@@ -158,8 +158,10 @@ Example for https protocol and specified webhook endpoint:
 module "landing_zone"{
   ...
   
-  sns_endpoint          = "https://app.datadoghq.com/intake/webhook/sns?api_key=qwerty0123456789"
-  sns_endpoint_protocol = "https"
+  sns_security_subscription = {
+    endpoint = "https://app.datadoghq.com/intake/webhook/sns?api_key=qwerty0123456789"
+    protocol = "https"
+  }
 }
 ```
 
