@@ -72,7 +72,7 @@ monitor_iam_access = {
 | terraform | >= 0.13 |
 | aws | ~> 3.16.0 |
 | datadog | ~> 2.14 |
-| github | ~> 3.1.0 |
+| github | >= 3.1.0 |
 | tfe | ~> 0.21.0 |
 
 ## Providers
