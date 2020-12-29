@@ -150,12 +150,12 @@ module "landing_zone" {
 
 ### Enable SNS topic subscription
 
-If you need to subscribe to AggregatedSecurityNotifications topic in order to receive security findings, please set values for `sns_endpoint` and `sns_endpoint_protocol` variables.
+To subscribe to the `AggregatedSecurityNotifications` topic to receive security findings, set the `sns_security_subscription` variable as shown below.
 
 Example for https protocol and specified webhook endpoint:
 
 ```hcl
-module "landing_zone"{
+module "landing_zone" {
   ...
   
   sns_security_subscription = {

@@ -1,6 +1,6 @@
 locals {
   sns_security_subscription = merge(
-    var.sns_security_subscription,
+    var.sns_security_subscription.0,
     { account_id = var.control_tower_account_ids.audit }
   )
 }
