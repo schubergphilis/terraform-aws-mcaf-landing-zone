@@ -1,8 +1,7 @@
 locals {
   sns_security_subscription = [
     for sub in var.sns_security_subscription :
-    merge(sub, { account_id = var.control_tower_account_ids.audit }
-    )
+    merge(sub, { account_id = var.control_tower_account_ids.audit })
   ]
 }
 
