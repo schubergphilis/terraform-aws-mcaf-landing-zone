@@ -6,8 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 
+## 0.4.1 (2020-12-29)
+
+ENHANCEMENTS
+
 * Add support for exemptions to the AWS region restriction ([#31](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/31))
 * Set default password policy parameters for the AWS accounts ([#51](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/51)) ([#43](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/43))
+
+BUG FIXES
+
+* Loosen provider version constraints to allow more flexibility for module users ([#53](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/53))
 
 ## 0.4.0 (2020-12-16)
 
