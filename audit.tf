@@ -1,8 +1,9 @@
 locals {
-  sns_security_subscription = merge(
-    var.sns_security_subscription.0,
-    { account_id = var.control_tower_account_ids.audit }
-  )
+  sns_security_subscription = [
+    for sub in var.sns_security_subscription :
+      merge(sub, { account_id = var.control_tower_account_ids.audit }
+    )
+  ]
 }
 
 provider "aws" {
