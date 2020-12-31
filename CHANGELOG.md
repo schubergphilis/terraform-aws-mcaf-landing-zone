@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 
+ENHANCEMENTS
+
+* Forward SecurityHub findings to AggregateSecurityNotifications SNS topic ([#56](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/56))
+
 ## 0.4.2 (2020-12-29)
 
 ENHANCEMENTS

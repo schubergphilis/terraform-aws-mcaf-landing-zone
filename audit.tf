@@ -18,6 +18,11 @@ resource "aws_cloudwatch_event_bus" "monitor_iam_access_audit" {
   name     = "LandingZone-MonitorIAMAccess"
 }
 
+resource "aws_cloudwatch_event_bus" "security_hub_findings" {
+  provider = aws.audit
+  name     = "LandingZone-SecurityHubFindings"
+}
+
 resource "aws_cloudwatch_event_permission" "organization_access_audit" {
   for_each       = { for account in data.aws_organizations_organization.default.accounts : account.id => account.name if account.id != var.control_tower_account_ids.audit }
   provider       = aws.audit
@@ -63,6 +68,22 @@ resource "aws_cloudwatch_event_target" "notify_iam_access_member_accounts" {
   arn            = aws_sns_topic.monitor_iam_access_audit.arn
   event_bus_name = aws_cloudwatch_event_bus.monitor_iam_access_audit.name
   rule           = aws_cloudwatch_event_rule.notify_iam_access_member_accounts.name
+  target_id      = "SendToSNS"
+}
+
+resource "aws_cloudwatch_event_rule" "security_hub_findings" {
+  provider       = aws.audit
+  name           = "LandingZone-SecurityHubFindings"
+  description    = "Rule for getting SecurityHub findings"
+  event_bus_name = aws_cloudwatch_event_bus.security_hub_findings.name
+  event_pattern  = file("${path.module}/files/event_bridge/security_hub_findings.json.tpl")
+}
+
+resource "aws_cloudwatch_event_target" "security_hub_findings" {
+  provider       = aws.audit
+  arn            = "arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_account_ids.audit}:aws-controltower-AggregateSecurityNotifications"
+  event_bus_name = aws_cloudwatch_event_bus.security_hub_findings.name
+  rule           = aws_cloudwatch_event_rule.security_hub_findings.name
   target_id      = "SendToSNS"
 }
 
