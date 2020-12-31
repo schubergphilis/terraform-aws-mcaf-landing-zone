@@ -31,6 +31,13 @@ resource "aws_cloudwatch_event_permission" "organization_access_audit" {
   statement_id   = "${each.value}Access"
 }
 
+resource "aws_cloudwatch_event_permission" "security_hub_findings" {
+  provider       = aws.audit
+  event_bus_name = aws_cloudwatch_event_bus.security_hub_findings.name
+  principal      = var.control_tower_account_ids.audit
+  statement_id   = "${data.aws_iam_account_alias.current.account_alias}Access"
+}
+
 resource "aws_cloudwatch_event_rule" "monitor_iam_access_audit" {
   for_each    = { for identity, identity_data in local.monitor_iam_access : identity => identity_data if try(identity_data.account, null) == "audit" || identity == "Root" }
   provider    = aws.audit
