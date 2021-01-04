@@ -40,7 +40,7 @@ variable "aws_config" {
 variable "create_account_password_policy" {
   type        = bool
   default     = true
-  description = "Set to false to prevent the AWS account policy from being created"
+  description = "Set to true to create the AWS account password policy"
 }
 
 variable "datadog" {
