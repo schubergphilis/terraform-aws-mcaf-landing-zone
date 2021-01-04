@@ -193,7 +193,9 @@ module "landing_zone" {
 | control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
 | tags | Map of tags | `map(string)` | n/a | yes |
 | additional\_auditing\_trail | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name   = string<br>    bucket = string<br>  })</pre> | `null` | no |
+| aws\_account\_password\_policy | AWS account password policy parameters for the audit, logging and master account | <pre>object({<br>    allow_users_to_change        = bool<br>    max_age                      = number<br>    minimum_length               = number<br>    require_lowercase_characters = bool<br>    require_numbers              = bool<br>    require_symbols              = bool<br>    require_uppercase_characters = bool<br>    reuse_prevention_history     = number<br>  })</pre> | <pre>{<br>  "allow_users_to_change": true,<br>  "max_age": 90,<br>  "minimum_length": 14,<br>  "require_lowercase_characters": true,<br>  "require_numbers": true,<br>  "require_symbols": true,<br>  "require_uppercase_characters": true,<br>  "reuse_prevention_history": 24<br>}</pre> | no |
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
+| aws\_create\_account\_password\_policy | Set to true to create the AWS account password policy in the audit, logging and master accounts | `bool` | `true` | no |
 | aws\_deny\_leaving\_org | Enable SCP that denies accounts the ability to leave the AWS organisation | `bool` | `true` | no |
 | aws\_deny\_root\_user\_ous | List of AWS Organisation OUs to apply the "DenyRootUser" SCP to | `list(string)` | `[]` | no |
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
