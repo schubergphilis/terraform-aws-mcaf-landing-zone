@@ -39,6 +39,7 @@ jobs:
         uses: hashicorp/terraform-github-actions@master
         env:
           AWS_DEFAULT_REGION: eu-west-1
+          O365_GROUP_ID: 13474e33-5fb3-4567-b1ef-d11585d29c0d  # This is a random UUID
         with:
           tf_actions_version: latest
           tf_actions_subcommand: validate
