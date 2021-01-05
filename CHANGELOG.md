@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 
+BUG FIXES
+
+* Fix bug in the aws\_sns\_topic\_subscription.datadog\_security resource ([#60](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/60))
+
 ## 0.4.3 (2021-01-04)
 
 ENHANCEMENTS
