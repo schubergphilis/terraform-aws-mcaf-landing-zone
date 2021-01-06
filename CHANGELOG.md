@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 BUG FIXES
 
-* Resolves issue where leaving the sns\_security\_subscription variable empty would cause failure and restructured the variable from a list to a map because in TF v0.14 for\_each statements cannot be used with an object that has sensitive values ([#60](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/60))
+* Resolve issue where an empty `sns_security_subscription` variable causes a failure and restructured the variable to a map as `for_each` in Terraform 0.14 cannot be used with an object that has sensitive values ([#60](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/60))
 
 ## 0.4.3 (2021-01-04)
 
