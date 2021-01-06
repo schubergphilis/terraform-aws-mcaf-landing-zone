@@ -15,13 +15,3 @@ variable "region" {
   default     = "eu-west-1"
   description = "The name of the AWS region where SecurityHub will be enabled"
 }
-
-variable "sns_subscription" {
-  type = list(object({
-    account_id = string
-    endpoint   = string
-    protocol   = string
-  }))
-  default     = null
-  description = "Aggregated security SNS topic subscription options"
-}

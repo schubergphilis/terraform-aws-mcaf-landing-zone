@@ -1,10 +1,3 @@
-locals {
-  sns_security_subscription = [
-    for sub in var.sns_security_subscription :
-    merge(sub, { account_id = var.control_tower_account_ids.audit })
-  ]
-}
-
 provider "aws" {
   alias = "audit"
 
@@ -161,13 +154,20 @@ module "kms_key_audit" {
 }
 
 module "security_hub_audit" {
-  source           = "./modules/security_hub"
-  providers        = { aws = aws.audit }
-  sns_subscription = local.sns_security_subscription
+  source    = "./modules/security_hub"
+  providers = { aws = aws.audit }
 
   member_accounts = {
     for id, email in local.aws_account_emails : id => email if id != var.control_tower_account_ids.audit
   }
+}
+
+resource "aws_sns_topic_subscription" "aws_config" {
+  for_each  = var.sns_aws_config_subscription
+  provider  = aws.audit
+  endpoint  = each.value.endpoint
+  protocol  = each.value.protocol
+  topic_arn = "arn:aws:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:aws-controltower-AggregateSecurityNotifications"
 }
 
 resource "aws_iam_account_password_policy" "audit" {

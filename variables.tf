@@ -131,13 +131,13 @@ variable "monitor_iam_access" {
   }
 }
 
-variable "sns_security_subscription" {
-  type = list(object({
+variable "sns_aws_config_subscription" {
+  type = map(object({
     endpoint = string
     protocol = string
   }))
-  default     = null
-  description = "Aggregated security SNS topic subscription options"
+  default     = {}
+  description = "Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic"
 }
 
 variable "tags" {
