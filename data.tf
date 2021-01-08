@@ -1,8 +1,7 @@
 data "aws_caller_identity" "current" {}
 
-data "aws_iam_account_alias" "current" {}
-
-data "aws_iam_policy_document" "monitor_iam_access_audit_topic" {
+data "aws_iam_policy_document" "sns_topic" {
+  for_each = { for topic in [aws_sns_topic.monitor_iam_access_audit, aws_sns_topic.security_hub_findings] : topic.name => topic.arn }
   statement {
     actions = [
       "SNS:AddPermission",
@@ -17,7 +16,7 @@ data "aws_iam_policy_document" "monitor_iam_access_audit_topic" {
     ]
 
     resources = [
-      aws_sns_topic.monitor_iam_access_audit.arn
+      each.value
     ]
 
     sid = "__default_statement_ID"
@@ -43,7 +42,7 @@ data "aws_iam_policy_document" "monitor_iam_access_audit_topic" {
     ]
 
     resources = [
-      aws_sns_topic.monitor_iam_access_audit.arn
+      each.value
     ]
 
     sid = "__events"

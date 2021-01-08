@@ -140,6 +140,15 @@ variable "sns_aws_config_subscription" {
   description = "Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic"
 }
 
+variable "sns_aws_security_hub_subscription" {
+  type = map(object({
+    endpoint = string
+    protocol = string
+  }))
+  default     = {}
+  description = "Subscription options for the LandingZone-SecurityHubFindings SNS topic"
+}
+
 variable "tags" {
   type        = map(string)
   description = "Map of tags"

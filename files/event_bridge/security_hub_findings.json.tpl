@@ -6,8 +6,8 @@
       "Severity": {
         "Label": [
           "HIGH",
-		  "CRITICAL",
-		  "MEDIUM"
+          "CRITICAL",
+	  "MEDIUM"
         ]
       }
     }

@@ -11,24 +11,12 @@ resource "aws_cloudwatch_event_bus" "monitor_iam_access_audit" {
   name     = "LandingZone-MonitorIAMAccess"
 }
 
-resource "aws_cloudwatch_event_bus" "security_hub_findings" {
-  provider = aws.audit
-  name     = "LandingZone-SecurityHubFindings"
-}
-
 resource "aws_cloudwatch_event_permission" "organization_access_audit" {
   for_each       = { for account in data.aws_organizations_organization.default.accounts : account.id => account.name if account.id != var.control_tower_account_ids.audit }
   provider       = aws.audit
   event_bus_name = aws_cloudwatch_event_bus.monitor_iam_access_audit.name
   principal      = each.key
   statement_id   = "${each.value}Access"
-}
-
-resource "aws_cloudwatch_event_permission" "security_hub_findings" {
-  provider       = aws.audit
-  event_bus_name = aws_cloudwatch_event_bus.security_hub_findings.name
-  principal      = var.control_tower_account_ids.audit
-  statement_id   = "${data.aws_iam_account_alias.current.account_alias}Access"
 }
 
 resource "aws_cloudwatch_event_rule" "monitor_iam_access_audit" {
@@ -72,19 +60,38 @@ resource "aws_cloudwatch_event_target" "notify_iam_access_member_accounts" {
 }
 
 resource "aws_cloudwatch_event_rule" "security_hub_findings" {
-  provider       = aws.audit
-  name           = "LandingZone-SecurityHubFindings"
-  description    = "Rule for getting SecurityHub findings"
-  event_bus_name = aws_cloudwatch_event_bus.security_hub_findings.name
-  event_pattern  = file("${path.module}/files/event_bridge/security_hub_findings.json.tpl")
+  provider      = aws.audit
+  name          = "LandingZone-SecurityHubFindings"
+  description   = "Rule for getting SecurityHub findings"
+  event_pattern = file("${path.module}/files/event_bridge/security_hub_findings.json.tpl")
 }
 
 resource "aws_cloudwatch_event_target" "security_hub_findings" {
-  provider       = aws.audit
-  arn            = "arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_account_ids.audit}:aws-controltower-AggregateSecurityNotifications"
-  event_bus_name = aws_cloudwatch_event_bus.security_hub_findings.name
-  rule           = aws_cloudwatch_event_rule.security_hub_findings.name
-  target_id      = "SendToSNS"
+  provider  = aws.audit
+  arn       = aws_sns_topic.security_hub_findings.arn
+  rule      = aws_cloudwatch_event_rule.security_hub_findings.name
+  target_id = "SendToSNS"
+}
+
+resource "aws_sns_topic" "security_hub_findings" {
+  provider          = aws.audit
+  name              = "LandingZone-SecurityHubFindings"
+  kms_master_key_id = module.kms_key_audit.id
+}
+
+resource "aws_sns_topic_policy" "security_hub_findings" {
+  provider = aws.audit
+  arn      = aws_sns_topic.security_hub_findings.arn
+  policy   = data.aws_iam_policy_document.sns_topic[aws_sns_topic.security_hub_findings.name].json
+}
+
+resource "aws_sns_topic_subscription" "security_hub_findings" {
+  for_each               = var.sns_aws_security_hub_subscription
+  provider               = aws.audit
+  endpoint               = each.value.endpoint
+  endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
+  protocol               = each.value.protocol
+  topic_arn              = aws_sns_topic.security_hub_findings.arn
 }
 
 resource "aws_config_aggregate_authorization" "audit" {
@@ -115,7 +122,7 @@ resource "aws_sns_topic" "monitor_iam_access_audit" {
 resource "aws_sns_topic_policy" "monitor_iam_access_audit" {
   provider = aws.audit
   arn      = aws_sns_topic.monitor_iam_access_audit.arn
-  policy   = data.aws_iam_policy_document.monitor_iam_access_audit_topic.json
+  policy   = data.aws_iam_policy_document.sns_topic[aws_sns_topic.monitor_iam_access_audit.name].json
 }
 
 resource "aws_guardduty_detector" "audit" {
