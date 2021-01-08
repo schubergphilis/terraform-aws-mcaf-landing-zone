@@ -4,7 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.4.5 (2021-01-06)
+
+BUG FIXES
+
+* Add `endpoint_auto_confirms` variable to the AWS Config SNS topic ([#62](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/62)) ([#64](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/64))
+
+* Modify accountID of the AWS Config SNS topic ([#65](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/65))
+
+## 0.4.4 (2021-01-05)
+
+BUG FIXES
+
+* Resolve issue where an empty `sns_security_subscription` variable causes a failure and restructured the variable to a map as `for_each` in Terraform 0.14 cannot be used with an object that has sensitive values ([#60](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/60))
+
+## 0.4.3 (2021-01-04)
+
+ENHANCEMENTS
+
+* Set default password policy parameters for the audit, logging, master accounts ([#57](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/57))
 
 ENHANCEMENTS
 

@@ -1,10 +1,3 @@
-locals {
-  sns_security_subscription = [
-    for sub in var.sns_security_subscription :
-    merge(sub, { account_id = var.control_tower_account_ids.audit })
-  ]
-}
-
 provider "aws" {
   alias = "audit"
 
@@ -189,11 +182,32 @@ module "kms_key_audit" {
 }
 
 module "security_hub_audit" {
-  source           = "./modules/security_hub"
-  providers        = { aws = aws.audit }
-  sns_subscription = local.sns_security_subscription
+  source    = "./modules/security_hub"
+  providers = { aws = aws.audit }
 
   member_accounts = {
     for id, email in local.aws_account_emails : id => email if id != var.control_tower_account_ids.audit
   }
+}
+
+resource "aws_sns_topic_subscription" "aws_config" {
+  for_each               = var.sns_aws_config_subscription
+  provider               = aws.audit
+  endpoint               = each.value.endpoint
+  endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
+  protocol               = each.value.protocol
+  topic_arn              = "arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_account_ids.audit}:aws-controltower-AggregateSecurityNotifications"
+}
+
+resource "aws_iam_account_password_policy" "audit" {
+  count                          = var.aws_create_account_password_policy ? 1 : 0
+  provider                       = aws.audit
+  allow_users_to_change_password = var.aws_account_password_policy.allow_users_to_change
+  max_password_age               = var.aws_account_password_policy.max_age
+  minimum_password_length        = var.aws_account_password_policy.minimum_length
+  password_reuse_prevention      = var.aws_account_password_policy.reuse_prevention_history
+  require_lowercase_characters   = var.aws_account_password_policy.require_lowercase_characters
+  require_numbers                = var.aws_account_password_policy.require_numbers
+  require_symbols                = var.aws_account_password_policy.require_symbols
+  require_uppercase_characters   = var.aws_account_password_policy.require_uppercase_characters
 }
