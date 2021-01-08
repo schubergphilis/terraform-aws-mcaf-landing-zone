@@ -176,11 +176,12 @@ module "datadog_audit" {
 }
 
 module "kms_key_audit" {
-  source      = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.1.5"
-  providers   = { aws = aws.audit }
-  name        = "audit"
-  description = "KMS key used for encrypting audit-related data"
-  tags        = var.tags
+  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.1.5"
+  providers           = { aws = aws.audit }
+  name                = "audit"
+  description         = "KMS key used for encrypting audit-related data"
+  enable_key_rotation = true
+  tags                = var.tags
 
   policy = templatefile("${path.module}/files/kms/audit_key_policy.json", {
     audit_account_id  = var.control_tower_account_ids.audit
