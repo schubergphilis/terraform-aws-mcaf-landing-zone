@@ -120,10 +120,11 @@ module "datadog_master" {
 }
 
 module "kms_key" {
-  source      = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.1.5"
-  name        = "inception"
-  description = "KMS key used for encrypting SSM parameters"
-  tags        = var.tags
+  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.1.5"
+  name                = "inception"
+  description         = "KMS key used for encrypting SSM parameters"
+  enable_key_rotation = true
+  tags                = var.tags
 }
 
 module "security_hub_master" {
