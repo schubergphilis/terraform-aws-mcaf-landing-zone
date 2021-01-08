@@ -166,7 +166,7 @@ resource "aws_sns_topic_subscription" "aws_config" {
   for_each               = var.sns_aws_config_subscription
   provider               = aws.audit
   endpoint               = each.value.endpoint
-  endpoint_auto_confirms = length(regexall("/http/i", each.value.endpoint)) > 0
+  endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
   protocol               = each.value.protocol
   topic_arn              = "arn:aws:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:aws-controltower-AggregateSecurityNotifications"
 }
