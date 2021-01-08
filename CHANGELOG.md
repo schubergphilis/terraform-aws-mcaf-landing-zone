@@ -4,13 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## UNRELEASED
+## 0.4.6 (2021-01-08)
 
 ENHANCEMENTS
 
 * Add notifications for Security Hub findings via SNS topic LandingZone-SecurityHubFindings ([#56](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/56))
 
-## 0.4.5 (2021-01-06)
+## 0.4.5 (2021-01-08)
 
 BUG FIXES
 
