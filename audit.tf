@@ -168,7 +168,7 @@ resource "aws_sns_topic_subscription" "aws_config" {
   endpoint               = each.value.endpoint
   endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
   protocol               = each.value.protocol
-  topic_arn              = "arn:aws:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:aws-controltower-AggregateSecurityNotifications"
+  topic_arn              = "arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_account_ids.audit}:aws-controltower-AggregateSecurityNotifications"
 }
 
 resource "aws_iam_account_password_policy" "audit" {
