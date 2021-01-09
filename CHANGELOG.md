@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 0.4.7 (2021-01-08)
 
 BUG FIXES
+
 * Enable key rotation for the kms resources ([#68](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/68))
 
 ## 0.4.6 (2021-01-08)
