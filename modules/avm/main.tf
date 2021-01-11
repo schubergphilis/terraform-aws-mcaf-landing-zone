@@ -18,7 +18,7 @@ locals {
     {
       for identity in try(var.monitor_iam_access.identities, []) : identity.name => {
         "type"     = [identity.type]
-        "userName" = identity.name
+        "userName" = [identity.name]
       } if identity.type == "IAMUser"
     },
     {
@@ -26,7 +26,7 @@ locals {
         "type" = [identity.type]
         "sessionContext" = {
           "sessionIssuer" = {
-            "userName" = identity.name
+            "userName" = [identity.name]
           }
         }
       } if identity.type == "AssumedRole"
