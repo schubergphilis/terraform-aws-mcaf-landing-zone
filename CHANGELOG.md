@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.4.8 (2021-01-11)
+
+BUG FIXES
+
+* Fix bug in `monitor_iam_access` pattern in the AVM module, `userName` must be an array ([#70](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/70))
+
 ## 0.4.7 (2021-01-08)
 
 BUG FIXES
