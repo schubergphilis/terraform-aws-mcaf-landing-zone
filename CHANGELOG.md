@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## UNRELEASED
+
+BUG FIXES
+
+* Fix bug in output `monitor_iam_access_sns_topic_arn`, this needs to be the event bus arn. Changed the value and the output to match the event bus in the audit account ([#72](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/72)) 
+
 ## 0.4.8 (2021-01-11)
 
 BUG FIXES
