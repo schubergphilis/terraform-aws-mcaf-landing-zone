@@ -1,3 +1,13 @@
+# Upgrading to 0.5.x
+
+Since the `create_workspace` variable was added to the AVM module, resources in the included [terraform-aws-mcaf-workspace](https://github.com/schubergphilis/terraform-aws-mcaf-workspace) module are now stored under `module.workspace[0]`, resulting in a plan wanting to destroy and recreate the existing Terraform Cloud workspace and IAM user used by the workspace which is undesirable.
+
+To prevent this happening, simply move the resources in the state to their new location as shown below for the `sandbox` AVM module instance:
+
+```shell
+terraform state mv 'module.sandbox.module.workspace' 'module.sandbox.module.workspace[0]'
+```
+
 # Upgrading from v0.1.x to v0.2.x
 
 This section describes changes to be aware of when upgrading from v0.1.x to v0.2.x.
