@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.5.1 (2021-01-15)
+
+BUG FIXES
+
+* Fix `workspace_id` output in AVM module when the module does not create a workspace ([#76](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/76))
+
 ## 0.5.0 (2021-01-15)
 
 ENHANCEMENTS
 
-* Add ability to opt out of workspace create when you want to create the workspace and workspace user outside of the AVM module
+* Add ability to opt out of workspace create when you want to create the workspace and workspace user outside of the AVM module ([#74](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/74))
 
 ## 0.4.9 (2021-01-11)
 
