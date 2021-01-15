@@ -91,6 +91,7 @@ module "security_hub" {
 }
 
 module "workspace" {
+  count                  = var.create_workspace ? 1 : 0
   source                 = "github.com/schubergphilis/terraform-aws-mcaf-workspace?ref=v0.3.0"
   providers              = { aws = aws.managed_by_inception }
   name                   = local.name
