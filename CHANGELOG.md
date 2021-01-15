@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+ENHANCEMENTS
+
+* Add ability to opt out of workspace create when you want to create the workspace and workspace user outside of the AVM module
+
 ## 0.4.9 (2021-01-11)
 
 BUG FIXES

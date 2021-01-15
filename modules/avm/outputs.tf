@@ -4,6 +4,6 @@ output "id" {
 }
 
 output "workspace_id" {
-  value       = module.workspace.workspace_id
+  value       = module.workspace.0.workspace_id
   description = "The TFE workspace ID"
 }

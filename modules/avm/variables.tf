@@ -43,6 +43,12 @@ variable "create_account_password_policy" {
   description = "Set to true to create the AWS account password policy"
 }
 
+variable "create_workspace" {
+  type        = bool
+  default     = true
+  description = "Set to true to create a Terraform Cloud workspace"
+}
+
 variable "datadog" {
   type = object({
     api_key               = string

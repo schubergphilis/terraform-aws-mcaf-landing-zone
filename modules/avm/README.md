@@ -98,6 +98,7 @@ monitor_iam_access = {
 | account\_password\_policy | AWS account password policy parameters | <pre>object({<br>    allow_users_to_change        = bool<br>    max_age                      = number<br>    minimum_length               = number<br>    require_lowercase_characters = bool<br>    require_numbers              = bool<br>    require_symbols              = bool<br>    require_uppercase_characters = bool<br>    reuse_prevention_history     = number<br>  })</pre> | <pre>{<br>  "allow_users_to_change": true,<br>  "max_age": 90,<br>  "minimum_length": 14,<br>  "require_lowercase_characters": true,<br>  "require_numbers": true,<br>  "require_symbols": true,<br>  "require_uppercase_characters": true,<br>  "reuse_prevention_history": 24<br>}</pre> | no |
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
 | create\_account\_password\_policy | Set to true to create the AWS account password policy | `bool` | `true` | no |
+| create\_workspace | Set to true to create a Terraform Cloud workspace | `bool` | `true` | no |
 | datadog | Datadog integration options | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | email | Email address of the account | `string` | `null` | no |
 | environment | Stack environment | `string` | `null` | no |
