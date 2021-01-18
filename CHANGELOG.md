@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+BUG FIXES
+
+* Fix error when trying to read SNS topic policy from data source ([#78](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/78))
+
 ## 0.5.1 (2021-01-15)
 
 BUG FIXES

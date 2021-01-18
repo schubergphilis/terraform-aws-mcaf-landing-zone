@@ -1,70 +1,7 @@
-data "aws_caller_identity" "current" {}
-
-data "aws_iam_policy_document" "sns_topic" {
-  for_each = { for topic in [aws_sns_topic.monitor_iam_access_audit, aws_sns_topic.security_hub_findings] : topic.name => topic.arn }
-  statement {
-    actions = [
-      "SNS:AddPermission",
-      "SNS:DeleteTopic",
-      "SNS:GetTopicAttributes",
-      "SNS:ListSubscriptionsByTopic",
-      "SNS:Publish",
-      "SNS:Receive",
-      "SNS:RemovePermission",
-      "SNS:SetTopicAttributes",
-      "SNS:Subscribe"
-    ]
-
-    resources = [
-      each.value
-    ]
-
-    sid = "__default_statement_ID"
-
-    principals {
-      type        = "AWS"
-      identifiers = ["*"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "AWS:SourceOwner"
-
-      values = [
-        var.control_tower_account_ids.audit
-      ]
-    }
-  }
-
-  statement {
-    actions = [
-      "sns:Publish"
-    ]
-
-    resources = [
-      each.value
-    ]
-
-    sid = "__events"
-
-    principals {
-      type        = "Service"
-      identifiers = ["events.amazonaws.com"]
-    }
-  }
+data "aws_caller_identity" "audit" {
+  provider = aws.audit
 }
-
-data "aws_iam_policy_document" "monitor_iam_access" {
-  statement {
-    actions = [
-      "events:PutEvents"
-    ]
-
-    resources = [
-      aws_cloudwatch_event_bus.monitor_iam_access_audit.arn
-    ]
-  }
-}
+data "aws_caller_identity" "master" {}
 
 data "aws_iam_role" "monitor_iam_access_audit" {
   for_each = toset([for identity in coalesce(var.monitor_iam_access, []) : identity.name if identity.type == "AssumedRole" && identity.account == "audit"])

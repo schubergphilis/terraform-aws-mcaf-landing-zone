@@ -55,7 +55,9 @@ resource "aws_iam_role_policy" "monitor_iam_access_logging" {
   provider = aws.logging
   name     = "LandingZone-MonitorIAMAccess"
   role     = aws_iam_role.monitor_iam_access_logging.id
-  policy   = data.aws_iam_policy_document.monitor_iam_access.json
+  policy = templatefile("${path.module}/files/iam/monitor_iam_access_policy.json", {
+    event_bus_arn = aws_cloudwatch_event_bus.monitor_iam_access_audit.arn
+  })
 }
 
 module "datadog_logging" {
