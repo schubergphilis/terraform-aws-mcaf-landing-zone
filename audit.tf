@@ -82,7 +82,7 @@ resource "aws_sns_topic" "security_hub_findings" {
 resource "aws_sns_topic_policy" "security_hub_findings" {
   provider = aws.audit
   arn      = aws_sns_topic.security_hub_findings.arn
-  policy = templatefile("${path.module}/files/sns/topic_policy.json", {
+  policy = templatefile("${path.module}/files/sns/topic_policy.json.tpl", {
     account_id = data.aws_caller_identity.audit.account_id
     sns_topic  = aws_sns_topic.security_hub_findings.arn
   })
@@ -125,7 +125,7 @@ resource "aws_sns_topic" "monitor_iam_access_audit" {
 resource "aws_sns_topic_policy" "monitor_iam_access_audit" {
   provider = aws.audit
   arn      = aws_sns_topic.monitor_iam_access_audit.arn
-  policy = templatefile("${path.module}/files/sns/topic_policy.json", {
+  policy = templatefile("${path.module}/files/sns/topic_policy.json.tpl", {
     account_id = data.aws_caller_identity.audit.account_id
     sns_topic  = aws_sns_topic.monitor_iam_access_audit.arn
   })
