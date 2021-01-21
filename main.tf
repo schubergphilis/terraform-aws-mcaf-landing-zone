@@ -95,9 +95,11 @@ resource "aws_iam_role" "monitor_iam_access_master" {
 }
 
 resource "aws_iam_role_policy" "monitor_iam_access_master" {
-  name   = "LandingZone-MonitorIAMAccess"
-  role   = aws_iam_role.monitor_iam_access_logging.id
-  policy = data.aws_iam_policy_document.monitor_iam_access.json
+  name = "LandingZone-MonitorIAMAccess"
+  role = aws_iam_role.monitor_iam_access_logging.id
+  policy = templatefile("${path.module}/files/iam/monitor_iam_access_policy.json.tpl", {
+    event_bus_arn = aws_cloudwatch_event_bus.monitor_iam_access_audit.arn
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "config_recorder_read_only" {

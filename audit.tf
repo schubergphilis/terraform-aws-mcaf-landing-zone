@@ -82,7 +82,10 @@ resource "aws_sns_topic" "security_hub_findings" {
 resource "aws_sns_topic_policy" "security_hub_findings" {
   provider = aws.audit
   arn      = aws_sns_topic.security_hub_findings.arn
-  policy   = data.aws_iam_policy_document.sns_topic[aws_sns_topic.security_hub_findings.name].json
+  policy = templatefile("${path.module}/files/sns/topic_policy.json.tpl", {
+    account_id = data.aws_caller_identity.audit.account_id
+    sns_topic  = aws_sns_topic.security_hub_findings.arn
+  })
 }
 
 resource "aws_sns_topic_subscription" "security_hub_findings" {
@@ -122,7 +125,10 @@ resource "aws_sns_topic" "monitor_iam_access_audit" {
 resource "aws_sns_topic_policy" "monitor_iam_access_audit" {
   provider = aws.audit
   arn      = aws_sns_topic.monitor_iam_access_audit.arn
-  policy   = data.aws_iam_policy_document.sns_topic[aws_sns_topic.monitor_iam_access_audit.name].json
+  policy = templatefile("${path.module}/files/sns/topic_policy.json.tpl", {
+    account_id = data.aws_caller_identity.audit.account_id
+    sns_topic  = aws_sns_topic.monitor_iam_access_audit.arn
+  })
 }
 
 resource "aws_guardduty_detector" "audit" {
@@ -185,7 +191,7 @@ module "kms_key_audit" {
 
   policy = templatefile("${path.module}/files/kms/audit_key_policy.json", {
     audit_account_id  = var.control_tower_account_ids.audit
-    master_account_id = data.aws_caller_identity.current.account_id
+    master_account_id = data.aws_caller_identity.master.account_id
   })
 }
 
