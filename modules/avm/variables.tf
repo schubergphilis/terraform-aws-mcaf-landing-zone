@@ -37,6 +37,12 @@ variable "aws_config" {
   description = "AWS Config settings"
 }
 
+variable "aws_ebs_encryption_by_default" {
+  type        = bool
+  default     = true
+  description = "Set to true to enable AWS Elastic Block Store encryption by default"
+}
+
 variable "create_account_password_policy" {
   type        = bool
   default     = true
