@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.6.0 (2021-02-02)
 
 BUG FIXES
 
@@ -13,6 +13,7 @@ BUG FIXES
 ENHANCEMENTS
 
 * Enable AWS EBS encryption by default ([#79](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/79))
+* Refactored Securityhub to use organizations and removed unused Guardduty resources ([#80](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/80))
 
 ## 0.5.1 (2021-01-15)
 
