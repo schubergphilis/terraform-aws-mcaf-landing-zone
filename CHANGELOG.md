@@ -10,6 +10,10 @@ BUG FIXES
 
 * Fix error when trying to read SNS topic policy from data source ([#78](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/78))
 
+ENHANCEMENTS
+
+* Enable AWS EBS encryption by default ([#79](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/79))
+
 ## 0.5.1 (2021-01-15)
 
 BUG FIXES

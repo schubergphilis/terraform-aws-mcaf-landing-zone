@@ -178,3 +178,6 @@ resource "aws_iam_account_password_policy" "default" {
   require_uppercase_characters   = var.account_password_policy.require_uppercase_characters
 }
 
+resource "aws_ebs_encryption_by_default" "default" {
+  enabled = var.aws_ebs_encryption_by_default
+}
