@@ -225,3 +225,8 @@ resource "aws_iam_account_password_policy" "audit" {
   require_symbols                = var.aws_account_password_policy.require_symbols
   require_uppercase_characters   = var.aws_account_password_policy.require_uppercase_characters
 }
+
+resource "aws_ebs_encryption_by_default" "adit" {
+  provider = aws.audit
+  enabled  = var.aws_ebs_encryption_by_default
+}

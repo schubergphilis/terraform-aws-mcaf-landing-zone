@@ -58,6 +58,12 @@ variable "aws_deny_root_user_ous" {
   description = "List of AWS Organisation OUs to apply the \"DenyRootUser\" SCP to"
 }
 
+variable "aws_ebs_encryption_by_default" {
+  type        = bool
+  default     = true
+  description = "Set to true to enable AWS Elastic Block Store encryption by default"
+}
+
 variable "aws_guardduty" {
   type        = bool
   default     = true
