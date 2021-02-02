@@ -198,12 +198,14 @@ module "landing_zone" {
 | aws\_create\_account\_password\_policy | Set to true to create the AWS account password policy in the audit, logging and master accounts | `bool` | `true` | no |
 | aws\_deny\_leaving\_org | Enable SCP that denies accounts the ability to leave the AWS organisation | `bool` | `true` | no |
 | aws\_deny\_root\_user\_ous | List of AWS Organisation OUs to apply the "DenyRootUser" SCP to | `list(string)` | `[]` | no |
+| aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
 | aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list(string)` | `[]` | no |
 | aws\_region\_restrictions | List of allowed AWS regions and principals that are exempt from the restriction | <pre>object({<br>    allowed    = list(string)<br>    exceptions = list(string)<br>  })</pre> | `null` | no |
 | aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | monitor\_iam\_access | List of IAM Identities that should have their access monitored | <pre>list(object({<br>    account = string<br>    name    = string<br>    type    = string<br>  }))</pre> | `null` | no |
+| security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
 | sns\_aws\_config\_subscription | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | sns\_aws\_security\_hub\_subscription | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 

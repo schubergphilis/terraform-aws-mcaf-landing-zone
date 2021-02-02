@@ -85,11 +85,6 @@ module "account" {
   sso_lastname             = var.sso_lastname
 }
 
-module "security_hub" {
-  source    = "../security_hub"
-  providers = { aws = aws.managed_by_inception }
-}
-
 module "workspace" {
   count                  = var.create_workspace ? 1 : 0
   source                 = "github.com/schubergphilis/terraform-aws-mcaf-workspace?ref=v0.3.0"

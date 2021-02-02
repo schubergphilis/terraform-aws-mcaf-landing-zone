@@ -137,6 +137,12 @@ variable "monitor_iam_access" {
   }
 }
 
+variable "security_hub_product_arns" {
+  type        = list(string)
+  default     = []
+  description = "A list of the ARNs of the products you want to import into Security Hub"
+}
+
 variable "sns_aws_config_subscription" {
   type = map(object({
     endpoint = string

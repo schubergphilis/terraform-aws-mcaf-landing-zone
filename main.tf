@@ -51,15 +51,6 @@ resource "aws_config_configuration_recorder" "default" {
   }
 }
 
-resource "aws_guardduty_detector" "master" {
-  count = var.aws_guardduty == true ? 1 : 0
-}
-
-resource "aws_guardduty_organization_admin_account" "audit" {
-  count            = var.aws_guardduty == true ? 1 : 0
-  admin_account_id = var.control_tower_account_ids.audit
-}
-
 resource "aws_config_configuration_recorder_status" "default" {
   name       = aws_config_configuration_recorder.default.name
   is_enabled = true
@@ -127,10 +118,6 @@ module "kms_key" {
   description         = "KMS key used for encrypting SSM parameters"
   enable_key_rotation = true
   tags                = var.tags
-}
-
-module "security_hub_master" {
-  source = "./modules/security_hub"
 }
 
 resource "aws_iam_account_password_policy" "master" {
