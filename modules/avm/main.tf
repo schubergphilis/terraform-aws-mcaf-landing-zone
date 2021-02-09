@@ -163,6 +163,7 @@ resource "aws_iam_role_policy" "monitor_iam_access" {
 
 resource "aws_iam_account_password_policy" "default" {
   count                          = var.create_account_password_policy ? 1 : 0
+  provider                       = aws.managed_by_inception
   allow_users_to_change_password = var.account_password_policy.allow_users_to_change
   max_password_age               = var.account_password_policy.max_age
   minimum_password_length        = var.account_password_policy.minimum_length
@@ -174,5 +175,6 @@ resource "aws_iam_account_password_policy" "default" {
 }
 
 resource "aws_ebs_encryption_by_default" "default" {
-  enabled = var.aws_ebs_encryption_by_default
+  provider = aws.managed_by_inception
+  enabled  = var.aws_ebs_encryption_by_default
 }
