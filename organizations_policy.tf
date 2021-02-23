@@ -54,3 +54,24 @@ resource "aws_organizations_policy_attachment" "deny_leaving_org" {
   policy_id = aws_organizations_policy.deny_leaving_org.0.id
   target_id = data.aws_organizations_organization.default.roots.0.id
 }
+
+// https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_supported-resources-enforcement.html
+resource "aws_organizations_policy" "required_tags" {
+  count = length(var.aws_required_tags) > 0 ? 1 : 0
+  name  = "LandingZone-RequiredTags"
+  type  = "TAG_POLICY"
+  tags  = var.tags
+
+  content = templatefile("${path.module}/files/organizations/required_tags.json.tpl", {
+    tags = var.aws_required_tags.resource_tags
+  })
+}
+
+resource "aws_organizations_policy_attachment" "required_tags" {
+  for_each = {
+    for ou in data.aws_organizations_organizational_units.default.children : ou.name => ou if contains(var.aws_required_tags.ous, ou.name)
+  }
+
+  policy_id = aws_organizations_policy.deny_root_user.0.id
+  target_id = each.value.id
+}
