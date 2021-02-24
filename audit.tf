@@ -202,3 +202,12 @@ resource "aws_sns_topic_policy" "iam_activity" {
     sns_topic                = aws_sns_topic.iam_activity.arn
   })
 }
+
+resource "aws_sns_topic_subscription" "iam_activity" {
+  for_each               = var.sns_monitor_iam_activity_subscription
+  provider               = aws.audit
+  endpoint               = each.value.endpoint
+  endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
+  protocol               = each.value.protocol
+  topic_arn              = aws_sns_topic.iam_activity.arn
+}

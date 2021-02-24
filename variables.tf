@@ -150,6 +150,15 @@ variable "sns_aws_security_hub_subscription" {
   description = "Subscription options for the LandingZone-SecurityHubFindings SNS topic"
 }
 
+variable "sns_monitor_iam_activity_subscription" {
+  type = map(object({
+    endpoint = string
+    protocol = string
+  }))
+  default     = {}
+  description = "Subscription options for the LandingZone-IAMActivity SNS topic"
+}
+
 variable "tags" {
   type        = map(string)
   description = "Map of tags"
