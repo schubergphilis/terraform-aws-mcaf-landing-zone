@@ -96,6 +96,12 @@ variable "kms_key_id" {
   description = "The KMS key ID used to encrypt the SSM parameters"
 }
 
+variable "monitor_iam_activity_sns_topic_arn" {
+  type        = string
+  default     = null
+  description = "SNS Topic that should receive captured IAM activity events"
+}
+
 variable "name" {
   type        = string
   description = "Stack name"
@@ -116,18 +122,6 @@ variable "provisioned_product_name" {
   type        = string
   default     = null
   description = "A custom name for the provisioned product"
-}
-
-variable "monitor_iam_access" {
-  type = object({
-    event_bus_arn = string
-    identities = list(object({
-      name = string
-      type = string
-    }))
-  })
-  default     = null
-  description = "Object containing list of IAM Identities that should have their access monitored and the EventBridge Event Bus that should receive captured events"
 }
 
 variable "region" {

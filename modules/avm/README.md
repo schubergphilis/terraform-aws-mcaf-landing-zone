@@ -42,31 +42,16 @@ provider "datadog" {
 
 This should prevent the provider from asking you for a Datadog API Key and allow the module to be provisioned without the integration resources.
 
-## Monitoring IAM Access
+## Monitoring IAM Activity
 
-This module offers the capability of monitoring IAM activity of both users and roles. To enable this feature, you have to provide the ARN of the EventBridge Event Bus that should receive events in case any activity is detected.
+This module offers the capability of monitoring IAM activity of both the Root user and AWS SSO roles. To enable this feature, you have to provide the ARN of the SNS Topic that should receive events in case any activity is detected.
 
-The event bus ARN can be set using the attribute `event_bus_arn` in the variable `monitor_iam_access`. In case the feature is enabled, the activity of the `root` user will be automatically monitored and reported.
+The topic ARN can be set using the variable `monitor_iam_activity_sns_topic_arn`.
 
-If you would like to monitor other users or roles, a list can be passed using the attribute `identities` in the variable `monitor_iam_access`. All objects in the list should have the attributes `name` and `type` where `name` is either the name of the IAM Role or the IAM User and `type` is either `AssumedRole` or `IAMUser`. 
+These are the type of events that will be monitored:
 
-For more details regarding identities, please check [this link](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html).
-
-NOTE: Data Sources will be used to make sure that the identities provided actually exist in the account to avoid monitoring non-existent resources. In case an invalid identity is provided, a `NoSuchEntity` error will be thrown. 
-
-Example:
-
-```hcl
-monitor_iam_access = {
-  event_bus_arn = aws_cloudwatch_event_bus.monitor_iam_access.arn
-  identities    = [
-    {
-      name = "AWSReservedSSO_AWSAdministratorAccess_123abc"
-      type = "AssumedRole"
-    }
-  ]
-}
-```
+- Any activity made by the root user of the account.
+- Any manual changes made by AWS SSO roles (read-only operations and console logins are not taken into account).
 
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
@@ -83,7 +68,6 @@ monitor_iam_access = {
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.16.0 |
 | aws.managed\_by\_inception | >= 3.16.0 |
 
 ## Inputs
@@ -104,7 +88,7 @@ monitor_iam_access = {
 | email | Email address of the account | `string` | `null` | no |
 | environment | Stack environment | `string` | `null` | no |
 | kms\_key\_id | The KMS key ID used to encrypt the SSM parameters | `string` | `null` | no |
-| monitor\_iam\_access | Object containing list of IAM Identities that should have their access monitored and the EventBridge Event Bus that should receive captured events | <pre>object({<br>    event_bus_arn = string<br>    identities = list(object({<br>      name = string<br>      type = string<br>    }))<br>  })</pre> | `null` | no |
+| monitor\_iam\_activity\_sns\_topic\_arn | SNS Topic that should receive captured IAM activity events | `string` | `null` | no |
 | organizational\_unit | Organizational Unit to place account in | `string` | `null` | no |
 | provisioned\_product\_name | A custom name for the provisioned product | `string` | `null` | no |
 | region | The default region of the account | `string` | `"eu-west-1"` | no |
