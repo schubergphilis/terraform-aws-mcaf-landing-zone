@@ -8,7 +8,7 @@ output "kms_key_id" {
   value       = module.kms_key.id
 }
 
-output "monitor_iam_access_sns_topic_arn" {
+output "monitor_iam_activity_sns_topic_arn" {
   description = "ARN of the SNS Topic in the Audit account for IAM activity monitoring notifications"
-  value       = aws_sns_topic.iam_activity_audit.arn
+  value       = aws_sns_topic.iam_activity.arn
 }

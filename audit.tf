@@ -48,7 +48,7 @@ resource "aws_cloudwatch_metric_alarm" "iam_activity_audit" {
   statistic                 = "Sum"
   threshold                 = "1"
   alarm_description         = "Monitors IAM activity for ${each.key}"
-  alarm_actions             = [aws_sns_topic.iam_activity_audit.arn]
+  alarm_actions             = [aws_sns_topic.iam_activity.arn]
   insufficient_data_actions = []
 }
 
@@ -186,18 +186,18 @@ module "datadog_audit" {
   tags                  = var.tags
 }
 
-resource "aws_sns_topic" "iam_activity_audit" {
+resource "aws_sns_topic" "iam_activity" {
   provider          = aws.audit
   name              = "LandingZone-IAMActivity"
   kms_master_key_id = module.kms_key_audit.id
 }
 
-resource "aws_sns_topic_policy" "iam_activity_audit" {
+resource "aws_sns_topic_policy" "iam_activity" {
   provider = aws.audit
-  arn      = aws_sns_topic.iam_activity_audit.arn
+  arn      = aws_sns_topic.iam_activity.arn
   policy = templatefile("${path.module}/files/sns/topic_policy.json.tpl", {
     account_id               = data.aws_caller_identity.audit.account_id
     services_allowed_publish = jsonencode("cloudwatch.amazonaws.com")
-    sns_topic                = aws_sns_topic.iam_activity_audit.arn
+    sns_topic                = aws_sns_topic.iam_activity.arn
   })
 }

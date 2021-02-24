@@ -70,6 +70,11 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 
 By default, this module monitors and notifies activities performed by the `root` user of all core accounts and AWS SSO Roles. All notifications will be sent to the SNS Topic `LandingZone-IAMActivity` in the `audit` account.
 
+These are the type of events that will be monitored:
+
+- Any activity made by the root user of the account.
+- Any manual changes made by AWS SSO roles (read-only operations and console logins are not taken into account).
+
 In case you would like to disable this functionality, you can set the variable `monitor_iam_activity` to `false`.
 
 ## Service Control Policies (SCPs)
