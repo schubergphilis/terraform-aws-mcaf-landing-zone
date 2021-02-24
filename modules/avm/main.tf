@@ -14,29 +14,10 @@ locals {
   prefixed_name       = "${var.defaults.account_iam_prefix}${local.name}"
   organizational_unit = var.organizational_unit != null ? var.organizational_unit : var.environment == "prod" ? "Production" : "Non-Production"
 
-  monitor_iam_access = merge(
-    {
-      for identity in try(var.monitor_iam_access.identities, []) : identity.name => {
-        "type"     = [identity.type]
-        "userName" = [identity.name]
-      } if identity.type == "IAMUser"
-    },
-    {
-      for identity in try(var.monitor_iam_access.identities, []) : identity.name => {
-        "type" = [identity.type]
-        "sessionContext" = {
-          "sessionIssuer" = {
-            "userName" = [identity.name]
-          }
-        }
-      } if identity.type == "AssumedRole"
-    },
-    {
-      for identity in ["Root"] : identity => {
-        "type" = [identity]
-      } if try(var.monitor_iam_access.event_bus_arn, null) != null
-    }
-  )
+  iam_activity = {
+    Root = "{ $.userIdentity.type = \"Root\" }"
+    SSO  = "{ $.readOnly IS FALSE  && $.userIdentity.sessionContext.sessionIssuer.userName = \"AWSReservedSSO_*\" && $.eventName != \"ConsoleLogin\" }"
+  }
 }
 
 provider "aws" {
@@ -48,30 +29,9 @@ provider "aws" {
   }
 }
 
-data "aws_iam_policy_document" "monitor_iam_access" {
-  count = length(keys(local.monitor_iam_access)) > 0 ? 1 : 0
-
-  statement {
-    actions = [
-      "events:PutEvents"
-    ]
-
-    resources = [
-      var.monitor_iam_access.event_bus_arn
-    ]
-  }
-}
-
-data "aws_iam_role" "monitor_iam_access" {
-  for_each = toset([for identity in try(var.monitor_iam_access.identities, []) : identity.name if identity.type == "AssumedRole"])
+data "aws_cloudwatch_log_group" "cloudtrail" {
   provider = aws.managed_by_inception
-  name     = each.value
-}
-
-data "aws_iam_user" "monitor_iam_access" {
-  for_each  = toset([for identity in try(var.monitor_iam_access.identities, []) : identity.name if identity.type == "IAMUser"])
-  provider  = aws.managed_by_inception
-  user_name = each.value
+  name     = "aws-controltower/CloudTrailLogs"
 }
 
 module "account" {
@@ -108,29 +68,34 @@ module "workspace" {
   tags                   = var.tags
 }
 
-resource "aws_cloudwatch_event_rule" "monitor_iam_access" {
-  for_each    = local.monitor_iam_access
-  provider    = aws.managed_by_inception
-  name        = substr("LandingZone-MonitorIAMAccess-${each.key}", 0, 64)
-  description = "Monitors IAM access for ${each.key}"
+resource "aws_cloudwatch_log_metric_filter" "iam_activity" {
+  for_each       = var.iam_activity_sns_topic_arn != null ? local.iam_activity : {}
+  provider       = aws.managed_by_inception
+  name           = "BaseLine-IAMActivity-${each.key}"
+  pattern        = each.value
+  log_group_name = data.aws_cloudwatch_log_group.cloudtrail.name
 
-  event_pattern = templatefile("${path.module}/files/event_bridge/monitor_iam_access.json.tpl", {
-    userIdentity = jsonencode(each.value)
-  })
-
-  depends_on = [
-    data.aws_iam_role.monitor_iam_access,
-    data.aws_iam_user.monitor_iam_access
-  ]
+  metric_transformation {
+    name      = "BaseLine-IAMActivity-${each.key}"
+    namespace = "BaseLine-IAMActivity"
+    value     = "1"
+  }
 }
 
-resource "aws_cloudwatch_event_target" "monitor_iam_access" {
-  for_each  = aws_cloudwatch_event_rule.monitor_iam_access
-  provider  = aws.managed_by_inception
-  arn       = var.monitor_iam_access.event_bus_arn
-  role_arn  = aws_iam_role.monitor_iam_access[0].arn
-  rule      = each.value.name
-  target_id = "SendToAuditEventBus"
+resource "aws_cloudwatch_metric_alarm" "iam_activity" {
+  for_each                  = aws_cloudwatch_log_metric_filter.iam_activity
+  provider                  = aws.managed_by_inception
+  alarm_name                = each.value.name
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "1"
+  metric_name               = each.value.name
+  namespace                 = each.value.metric_transformation.0.namespace
+  period                    = "300"
+  statistic                 = "Sum"
+  threshold                 = "1"
+  alarm_description         = "Monitors IAM activity for ${each.key}"
+  alarm_actions             = [var.iam_activity_sns_topic_arn]
+  insufficient_data_actions = []
 }
 
 resource "aws_config_aggregate_authorization" "default" {
@@ -143,22 +108,6 @@ resource "aws_config_aggregate_authorization" "default" {
 resource "aws_iam_account_alias" "alias" {
   provider      = aws.managed_by_inception
   account_alias = local.prefixed_name
-}
-
-resource "aws_iam_role" "monitor_iam_access" {
-  count              = length(keys(local.monitor_iam_access)) > 0 ? 1 : 0
-  provider           = aws.managed_by_inception
-  name               = "LandingZone-MonitorIAMAccess"
-  assume_role_policy = templatefile("${path.module}/files/iam/service_assume_role.json.tpl", { service = "events.amazonaws.com" })
-  tags               = var.tags
-}
-
-resource "aws_iam_role_policy" "monitor_iam_access" {
-  count    = length(keys(local.monitor_iam_access)) > 0 ? 1 : 0
-  provider = aws.managed_by_inception
-  name     = "LandingZone-MonitorIAMAccess"
-  role     = aws_iam_role.monitor_iam_access[0].id
-  policy   = data.aws_iam_policy_document.monitor_iam_access[0].json
 }
 
 resource "aws_iam_account_password_policy" "default" {
