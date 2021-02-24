@@ -87,8 +87,8 @@ These are the type of events that will be monitored:
 | datadog | Datadog integration options | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | email | Email address of the account | `string` | `null` | no |
 | environment | Stack environment | `string` | `null` | no |
-| iam\_activity\_sns\_topic\_arn | SNS Topic that should receive captured IAM access events | `string` | `null` | no |
 | kms\_key\_id | The KMS key ID used to encrypt the SSM parameters | `string` | `null` | no |
+| monitor\_iam\_activity\_sns\_topic\_arn | SNS Topic that should receive captured IAM activity events | `string` | `null` | no |
 | organizational\_unit | Organizational Unit to place account in | `string` | `null` | no |
 | provisioned\_product\_name | A custom name for the provisioned product | `string` | `null` | no |
 | region | The default region of the account | `string` | `"eu-west-1"` | no |
