@@ -14,9 +14,10 @@ module "kms_key_audit" {
   enable_key_rotation = true
   tags                = var.tags
 
-  policy = templatefile("${path.module}/files/kms/audit_key_policy.json", {
+  policy = templatefile("${path.module}/files/kms/audit_key_policy.json.tpl", {
     audit_account_id  = var.control_tower_account_ids.audit
     master_account_id = data.aws_caller_identity.master.account_id
+    services          = jsonencode(["cloudwatch.amazonaws.com", "events.amazonaws.com"])
   })
 }
 
