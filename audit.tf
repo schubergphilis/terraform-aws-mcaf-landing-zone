@@ -20,6 +20,38 @@ module "kms_key_audit" {
   })
 }
 
+resource "aws_cloudwatch_log_metric_filter" "iam_activity_audit" {
+  for_each = var.monitor_iam_activity ? local.iam_activity : {}
+  provider = aws.audit
+
+  name           = "LandingZone-IAMActivity-${each.key}"
+  pattern        = each.value
+  log_group_name = data.aws_cloudwatch_log_group.cloudtrail_audit.name
+
+  metric_transformation {
+    name      = "LandingZone-IAMActivity-${each.key}"
+    namespace = "LandingZone-IAMActivity"
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "iam_activity_audit" {
+  for_each = aws_cloudwatch_log_metric_filter.iam_activity_audit
+  provider = aws.audit
+
+  alarm_name                = each.value.name
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "1"
+  metric_name               = each.value.name
+  namespace                 = each.value.metric_transformation.0.namespace
+  period                    = "300"
+  statistic                 = "Sum"
+  threshold                 = "1"
+  alarm_description         = "Monitors IAM activity for ${each.key}"
+  alarm_actions             = [aws_sns_topic.iam_activity_audit.arn]
+  insufficient_data_actions = []
+}
+
 resource "aws_iam_account_password_policy" "audit" {
   count                          = var.aws_create_account_password_policy ? 1 : 0
   provider                       = aws.audit
@@ -129,8 +161,9 @@ resource "aws_sns_topic_policy" "security_hub_findings" {
   provider = aws.audit
   arn      = aws_sns_topic.security_hub_findings.arn
   policy = templatefile("${path.module}/files/sns/topic_policy.json.tpl", {
-    account_id = data.aws_caller_identity.audit.account_id
-    sns_topic  = aws_sns_topic.security_hub_findings.arn
+    account_id               = data.aws_caller_identity.audit.account_id
+    services_allowed_publish = jsonencode("events.amazonaws.com")
+    sns_topic                = aws_sns_topic.security_hub_findings.arn
   })
 }
 
@@ -153,71 +186,18 @@ module "datadog_audit" {
   tags                  = var.tags
 }
 
-resource "aws_cloudwatch_event_bus" "monitor_iam_access_audit" {
-  provider = aws.audit
-  name     = "LandingZone-MonitorIAMAccess"
-}
-
-resource "aws_cloudwatch_event_permission" "organization_access_audit" {
-  for_each       = { for account in data.aws_organizations_organization.default.accounts : account.id => account.name if account.id != var.control_tower_account_ids.audit }
-  provider       = aws.audit
-  event_bus_name = aws_cloudwatch_event_bus.monitor_iam_access_audit.name
-  principal      = each.key
-  statement_id   = "${each.value}Access"
-}
-
-resource "aws_cloudwatch_event_rule" "monitor_iam_access_audit" {
-  for_each    = { for identity, identity_data in local.monitor_iam_access : identity => identity_data if try(identity_data.account, null) == "audit" || identity == "Root" }
-  provider    = aws.audit
-  name        = substr("LandingZone-MonitorIAMAccess-${each.key}", 0, 64)
-  description = "Monitors IAM access for ${each.key}"
-
-  event_pattern = templatefile("${path.module}/files/event_bridge/monitor_iam_access.json.tpl", {
-    userIdentity = jsonencode(each.value.userIdentity)
-  })
-
-  depends_on = [
-    data.aws_iam_role.monitor_iam_access_audit,
-    data.aws_iam_user.monitor_iam_access_audit
-  ]
-}
-
-resource "aws_cloudwatch_event_target" "monitor_iam_access_audit" {
-  for_each  = aws_cloudwatch_event_rule.monitor_iam_access_audit
-  provider  = aws.audit
-  rule      = each.value.name
-  target_id = "SendToSNS"
-  arn       = aws_sns_topic.monitor_iam_access_audit.arn
-}
-
-resource "aws_cloudwatch_event_rule" "notify_iam_access_member_accounts" {
-  provider       = aws.audit
-  name           = "LandingZone-NotifyIAMAccessMemberAccounts"
-  description    = "Monitors IAM access in member accounts"
-  event_bus_name = aws_cloudwatch_event_bus.monitor_iam_access_audit.name
-  event_pattern  = file("${path.module}/files/event_bridge/notify_iam_access.json.tpl")
-}
-
-resource "aws_cloudwatch_event_target" "notify_iam_access_member_accounts" {
-  provider       = aws.audit
-  arn            = aws_sns_topic.monitor_iam_access_audit.arn
-  event_bus_name = aws_cloudwatch_event_bus.monitor_iam_access_audit.name
-  rule           = aws_cloudwatch_event_rule.notify_iam_access_member_accounts.name
-  target_id      = "SendToSNS"
-}
-
-resource "aws_sns_topic" "monitor_iam_access_audit" {
+resource "aws_sns_topic" "iam_activity_audit" {
   provider          = aws.audit
-  name              = "LandingZone-MonitorIAMAccess"
+  name              = "LandingZone-IAMActivity"
   kms_master_key_id = module.kms_key_audit.id
 }
 
-resource "aws_sns_topic_policy" "monitor_iam_access_audit" {
+resource "aws_sns_topic_policy" "iam_activity_audit" {
   provider = aws.audit
-  arn      = aws_sns_topic.monitor_iam_access_audit.arn
+  arn      = aws_sns_topic.iam_activity_audit.arn
   policy = templatefile("${path.module}/files/sns/topic_policy.json.tpl", {
-    account_id = data.aws_caller_identity.audit.account_id
-    sns_topic  = aws_sns_topic.monitor_iam_access_audit.arn
+    account_id               = data.aws_caller_identity.audit.account_id
+    services_allowed_publish = jsonencode("cloudwatch.amazonaws.com")
+    sns_topic                = aws_sns_topic.iam_activity_audit.arn
   })
 }
-

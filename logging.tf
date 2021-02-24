@@ -6,30 +6,36 @@ provider "aws" {
   }
 }
 
-resource "aws_cloudwatch_event_rule" "monitor_iam_access_logging" {
-  for_each    = { for identity, identity_data in local.monitor_iam_access : identity => identity_data if try(identity_data.account, null) == "logging" || identity == "Root" }
-  provider    = aws.logging
-  name        = substr("LandingZone-MonitorIAMAccess-${each.key}", 0, 64)
-  description = "Monitors IAM access for ${each.key}"
+resource "aws_cloudwatch_log_metric_filter" "iam_activity_logging" {
+  for_each = var.monitor_iam_activity ? local.iam_activity : {}
+  provider = aws.logging
 
-  event_pattern = templatefile("${path.module}/files/event_bridge/monitor_iam_access.json.tpl", {
-    userIdentity = jsonencode(each.value.userIdentity)
-  })
+  name           = "LandingZone-IAMActivity-${each.key}"
+  pattern        = each.value
+  log_group_name = data.aws_cloudwatch_log_group.cloudtrail_logging.name
 
-  depends_on = [
-    data.aws_iam_role.monitor_iam_access_logging,
-    data.aws_iam_user.monitor_iam_access_logging
-  ]
+  metric_transformation {
+    name      = "LandingZone-IAMActivity-${each.key}"
+    namespace = "LandingZone-IAMActivity"
+    value     = "1"
+  }
 }
 
-resource "aws_cloudwatch_event_target" "monitor_iam_access_logging" {
-  for_each   = aws_cloudwatch_event_rule.monitor_iam_access_logging
-  provider   = aws.logging
-  arn        = aws_cloudwatch_event_bus.monitor_iam_access_audit.arn
-  role_arn   = aws_iam_role.monitor_iam_access_logging.arn
-  rule       = each.value.name
-  target_id  = "SendToAuditEventBus"
-  depends_on = [aws_cloudwatch_event_permission.organization_access_audit]
+resource "aws_cloudwatch_metric_alarm" "iam_activity_logging" {
+  for_each = aws_cloudwatch_log_metric_filter.iam_activity_logging
+  provider = aws.logging
+
+  alarm_name                = each.value.name
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "1"
+  metric_name               = each.value.name
+  namespace                 = each.value.metric_transformation.0.namespace
+  period                    = "300"
+  statistic                 = "Sum"
+  threshold                 = "1"
+  alarm_description         = "Monitors IAM activity for ${each.key}"
+  alarm_actions             = [aws_sns_topic.iam_activity_audit.arn]
+  insufficient_data_actions = []
 }
 
 resource "aws_config_aggregate_authorization" "logging" {
@@ -37,22 +43,6 @@ resource "aws_config_aggregate_authorization" "logging" {
   provider   = aws.logging
   account_id = each.value.account_id
   region     = each.value.region
-}
-
-resource "aws_iam_role" "monitor_iam_access_logging" {
-  provider           = aws.logging
-  name               = "LandingZone-MonitorIAMAccess"
-  assume_role_policy = templatefile("${path.module}/files/iam/service_assume_role.json.tpl", { service = "events.amazonaws.com" })
-  tags               = var.tags
-}
-
-resource "aws_iam_role_policy" "monitor_iam_access_logging" {
-  provider = aws.logging
-  name     = "LandingZone-MonitorIAMAccess"
-  role     = aws_iam_role.monitor_iam_access_logging.id
-  policy = templatefile("${path.module}/files/iam/monitor_iam_access_policy.json.tpl", {
-    event_bus_arn = aws_cloudwatch_event_bus.monitor_iam_access_audit.arn
-  })
 }
 
 module "datadog_logging" {

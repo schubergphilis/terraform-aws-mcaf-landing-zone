@@ -66,33 +66,11 @@ provider "datadog" {
 
 This should prevent the provider from asking you for a Datadog API Key and allow the module to be provisioned without the integration resources.
 
-## Monitoring IAM Access
+## Monitoring IAM Activity
 
-This module automatically monitors and notifies all activities performed by the `root` user of all core accounts. All notifications will be sent to the SNS Topic `LandingZone-MonitorIAMAccess` in the `audit` account.
+By default, this module monitors and notifies activities performed by the `root` user of all core accounts and AWS SSO Roles. All notifications will be sent to the SNS Topic `LandingZone-IAMActivity` in the `audit` account.
 
-In case you would like to monitor other users or roles, a list can be passed using the variable `monitor_iam_access`. All objects in the list should have the attributes `account`, `name` and `type`. 
-
-The allowed values are:
-
-- `account`: `audit`, `logging` or `master`
-- `name`: the name of the IAM Role or the IAM User
-- `type`: `AssumedRole` or `IAMUser` 
-
-For more details regarding identities, please check [this link](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html).
-
-NOTE: Data Sources will be used to make sure that the identities provided actually exist in each account to avoid monitoring non-existent resources. In case an invalid identity is provided, a `NoSuchEntity` error will be thrown. 
-
-Example:
-
-```hcl
-monitor_iam_access = [
-  {
-    account = "master"
-    name    = "AWSReservedSSO_AWSAdministratorAccess_123abc"
-    type    = "AssumedRole"
-  }
-]
-```
+In case you would like to disable this functionality, you can set the variable `monitor_iam_activity` to `false`.
 
 ## Service Control Policies (SCPs)
 
