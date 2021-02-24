@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## Unreleased
 
 * Update IAM activity monitoring in the AVM module ([#86](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/86/files))
+* Update IAM activity monitoring in the core accounts ([#85](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/85/files))
 
 ## 0.6.1 (2021-02-09)
 

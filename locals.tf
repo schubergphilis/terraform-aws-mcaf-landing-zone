@@ -17,39 +17,10 @@ locals {
       "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
     ]
   )
-  monitor_iam_access = merge(
-    {
-      for identity in coalesce(var.monitor_iam_access, []) : identity.name => {
-        "account" = identity.account
-        "userIdentity" = {
-          "type"     = [identity.type]
-          "userName" = [identity.name]
-        }
-      } if identity.type == "IAMUser"
-    },
-    {
-      for identity in coalesce(var.monitor_iam_access, []) : identity.name => {
-        "account" = identity.account
-        "userIdentity" = {
-          "type" = [identity.type]
-          "sessionContext" = {
-            "sessionIssuer" = {
-              "userName" = [identity.name]
-            }
-          }
-        }
-      } if identity.type == "AssumedRole"
-    },
-    {
-      "Root" = {
-        "userIdentity" = {
-          "Root" = {
-            "type" = ["Root"]
-          }
-        }
-      }
-    }
-  )
+  iam_activity = {
+    Root = "{ $.userIdentity.type = \"Root\" }"
+    SSO  = "{ $.readOnly IS FALSE  && $.userIdentity.sessionContext.sessionIssuer.userName = \"AWSReservedSSO_*\" && $.eventName != \"ConsoleLogin\" }"
+  }
   security_hub_standards_arns = [
     "arn:aws:securityhub:${data.aws_region.current.name}::standards/aws-foundational-security-best-practices/v/1.0.0",
     "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.2.0",
