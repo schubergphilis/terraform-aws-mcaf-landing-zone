@@ -26,10 +26,10 @@
       }
     },
     {
-      "Sid": "__events",
+      "Sid": "__services_allowed_publish",
       "Effect": "Allow",
       "Principal": {
-        "Service": "events.amazonaws.com"
+        "Service": ${services_allowed_publish}
       },
       "Action": "sns:Publish",
       "Resource": "${sns_topic}"

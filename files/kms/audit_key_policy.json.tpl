@@ -17,9 +17,7 @@
       "Sid": "Allow_CloudWatch_for_CMK",
       "Effect": "Allow",
       "Principal": {
-        "Service":[
-          "events.amazonaws.com"
-        ]
+        "Service":${services}
       },
       "Action": [
         "kms:Decrypt",

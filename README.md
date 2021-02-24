@@ -66,33 +66,16 @@ provider "datadog" {
 
 This should prevent the provider from asking you for a Datadog API Key and allow the module to be provisioned without the integration resources.
 
-## Monitoring IAM Access
+## Monitoring IAM Activity
 
-This module automatically monitors and notifies all activities performed by the `root` user of all core accounts. All notifications will be sent to the SNS Topic `LandingZone-MonitorIAMAccess` in the `audit` account.
+By default, this module monitors and notifies activities performed by the `root` user of all core accounts and AWS SSO Roles. All notifications will be sent to the SNS Topic `LandingZone-IAMActivity` in the `audit` account.
 
-In case you would like to monitor other users or roles, a list can be passed using the variable `monitor_iam_access`. All objects in the list should have the attributes `account`, `name` and `type`. 
+These are the type of events that will be monitored:
 
-The allowed values are:
+- Any activity made by the root user of the account.
+- Any manual changes made by AWS SSO roles (read-only operations and console logins are not taken into account).
 
-- `account`: `audit`, `logging` or `master`
-- `name`: the name of the IAM Role or the IAM User
-- `type`: `AssumedRole` or `IAMUser` 
-
-For more details regarding identities, please check [this link](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html).
-
-NOTE: Data Sources will be used to make sure that the identities provided actually exist in each account to avoid monitoring non-existent resources. In case an invalid identity is provided, a `NoSuchEntity` error will be thrown. 
-
-Example:
-
-```hcl
-monitor_iam_access = [
-  {
-    account = "master"
-    name    = "AWSReservedSSO_AWSAdministratorAccess_123abc"
-    type    = "AssumedRole"
-  }
-]
-```
+In case you would like to disable this functionality, you can set the variable `monitor_iam_activity` to `false`.
 
 ## Service Control Policies (SCPs)
 
@@ -204,10 +187,11 @@ module "landing_zone" {
 | aws\_region\_restrictions | List of allowed AWS regions and principals that are exempt from the restriction | <pre>object({<br>    allowed    = list(string)<br>    exceptions = list(string)<br>  })</pre> | `null` | no |
 | aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
-| monitor\_iam\_access | List of IAM Identities that should have their access monitored | <pre>list(object({<br>    account = string<br>    name    = string<br>    type    = string<br>  }))</pre> | `null` | no |
+| monitor\_iam\_activity | Whether IAM activity should be monitored | `bool` | `true` | no |
 | security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
 | sns\_aws\_config\_subscription | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | sns\_aws\_security\_hub\_subscription | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
+| sns\_monitor\_iam\_activity\_subscription | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 
 ## Outputs
 
@@ -215,6 +199,6 @@ module "landing_zone" {
 |------|-------------|
 | kms\_key\_arn | ARN of KMS key for SSM encryption |
 | kms\_key\_id | ID of KMS key for SSM encryption |
-| monitor\_iam\_access\_event\_bus\_arn | ARN of the Event Bus in the Audit account for IAM access monitoring notifications |
+| monitor\_iam\_activity\_sns\_topic\_arn | ARN of the SNS Topic in the Audit account for IAM activity monitoring notifications |
 
 <!--- END_TF_DOCS --->
