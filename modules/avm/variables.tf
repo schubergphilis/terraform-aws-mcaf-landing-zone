@@ -90,16 +90,16 @@ variable "email" {
   description = "Email address of the account"
 }
 
-variable "iam_activity_sns_topic_arn" {
-  type        = string
-  default     = null
-  description = "SNS Topic that should receive captured IAM access events"
-}
-
 variable "kms_key_id" {
   type        = string
   default     = null
   description = "The KMS key ID used to encrypt the SSM parameters"
+}
+
+variable "monitor_iam_activity_sns_topic_arn" {
+  type        = string
+  default     = null
+  description = "SNS Topic that should receive captured IAM activity events"
 }
 
 variable "name" {

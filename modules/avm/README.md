@@ -46,7 +46,7 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 
 This module offers the capability of monitoring IAM activity of both the Root user and AWS SSO roles. To enable this feature, you have to provide the ARN of the SNS Topic that should receive events in case any activity is detected.
 
-The topic ARN can be set using the variable `iam_activity_sns_topic_arn`.
+The topic ARN can be set using the variable `monitor_iam_activity_sns_topic_arn`.
 
 These are the type of events that will be monitored:
 

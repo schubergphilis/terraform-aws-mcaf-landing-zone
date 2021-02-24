@@ -69,7 +69,7 @@ module "workspace" {
 }
 
 resource "aws_cloudwatch_log_metric_filter" "iam_activity" {
-  for_each       = var.iam_activity_sns_topic_arn != null ? local.iam_activity : {}
+  for_each       = var.monitor_iam_activity_sns_topic_arn != null ? local.iam_activity : {}
   provider       = aws.managed_by_inception
   name           = "BaseLine-IAMActivity-${each.key}"
   pattern        = each.value
@@ -94,7 +94,7 @@ resource "aws_cloudwatch_metric_alarm" "iam_activity" {
   statistic                 = "Sum"
   threshold                 = "1"
   alarm_description         = "Monitors IAM activity for ${each.key}"
-  alarm_actions             = [var.iam_activity_sns_topic_arn]
+  alarm_actions             = [var.monitor_iam_activity_sns_topic_arn]
   insufficient_data_actions = []
 }
 
