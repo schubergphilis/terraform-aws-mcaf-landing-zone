@@ -198,6 +198,6 @@ module "landing_zone" {
 |------|-------------|
 | kms\_key\_arn | ARN of KMS key for SSM encryption |
 | kms\_key\_id | ID of KMS key for SSM encryption |
-| monitor\_iam\_access\_sns\_topic\_arn | ARN of the SNS Topic in the Audit account for IAM activity monitoring notifications |
+| monitor\_iam\_activity\_sns\_topic\_arn | ARN of the SNS Topic in the Audit account for IAM activity monitoring notifications |
 
 <!--- END_TF_DOCS --->
