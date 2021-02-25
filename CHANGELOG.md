@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+* Add capability to disable SSO activity monitoring in the AVM module ([#89](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/89/files))
+
 ## 0.7.1 (2021-02-24)
 
 * Update SCP to support AWS ChatBot ([#88](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/88/files))
