@@ -53,6 +53,8 @@ These are the type of events that will be monitored:
 - Any activity made by the root user of the account.
 - Any manual changes made by AWS SSO roles (read-only operations and console logins are not taken into account).
 
+In case you would like to NOT monitor AWS SSO roles, you can set `monitor_iam_activity_sso` to `false`.
+
 <!--- BEGIN_TF_DOCS --->
 ## Requirements
 

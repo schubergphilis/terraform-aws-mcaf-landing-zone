@@ -102,6 +102,12 @@ variable "monitor_iam_activity_sns_topic_arn" {
   description = "SNS Topic that should receive captured IAM activity events"
 }
 
+variable "monitor_iam_activity_sso" {
+  type        = bool
+  default     = true
+  description = "Whether IAM activity from SSO roles should be monitored"
+}
+
 variable "name" {
   type        = string
   description = "Stack name"

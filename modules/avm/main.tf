@@ -14,10 +14,14 @@ locals {
   prefixed_name       = "${var.defaults.account_iam_prefix}${local.name}"
   organizational_unit = var.organizational_unit != null ? var.organizational_unit : var.environment == "prod" ? "Production" : "Non-Production"
 
-  iam_activity = {
-    Root = "{ $.userIdentity.type = \"Root\" }"
-    SSO  = "{ $.readOnly IS FALSE  && $.userIdentity.sessionContext.sessionIssuer.userName = \"AWSReservedSSO_*\" && $.eventName != \"ConsoleLogin\" }"
-  }
+  iam_activity = merge(
+    {
+      Root = "{ $.userIdentity.type = \"Root\" }"
+    },
+    var.monitor_iam_activity_sso == true ? {
+      SSO = "{ $.readOnly IS FALSE  && $.userIdentity.sessionContext.sessionIssuer.userName = \"AWSReservedSSO_*\" && $.eventName != \"ConsoleLogin\" }"
+    } : {}
+  )
 }
 
 provider "aws" {
