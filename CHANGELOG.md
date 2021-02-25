@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.7.2 (2021-02-25)
 
 * Add capability to disable SSO activity monitoring in the AVM module ([#89](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/89/files))
 
