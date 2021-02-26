@@ -1,6 +1,7 @@
 resource "aws_organizations_policy" "allowed_regions" {
   count = var.aws_region_restrictions != null ? 1 : 0
   name  = "LandingZone-AllowedRegions"
+  tags  = var.tags
 
   content = templatefile("${path.module}/files/organizations/allowed_regions_scp.json.tpl", {
     allowed    = var.aws_region_restrictions.allowed
@@ -18,6 +19,7 @@ resource "aws_organizations_policy" "deny_root_user" {
   count   = length(var.aws_deny_root_user_ous) > 0 ? 1 : 0
   name    = "LandingZone-DenyRootUser"
   content = file("${path.module}/files/organizations/deny_root_user.json")
+  tags    = var.tags
 }
 
 resource "aws_organizations_policy_attachment" "deny_root_user" {
@@ -34,6 +36,7 @@ resource "aws_organizations_policy" "require_use_of_imdsv2" {
   count   = var.aws_require_imdsv2 == true ? 1 : 0
   name    = "LandingZone-RequireUseOfIMDSv2"
   content = file("${path.module}/files/organizations/require_use_of_imdsv2.json")
+  tags    = var.tags
 }
 
 resource "aws_organizations_policy_attachment" "require_use_of_imdsv2" {
@@ -47,6 +50,7 @@ resource "aws_organizations_policy" "deny_leaving_org" {
   count   = var.aws_deny_leaving_org == true ? 1 : 0
   name    = "LandingZone-DenyLeavingOrg"
   content = file("${path.module}/files/organizations/deny_leaving_org.json")
+  tags    = var.tags
 }
 
 resource "aws_organizations_policy_attachment" "deny_leaving_org" {

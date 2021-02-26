@@ -51,6 +51,7 @@ resource "aws_cloudwatch_metric_alarm" "iam_activity_audit" {
   alarm_description         = "Monitors IAM activity for ${each.key}"
   alarm_actions             = [aws_sns_topic.iam_activity.arn]
   insufficient_data_actions = []
+  tags                      = var.tags
 }
 
 resource "aws_iam_account_password_policy" "audit" {
@@ -75,6 +76,7 @@ resource "aws_ebs_encryption_by_default" "audit" {
 resource "aws_config_configuration_aggregator" "audit" {
   provider = aws.audit
   name     = "audit"
+  tags     = var.tags
 
   account_aggregation_source {
     account_ids = [
@@ -89,6 +91,7 @@ resource "aws_config_aggregate_authorization" "audit" {
   provider   = aws.audit
   account_id = each.value.account_id
   region     = each.value.region
+  tags       = var.tags
 }
 
 resource "aws_sns_topic_subscription" "aws_config" {
@@ -117,6 +120,7 @@ resource "aws_guardduty_organization_configuration" "default" {
 resource "aws_guardduty_detector" "audit" {
   count    = var.aws_guardduty == true ? 1 : 0
   provider = aws.audit
+  tags     = var.tags
 }
 
 // Security Hub
@@ -143,6 +147,7 @@ resource "aws_cloudwatch_event_rule" "security_hub_findings" {
   name          = "LandingZone-SecurityHubFindings"
   description   = "Rule for getting SecurityHub findings"
   event_pattern = file("${path.module}/files/event_bridge/security_hub_findings.json.tpl")
+  tags          = var.tags
 }
 
 resource "aws_cloudwatch_event_target" "security_hub_findings" {
@@ -156,6 +161,7 @@ resource "aws_sns_topic" "security_hub_findings" {
   provider          = aws.audit
   name              = "LandingZone-SecurityHubFindings"
   kms_master_key_id = module.kms_key_audit.id
+  tags              = var.tags
 }
 
 resource "aws_sns_topic_policy" "security_hub_findings" {
@@ -191,6 +197,7 @@ resource "aws_sns_topic" "iam_activity" {
   provider          = aws.audit
   name              = "LandingZone-IAMActivity"
   kms_master_key_id = module.kms_key_audit.id
+  tags              = var.tags
 }
 
 resource "aws_sns_topic_policy" "iam_activity" {

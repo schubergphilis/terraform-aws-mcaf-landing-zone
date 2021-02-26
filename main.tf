@@ -3,6 +3,7 @@ resource "aws_cloudtrail" "additional_auditing_trail" {
   name                  = var.additional_auditing_trail.name
   s3_bucket_name        = var.additional_auditing_trail.bucket
   is_organization_trail = true
+  tags                  = var.tags
 }
 
 resource "aws_cloudwatch_log_metric_filter" "iam_activity_master" {
@@ -33,18 +34,21 @@ resource "aws_cloudwatch_metric_alarm" "iam_activity_master" {
   alarm_description         = "Monitors IAM activity for ${each.key}"
   alarm_actions             = [aws_sns_topic.iam_activity.arn]
   insufficient_data_actions = []
+  tags                      = var.tags
 }
 
 resource "aws_config_aggregate_authorization" "master" {
   for_each   = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator if aggregator.account_id != var.control_tower_account_ids.audit }
   account_id = each.value.account_id
   region     = each.value.region
+  tags       = var.tags
 }
 
 resource "aws_config_aggregate_authorization" "master_to_audit" {
   for_each   = toset(try(var.aws_config.aggregator_regions, ["eu-central-1", "eu-west-1"]))
   account_id = var.control_tower_account_ids.audit
   region     = each.value
+  tags       = var.tags
 }
 
 resource "aws_config_configuration_recorder" "default" {
@@ -79,6 +83,7 @@ resource "aws_config_organization_managed_rule" "default" {
 
 resource "aws_iam_role" "config_recorder" {
   name = "LandingZone-ConfigRecorderRole"
+  tags = var.tags
 
   assume_role_policy = templatefile("${path.module}/files/iam/service_assume_role.json.tpl", {
     service = "config.amazonaws.com"
