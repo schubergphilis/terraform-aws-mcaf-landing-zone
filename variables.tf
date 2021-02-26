@@ -58,6 +58,15 @@ variable "aws_deny_root_user_ous" {
   description = "List of AWS Organisation OUs to apply the \"DenyRootUser\" SCP to"
 }
 
+variable "aws_required_tags" {
+  type = map(list(object({
+    name   = string
+    values = list(string)
+  })))
+  default     = null
+  description = "AWS Required tags settings"
+}
+
 variable "aws_ebs_encryption_by_default" {
   type        = bool
   default     = true
