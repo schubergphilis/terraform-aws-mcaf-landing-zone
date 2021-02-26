@@ -77,25 +77,27 @@ These are the type of events that will be monitored:
 
 In case you would like to disable this functionality, you can set the variable `monitor_iam_activity` to `false`.
 
-## Service Control Policies (SCPs)
+## Organizations Policies
+
+### Service Control Policies (SCPs)
 
 Service control policies (SCPs) are a type of organization policy that you can use to manage permissions in your organization. See [this page](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html) for an introduction to SCPs and the value they add.
 
 This module allows using various SCPs as described below. We try to adhere to best practices of not attaching SCPs to the root of the organisation when possible; in the event you need to pass a list of OU names, be sure to have the exact name as the matching is case sensitive.
 
-### Deny ability to leave Organization
+#### Deny ability to leave Organization
 
 Enabling this SCP removes a member account's ability to leave the AWS organisation.
 
 This is SCP is enabled by default, but can be disabled by setting `aws_deny_leaving_org` variable to `false`.
 
-### Require the use of Instance Metadata Service Version 2
+#### Require the use of Instance Metadata Service Version 2
 
 By default, all EC2s still allow access to the original metadata service, which means that if an attacker finds an EC2 running a proxy or WAF, or finds and SSRF vulnerability, they likely can steal the IAM role of the EC2. By enforcing IMDSv2, you can mitigate that risk. Be aware that this potentially could break some applications that have not yet been updated to work with the new IMDSv2.
 
 This is SCP is enabled by default, but can be disabled by setting `aws_require_imdsv2` variable to `false`.
 
-### Restricting AWS Regions
+#### Restricting AWS Regions
 
 If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_region_restrictions` using the `allowed` attribute. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.
 
@@ -110,7 +112,7 @@ aws_region_restrictions = {
 }
 ```
 
-### Restricting Root User Access
+#### Restricting Root User Access
 
 If you would like to restrict the root user's ability to log into accounts in an OU, you can pass a list of OU names to the `aws_deny_root_user_ous` variable.
 
@@ -131,7 +133,35 @@ module "landing_zone" {
   ]
 ```
 
-### Enable SNS topic subscription
+### Tag Policies
+
+Tag policies are a type of policy that can help you standardize tags across resources in your organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged. See [this page](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_tag-policies.html) for an introduction to tag policies and the value they add.
+
+If you would like to enforce certain tags in an OU, you can pass a map of OU names containing the tags to the `aws_required_tags` variable. Be sure to pass the exact OU name as the matching is case sensitive. If the OU provided does not match any existing OU the tag policy is not created. 
+
+Example:
+
+```hcl
+module "landing_zone" {
+  ...
+
+  aws_required_tags = {
+    "Production" = [
+      {
+        name   = "Tag1"
+        values = ["A", "B"]
+      }
+    ]
+    "Non-Production" = [
+      {
+        name   = "Tag2"
+        values = ["A", "B"]
+      }
+    ]
+  }
+```
+
+## Enable SNS topic subscription
 
 To subscribe to the `AggregatedSecurityNotifications` topic to receive security findings, set the `sns_security_subscription` variable as shown below.
 
