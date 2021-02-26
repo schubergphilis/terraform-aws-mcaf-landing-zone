@@ -129,21 +129,10 @@ variable "datadog" {
   description = "Datadog integration options for the core accounts"
 }
 
-variable "monitor_iam_access" {
-  type = list(object({
-    account = string
-    name    = string
-    type    = string
-  }))
-  default     = null
-  description = "List of IAM Identities that should have their access monitored"
-
-  validation {
-    condition = length(setsubtract(toset([
-      for identity in coalesce(var.monitor_iam_access, []) : identity.account
-    ]), ["audit", "logging", "master"])) == 0
-    error_message = "Invalid account. The allowed values are \"audit\", \"logging\" or \"master\"."
-  }
+variable "monitor_iam_activity" {
+  type        = bool
+  default     = true
+  description = "Whether IAM activity should be monitored"
 }
 
 variable "security_hub_product_arns" {
@@ -168,6 +157,15 @@ variable "sns_aws_security_hub_subscription" {
   }))
   default     = {}
   description = "Subscription options for the LandingZone-SecurityHubFindings SNS topic"
+}
+
+variable "sns_monitor_iam_activity_subscription" {
+  type = map(object({
+    endpoint = string
+    protocol = string
+  }))
+  default     = {}
+  description = "Subscription options for the LandingZone-IAMActivity SNS topic"
 }
 
 variable "tags" {
