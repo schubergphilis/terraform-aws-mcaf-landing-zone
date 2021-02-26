@@ -4,15 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.7.3 (2021-02-06)
+
+ENHANCEMENTS
+
+* Adding tag compliance capability using tag policies ([#84](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/84/files))
+
 ## 0.7.2 (2021-02-25)
+
+ENHANCEMENTS
 
 * Add capability to disable SSO activity monitoring in the AVM module ([#89](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/89/files))
 
 ## 0.7.1 (2021-02-24)
 
+BUG FIXES
+
 * Update SCP to support AWS ChatBot ([#88](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/88/files))
 
 ## 0.7.0 (2021-02-24)
+
+ENHANCEMENTS
 
 * Update IAM activity monitoring in the AVM module ([#86](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/86/files))
 * Update IAM activity monitoring in the core accounts ([#85](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/85/files))
