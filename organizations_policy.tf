@@ -58,7 +58,7 @@ resource "aws_organizations_policy_attachment" "deny_leaving_org" {
 // https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_supported-resources-enforcement.html
 resource "aws_organizations_policy" "required_tags" {
   for_each = {
-    for ou in data.aws_organizations_organizational_units.default.children : ou.name => ou if contains(keys(var.aws_required_tags), ou.name)
+    for ou in data.aws_organizations_organizational_units.default.children : ou.name => ou if contains(keys(coalesce(var.aws_required_tags, {})), ou.name)
   }
 
   name = "LandingZone-RequiredTags-${each.key}"
@@ -72,7 +72,7 @@ resource "aws_organizations_policy" "required_tags" {
 
 resource "aws_organizations_policy_attachment" "required_tags" {
   for_each = {
-    for ou in data.aws_organizations_organizational_units.default.children : ou.name => ou if contains(keys(var.aws_required_tags), ou.name)
+    for ou in data.aws_organizations_organizational_units.default.children : ou.name => ou if contains(keys(coalesce(var.aws_required_tags, {})), ou.name)
   }
 
   policy_id = aws_organizations_policy.required_tags[each.key].id
