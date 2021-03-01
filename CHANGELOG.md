@@ -8,39 +8,39 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 BUG FIXES
 
-* Prevent error when aws_required_tags is not set ([#93](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/93/files))
-
+* Prevent error when aws_required_tags is not set ([#93](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/93))
+* Improve tagging of resources ([#92](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/92))
 
 ## 0.7.3 (2021-02-06)
 
 ENHANCEMENTS
 
-* Adding tag compliance capability using tag policies ([#84](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/84/files))
+* Adding tag compliance capability using tag policies ([#84](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/84))
 
 ## 0.7.2 (2021-02-25)
 
 ENHANCEMENTS
 
-* Add capability to disable SSO activity monitoring in the AVM module ([#89](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/89/files))
+* Add capability to disable SSO activity monitoring in the AVM module ([#89](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/89))
 
 ## 0.7.1 (2021-02-24)
 
 BUG FIXES
 
-* Update SCP to support AWS ChatBot ([#88](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/88/files))
+* Update SCP to support AWS ChatBot ([#88](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/88))
 
 ## 0.7.0 (2021-02-24)
 
 ENHANCEMENTS
 
-* Update IAM activity monitoring in the AVM module ([#86](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/86/files))
-* Update IAM activity monitoring in the core accounts ([#85](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/85/files))
+* Update IAM activity monitoring in the AVM module ([#86](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/86))
+* Update IAM activity monitoring in the core accounts ([#85](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/85))
 
 ## 0.6.1 (2021-02-09)
 
 BUG FIXES
 
-* Add missing provider to the `aws_iam_account_password_policy` and `aws_ebs_encryption_by_default` resources ([#82](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/82/files))
+* Add missing provider to the `aws_iam_account_password_policy` and `aws_ebs_encryption_by_default` resources ([#82](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/82))
 
 ## 0.6.0 (2021-02-02)
 
