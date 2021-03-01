@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+BUG FIXES
+
+* Prevent error when aws_required_tags is not set ([#93](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/93/files))
+
+
 ## 0.7.3 (2021-02-06)
 
 ENHANCEMENTS
