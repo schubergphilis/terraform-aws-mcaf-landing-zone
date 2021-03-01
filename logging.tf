@@ -36,6 +36,7 @@ resource "aws_cloudwatch_metric_alarm" "iam_activity_logging" {
   alarm_description         = "Monitors IAM activity for ${each.key}"
   alarm_actions             = [aws_sns_topic.iam_activity.arn]
   insufficient_data_actions = []
+  tags                      = var.tags
 }
 
 resource "aws_config_aggregate_authorization" "logging" {
@@ -43,6 +44,7 @@ resource "aws_config_aggregate_authorization" "logging" {
   provider   = aws.logging
   account_id = each.value.account_id
   region     = each.value.region
+  tags       = var.tags
 }
 
 module "datadog_logging" {
