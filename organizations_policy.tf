@@ -15,6 +15,17 @@ resource "aws_organizations_policy_attachment" "allowed_regions" {
   target_id = data.aws_organizations_organization.default.roots.0.id
 }
 
+resource "aws_organizations_policy" "deny_cloudtrail_log_stream" {
+  name    = "LandingZone-DenyDeletingCloudTrailLogStream"
+  content = file("${path.module}/files/organizations/cloudtrail_log_stream.json")
+  tags    = var.tags
+}
+
+resource "aws_organizations_policy_attachment" "deny_cloudtrail_log_stream" {
+  policy_id = aws_organizations_policy.deny_cloudtrail_log_stream.id
+  target_id = data.aws_organizations_organization.default.roots.0.id
+}
+
 resource "aws_organizations_policy" "deny_root_user" {
   count   = length(var.aws_deny_root_user_ous) > 0 ? 1 : 0
   name    = "LandingZone-DenyRootUser"

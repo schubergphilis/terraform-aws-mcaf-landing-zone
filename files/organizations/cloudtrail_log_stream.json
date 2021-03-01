@@ -1,0 +1,13 @@
+{
+  "Version": "2012-10-17",
+  "Statement": {
+    "Sid": "DenyDeletingCloudTrailLogStream",
+    "Effect": "Deny",
+    "Action": [
+      "logs:DeleteLogStream"
+    ],
+    "Resource": [
+      "arn:aws:logs:*:*:log-group:aws-controltower/CloudTrailLogs:*"
+    ]
+  }
+}

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 
+ENHANCEMENTS
+
+* Add SCP to protect CloudTrail LogStream ([#94](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/94))
+
 BUG FIXES
 
 * Prevent error when aws_required_tags is not set ([#93](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/93))
