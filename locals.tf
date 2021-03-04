@@ -17,6 +17,17 @@ locals {
       "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
     ]
   )
+  aws_sso_account_assignment = flatten([
+    for permission_set_name, permission_set in var.aws_sso_permission_sets : [
+      for aws_account_id, sso_groups in permission_set.accounts : [
+        for sso_group in sso_groups : {
+          aws_account_id      = aws_account_id
+          permission_set_name = permission_set_name
+          sso_group           = sso_group
+        }
+      ]
+    ]
+  ])
   iam_activity = {
     Root = "{ $.userIdentity.type = \"Root\" }"
     SSO  = "{ $.readOnly IS FALSE  && $.userIdentity.sessionContext.sessionIssuer.userName = \"AWSReservedSSO_*\" && $.eventName != \"ConsoleLogin\" }"

@@ -46,6 +46,58 @@ This feature can be controlled via the `aws_guardduty` variable and is enabled b
 
 Note: In case you are migrating an existing AWS organization to this module, all existing accounts except for the `master` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
 
+## AWS SSO
+
+This module supports managing AWS SSO resources to control user access to all accounts belonging to the AWS Organization.
+
+This feature can be controlled via the `aws_sso_permission_sets` variable by passing a map (key-value pair) where every key corresponds to an AWS SSO Permission Set name and the value follows the structure below:
+
+- `inline_policy`: valid IAM policy in JSON format
+- `session_duration`: length of time in the ISO-8601 standard
+- `accounts`: map (key-value pair) of AWS Account IDs as keys and a list of AWS SSO Group names that should have access to the account using the permission set defined
+
+Example:
+
+```hcl
+  aws_sso_permission_sets = {
+    PlatformAdmin = {
+      inline_policy = file("${path.module}/template_files/sso/platform_admin.json")
+      session_duration = "PT2H"
+
+      accounts = {
+        for account in [ 123456789012, 012456789012 ] : account => [
+          okta_group.aws["AWSPlatformAdmins"].name
+        ]
+      }
+    }
+    PlatformUser = {
+      inline_policy = jsonencode(
+        {
+          Version = "2012-10-17",
+          Statement = concat(
+            [
+              {
+                Effect   = "Allow",
+                Action   = "support:*",
+                Resource = "*"
+              }
+            ],
+            jsondecode(data.aws_iam_policy.readonly.policy).Statement
+          )
+        }
+      )
+      session_duration = "PT12H"
+
+      accounts = {
+        for account in [ 123456789012, 012456789012 ] : account => [
+          okta_group.aws["AWSPlatformAdmins"].name,
+          okta_group.aws["AWSPlatformUsers"].name
+        ]
+      }
+    }
+  }
+```
+
 ## Datadog Integration
 
 This module supports an optional Datadog-AWS integration. This integration makes it easier for you to forward metrics and logs from your AWS account to Datadog.
@@ -185,24 +237,20 @@ module "landing_zone" {
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
-| aws | >= 3.16.0 |
-| okta | >= 3.0 |
+| aws | >= 3.24.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.16.0 |
-| aws.audit | >= 3.16.0 |
-| aws.logging | >= 3.16.0 |
-| okta | >= 3.0 |
+| aws | >= 3.24.0 |
+| aws.audit | >= 3.24.0 |
+| aws.logging | >= 3.24.0 |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| aws\_sso\_acs\_url | AWS SSO ACS URL for the Okta App | `string` | n/a | yes |
-| aws\_sso\_entity\_id | AWS SSO Entity ID for the Okta App | `string` | n/a | yes |
 | control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
 | tags | Map of tags | `map(string)` | n/a | yes |
 | additional\_auditing\_trail | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name   = string<br>    bucket = string<br>  })</pre> | `null` | no |
@@ -213,10 +261,10 @@ module "landing_zone" {
 | aws\_deny\_root\_user\_ous | List of AWS Organisation OUs to apply the "DenyRootUser" SCP to | `list(string)` | `[]` | no |
 | aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
-| aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list(string)` | `[]` | no |
 | aws\_region\_restrictions | List of allowed AWS regions and principals that are exempt from the restriction | <pre>object({<br>    allowed    = list(string)<br>    exceptions = list(string)<br>  })</pre> | `null` | no |
 | aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
 | aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name   = string<br>    values = list(string)<br>  })))</pre> | `null` | no |
+| aws\_sso\_permission\_sets | Map of AWS SSO Permission Sets with the AWS Accounts and the names of the AWS SSO Groups that should be granted access to each account | <pre>map(object({<br>    accounts         = map(list(string))<br>    inline_policy    = string<br>    session_duration = string<br>  }))</pre> | `{}` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | monitor\_iam\_activity | Whether IAM activity should be monitored | `bool` | `true` | no |
 | security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |

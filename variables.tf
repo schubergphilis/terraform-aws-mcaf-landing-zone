@@ -79,12 +79,6 @@ variable "aws_guardduty" {
   description = "Whether AWS GuardDuty should be enabled"
 }
 
-variable "aws_okta_group_ids" {
-  type        = list(string)
-  default     = []
-  description = "List of Okta group IDs that should be assigned the AWS SSO Okta app"
-}
-
 variable "aws_region_restrictions" {
   type = object({
     allowed    = list(string)
@@ -100,14 +94,14 @@ variable "aws_require_imdsv2" {
   description = "Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service"
 }
 
-variable "aws_sso_acs_url" {
-  type        = string
-  description = "AWS SSO ACS URL for the Okta App"
-}
-
-variable "aws_sso_entity_id" {
-  type        = string
-  description = "AWS SSO Entity ID for the Okta App"
+variable "aws_sso_permission_sets" {
+  type = map(object({
+    accounts         = map(list(string))
+    inline_policy    = string
+    session_duration = string
+  }))
+  default     = {}
+  description = "Map of AWS SSO Permission Sets with the AWS Accounts and the names of the AWS SSO Groups that should be granted access to each account"
 }
 
 variable "control_tower_account_ids" {
