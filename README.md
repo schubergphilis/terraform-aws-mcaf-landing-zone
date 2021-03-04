@@ -237,24 +237,20 @@ module "landing_zone" {
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
-| aws | >= 3.16.0 |
-| okta | >= 3.0 |
+| aws | >= 3.24.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.16.0 |
-| aws.audit | >= 3.16.0 |
-| aws.logging | >= 3.16.0 |
-| okta | >= 3.0 |
+| aws | >= 3.24.0 |
+| aws.audit | >= 3.24.0 |
+| aws.logging | >= 3.24.0 |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| aws\_sso\_acs\_url | AWS SSO ACS URL for the Okta App | `string` | n/a | yes |
-| aws\_sso\_entity\_id | AWS SSO Entity ID for the Okta App | `string` | n/a | yes |
 | control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
 | tags | Map of tags | `map(string)` | n/a | yes |
 | additional\_auditing\_trail | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name   = string<br>    bucket = string<br>  })</pre> | `null` | no |
@@ -265,10 +261,10 @@ module "landing_zone" {
 | aws\_deny\_root\_user\_ous | List of AWS Organisation OUs to apply the "DenyRootUser" SCP to | `list(string)` | `[]` | no |
 | aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
-| aws\_okta\_group\_ids | List of Okta group IDs that should be assigned the AWS SSO Okta app | `list(string)` | `[]` | no |
 | aws\_region\_restrictions | List of allowed AWS regions and principals that are exempt from the restriction | <pre>object({<br>    allowed    = list(string)<br>    exceptions = list(string)<br>  })</pre> | `null` | no |
 | aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
 | aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name   = string<br>    values = list(string)<br>  })))</pre> | `null` | no |
+| aws\_sso\_permission\_sets | Map of AWS SSO Permission Sets with the AWS Accounts and the names of the AWS SSO Groups that should be granted access to each account | <pre>map(object({<br>    accounts         = map(list(string))<br>    inline_policy    = string<br>    session_duration = string<br>  }))</pre> | `{}` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | monitor\_iam\_activity | Whether IAM activity should be monitored | `bool` | `true` | no |
 | security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
