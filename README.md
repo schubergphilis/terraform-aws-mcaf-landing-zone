@@ -46,6 +46,58 @@ This feature can be controlled via the `aws_guardduty` variable and is enabled b
 
 Note: In case you are migrating an existing AWS organization to this module, all existing accounts except for the `master` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
 
+## AWS SSO
+
+This module supports managing AWS SSO resources to control user access to all accounts belonging to the AWS Organization.
+
+This feature can be controlled via the `aws_sso_permission_sets` variable by passing a map (key-value pair) where every key corresponds to an AWS SSO Permission Set name and the value follows the structure below:
+
+- `inline_policy`: valid IAM policy in JSON format
+- `session_duration`: length of time in the ISO-8601 standard
+- `accounts`: map (key-value pair) of AWS Account IDs as keys and a list of AWS SSO Group names that should have access to the account using the permission set defined
+
+Example:
+
+```hcl
+  aws_sso_permission_sets = {
+    PlatformAdmin = {
+      inline_policy = file("${path.module}/template_files/sso/platform_admin.json")
+      session_duration = "PT2H"
+
+      accounts = {
+        for account in [ 123456789012, 012456789012 ] : account => [
+          okta_group.aws["AWSPlatformAdmins"].name
+        ]
+      }
+    }
+    PlatformUser = {
+      inline_policy = jsonencode(
+        {
+          Version = "2012-10-17",
+          Statement = concat(
+            [
+              {
+                Effect   = "Allow",
+                Action   = "support:*",
+                Resource = "*"
+              }
+            ],
+            jsondecode(data.aws_iam_policy.readonly.policy).Statement
+          )
+        }
+      )
+      session_duration = "PT12H"
+
+      accounts = {
+        for account in [ 123456789012, 012456789012 ] : account => [
+          okta_group.aws["AWSPlatformAdmins"].name,
+          okta_group.aws["AWSPlatformUsers"].name
+        ]
+      }
+    }
+  }
+```
+
 ## Datadog Integration
 
 This module supports an optional Datadog-AWS integration. This integration makes it easier for you to forward metrics and logs from your AWS account to Datadog.
