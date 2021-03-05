@@ -1,3 +1,9 @@
+# Upgrading to 0.8.x
+
+Version `0.8.x` introduces the possibility of managing AWS SSO resources using this module. To avoid a race condition between Okta pushing groups to AWS SSO and Terraform trying to read them using data sources, the `okta_app_saml` resource has been removed from the module.
+
+With this change, all Okta configuration can be managed in the way that best suits the user. It also makes it possible to use this module with any other identity provider that is able to create groups on AWS SSO.
+
 # Upgrading to 0.7.x
 
 From version `0.7.0`, the monitoring of IAM entities has changed from Event Bridge Rules to CloudWatch Alarms. This means that passing a list of IAM identities to the variable `monitor_iam_access` is no longer supported.

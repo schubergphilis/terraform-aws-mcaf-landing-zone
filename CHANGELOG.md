@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.8.0 (2021-03-05)
 
 - Add support to manage AWS SSO resources ([#95](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/95))
 
