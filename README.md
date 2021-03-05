@@ -52,7 +52,7 @@ This module supports managing AWS SSO resources to control user access to all ac
 
 This feature can be controlled via the `aws_sso_permission_sets` variable by passing a map (key-value pair) where every key corresponds to an AWS SSO Permission Set name and the value follows the structure below:
 
-- `inline_policy`: valid IAM policy in JSON format
+- `inline_policy`: valid IAM policy in JSON format (maximum length of 10240 characters)
 - `session_duration`: length of time in the ISO-8601 standard
 - `accounts`: map (key-value pair) of AWS Account IDs as keys and a list of AWS SSO Group names that should have access to the account using the permission set defined
 
@@ -82,7 +82,7 @@ Example:
                 Resource = "*"
               }
             ],
-            jsondecode(data.aws_iam_policy.readonly.policy).Statement
+            jsondecode(data.aws_iam_policy.lambda_readonly.policy).Statement
           )
         }
       )
