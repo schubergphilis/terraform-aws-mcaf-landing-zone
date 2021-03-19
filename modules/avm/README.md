@@ -100,6 +100,7 @@ In case you would like to NOT monitor AWS SSO roles, you can set `monitor_iam_ac
 | sso\_lastname | The lastname of the Control Tower SSO account | `string` | `"Admin"` | no |
 | terraform\_auto\_apply | Whether to automatically apply changes when a Terraform plan is successful | `bool` | `false` | no |
 | terraform\_version | Terraform version to use | `string` | `null` | no |
+| tfe\_agent\_pool\_id | Terraform agent pool ID | `string` | `null` | no |
 | tfe\_vcs\_branch | Terraform VCS branch to use | `string` | `"master"` | no |
 | trigger\_prefixes | List of repository-root-relative paths which should be tracked for changes | `list(string)` | <pre>[<br>  "modules"<br>]</pre> | no |
 
