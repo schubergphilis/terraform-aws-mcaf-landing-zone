@@ -165,6 +165,12 @@ variable "terraform_auto_apply" {
   description = "Whether to automatically apply changes when a Terraform plan is successful"
 }
 
+variable "tfe_agent_pool_id" {
+  type        = string
+  default     = null
+  description = "Terraform agent pool ID"
+}
+
 variable "tfe_vcs_branch" {
   type        = string
   default     = "master"

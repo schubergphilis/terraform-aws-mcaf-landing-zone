@@ -51,18 +51,20 @@ module "account" {
 
 module "workspace" {
   count                  = var.create_workspace ? 1 : 0
-  source                 = "github.com/schubergphilis/terraform-aws-mcaf-workspace?ref=v0.3.0"
+  source                 = "github.com/schubergphilis/terraform-aws-mcaf-workspace?ref=v0.4.1"
   providers              = { aws = aws.managed_by_inception }
   name                   = local.name
+  agent_pool_id          = var.tfe_agent_pool_id
   auto_apply             = var.terraform_auto_apply
   branch                 = var.tfe_vcs_branch
   create_repository      = false
-  github_organization    = var.defaults.github_organization
-  github_repository      = var.name
+  execution_mode         = var.tfe_agent_pool_id != null ? "agent" : "remote"
   kms_key_id             = var.kms_key_id
   oauth_token_id         = var.oauth_token_id
   policy_arns            = ["arn:aws:iam::aws:policy/AdministratorAccess"]
   region                 = var.region
+  repository_name        = var.name
+  repository_owner       = var.defaults.github_organization
   ssh_key_id             = var.ssh_key_id
   terraform_organization = var.defaults.terraform_organization
   terraform_version      = var.terraform_version != null ? var.terraform_version : var.defaults.terraform_version
