@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 
-ENHANCEMENTS
+## 0.8.1 (2021-03-22)
 
 - Add support to use a TFC agent pool ([#98](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/98))
 
