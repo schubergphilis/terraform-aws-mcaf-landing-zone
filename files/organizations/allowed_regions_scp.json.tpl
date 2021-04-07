@@ -6,6 +6,7 @@
             "Effect": "Deny",
             "NotAction": [
                 "a4b:*",
+                "access-analyzer:*",
                 "acm:*",
                 "aws-marketplace-management:*",
                 "aws-marketplace:*",

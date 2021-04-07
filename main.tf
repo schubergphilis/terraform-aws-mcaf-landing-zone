@@ -1,8 +1,9 @@
+#tfsec:ignore:AWS063 tfsec:ignore:AWS064 tfsec:ignore:AWS065
 resource "aws_cloudtrail" "additional_auditing_trail" {
   count                 = var.additional_auditing_trail != null ? 1 : 0
   name                  = var.additional_auditing_trail.name
-  s3_bucket_name        = var.additional_auditing_trail.bucket
   is_organization_trail = true
+  s3_bucket_name        = var.additional_auditing_trail.bucket
   tags                  = var.tags
 }
 
