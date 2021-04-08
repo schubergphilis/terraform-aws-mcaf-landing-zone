@@ -4,16 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.8.2 (2021-04-08)
+
+BUG FIXES
 
 - Adds `is_multi_region_trail = true` & `enable_log_file_validation = true` for cloudtrail resource regarding TFSEC#AWS063 & #AWS064 ([#101](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/101))
 - Allows access-analyzer to be used outside region since it's a global service + adds ignores for tfsec ([#100](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/100))
 
 ## 0.8.1 (2021-03-22)
 
+ENHANCEMENTS
+
 - Add support to use a TFC agent pool ([#98](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/98))
 
 ## 0.8.0 (2021-03-05)
+
+ENHANCEMENTS
 
 - Add support to manage AWS SSO resources ([#95](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/95))
 
