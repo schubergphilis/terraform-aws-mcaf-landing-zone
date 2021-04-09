@@ -1,10 +1,12 @@
-#tfsec:ignore:AWS063 tfsec:ignore:AWS064 tfsec:ignore:AWS065
+#tfsec:ignore:AWS065
 resource "aws_cloudtrail" "additional_auditing_trail" {
-  count                 = var.additional_auditing_trail != null ? 1 : 0
-  name                  = var.additional_auditing_trail.name
-  is_organization_trail = true
-  s3_bucket_name        = var.additional_auditing_trail.bucket
-  tags                  = var.tags
+  count                      = var.additional_auditing_trail != null ? 1 : 0
+  name                       = var.additional_auditing_trail.name
+  enable_log_file_validation = true
+  is_multi_region_trail      = true
+  is_organization_trail      = true
+  s3_bucket_name             = var.additional_auditing_trail.bucket
+  tags                       = var.tags
 }
 
 resource "aws_cloudwatch_log_metric_filter" "iam_activity_master" {
