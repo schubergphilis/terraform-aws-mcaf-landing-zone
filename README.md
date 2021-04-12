@@ -1,9 +1,80 @@
 # terraform-aws-mcaf-landing-zone
-Terraform module to setup and manage various components of the AWS Landing Zone.
+Terraform module to setup and manage various components of the SBP AWS Landing Zone.
 
 Overview of Landing Zone tools & services: 
 
 <img src="images/MCAF_landing_zone_tools_and_services_v040.png" width="600"> 
+
+The SBP AWS Landing Zone consists of 3 repositories:
+- [MCAF Landing Zone module (current repository)](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone): the foundation of the Landing Zone and manages the 3 core accounts: audit, logging, master
+- [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm): providing an AWS AVM. This module sets up an AWS account with one or more Terraform Cloud/Enterprise (TFE) workspace(s) backed by a VCS project
+- [MCAF Account Baseline module](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline): optional module providing baseline configuration for AWS accounts
+
+# Basic configuration
+```hcl
+module "landing_zone" {
+  source             = "github.com/schubergphilis/terraform-aws-mcaf-landing-zone?ref=VERSION"
+  tags               = var.tags
+
+  control_tower_account_ids = {
+    audit   = "012345678902"
+    logging = "012345678903"
+  }
+}
+```
+
+<!--- BEGIN_TF_DOCS --->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.13 |
+| aws | >= 3.24.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| aws | >= 3.24.0 |
+| aws.audit | >= 3.24.0 |
+| aws.logging | >= 3.24.0 |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
+| tags | Map of tags | `map(string)` | n/a | yes |
+| additional\_auditing\_trail | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name   = string<br>    bucket = string<br>  })</pre> | `null` | no |
+| aws\_account\_password\_policy | AWS account password policy parameters for the audit, logging and master account | <pre>object({<br>    allow_users_to_change        = bool<br>    max_age                      = number<br>    minimum_length               = number<br>    require_lowercase_characters = bool<br>    require_numbers              = bool<br>    require_symbols              = bool<br>    require_uppercase_characters = bool<br>    reuse_prevention_history     = number<br>  })</pre> | <pre>{<br>  "allow_users_to_change": true,<br>  "max_age": 90,<br>  "minimum_length": 14,<br>  "require_lowercase_characters": true,<br>  "require_numbers": true,<br>  "require_symbols": true,<br>  "require_uppercase_characters": true,<br>  "reuse_prevention_history": 24<br>}</pre> | no |
+| aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
+| aws\_create\_account\_password\_policy | Set to true to create the AWS account password policy in the audit, logging and master accounts | `bool` | `true` | no |
+| aws\_deny\_leaving\_org | Enable SCP that denies accounts the ability to leave the AWS organisation | `bool` | `true` | no |
+| aws\_deny\_root\_user\_ous | List of AWS Organisation OUs to apply the "DenyRootUser" SCP to | `list(string)` | `[]` | no |
+| aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
+| aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
+| aws\_region\_restrictions | List of allowed AWS regions and principals that are exempt from the restriction | <pre>object({<br>    allowed    = list(string)<br>    exceptions = list(string)<br>  })</pre> | `null` | no |
+| aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
+| aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name   = string<br>    values = list(string)<br>  })))</pre> | `null` | no |
+| aws\_sso\_permission\_sets | Map of AWS SSO Permission Sets with the AWS Accounts and the names of the AWS SSO Groups that should be granted access to each account | <pre>map(object({<br>    accounts         = map(list(string))<br>    inline_policy    = string<br>    session_duration = string<br>  }))</pre> | `{}` | no |
+| datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
+| monitor\_iam\_activity | Whether IAM activity should be monitored | `bool` | `true` | no |
+| security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
+| sns\_aws\_config\_subscription | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
+| sns\_aws\_security\_hub\_subscription | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
+| sns\_monitor\_iam\_activity\_subscription | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| kms\_key\_arn | ARN of KMS key for SSM encryption |
+| kms\_key\_id | ID of KMS key for SSM encryption |
+| monitor\_iam\_activity\_sns\_topic\_arn | ARN of the SNS Topic in the Audit account for IAM activity monitoring notifications |
+
+<!--- END_TF_DOCS --->
+
+# Detailed configuration
 
 ## AWS CloudTrail
 
@@ -213,9 +284,14 @@ module "landing_zone" {
   }
 ```
 
-## Enable SNS topic subscription
+## SNS topic subscription
 
-To subscribe to the `AggregatedSecurityNotifications` topic to receive security findings, set the `sns_security_subscription` variable as shown below.
+| Topic Name  |  Variable | Content  |
+|---|---|---|
+| `aws-controltower-AggregateSecurityNotifications` | `sns_aws_config_subscription`  |  Aggregated AWS Config notifications |
+| `LandingZone-SecurityHubFindings` |  `sns_aws_security_hub_subscription` |  Aggregated Security Hub findings |
+| `LandingZone-IAMActivity` | `sns_monitor_iam_activity_subscription`  |  IAM activity findings |
+
 
 Example for https protocol and specified webhook endpoint:
 
@@ -223,61 +299,9 @@ Example for https protocol and specified webhook endpoint:
 module "landing_zone" {
   ...
   
-  sns_security_subscription = {
+  sns_aws_config_subscription = {
     endpoint = "https://app.datadoghq.com/intake/webhook/sns?api_key=qwerty0123456789"
     protocol = "https"
   }
 }
 ```
-
-
-<!--- BEGIN_TF_DOCS --->
-## Requirements
-
-| Name | Version |
-|------|---------|
-| terraform | >= 0.13 |
-| aws | >= 3.24.0 |
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| aws | >= 3.24.0 |
-| aws.audit | >= 3.24.0 |
-| aws.logging | >= 3.24.0 |
-
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
-| tags | Map of tags | `map(string)` | n/a | yes |
-| additional\_auditing\_trail | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name   = string<br>    bucket = string<br>  })</pre> | `null` | no |
-| aws\_account\_password\_policy | AWS account password policy parameters for the audit, logging and master account | <pre>object({<br>    allow_users_to_change        = bool<br>    max_age                      = number<br>    minimum_length               = number<br>    require_lowercase_characters = bool<br>    require_numbers              = bool<br>    require_symbols              = bool<br>    require_uppercase_characters = bool<br>    reuse_prevention_history     = number<br>  })</pre> | <pre>{<br>  "allow_users_to_change": true,<br>  "max_age": 90,<br>  "minimum_length": 14,<br>  "require_lowercase_characters": true,<br>  "require_numbers": true,<br>  "require_symbols": true,<br>  "require_uppercase_characters": true,<br>  "reuse_prevention_history": 24<br>}</pre> | no |
-| aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
-| aws\_create\_account\_password\_policy | Set to true to create the AWS account password policy in the audit, logging and master accounts | `bool` | `true` | no |
-| aws\_deny\_leaving\_org | Enable SCP that denies accounts the ability to leave the AWS organisation | `bool` | `true` | no |
-| aws\_deny\_root\_user\_ous | List of AWS Organisation OUs to apply the "DenyRootUser" SCP to | `list(string)` | `[]` | no |
-| aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
-| aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
-| aws\_region\_restrictions | List of allowed AWS regions and principals that are exempt from the restriction | <pre>object({<br>    allowed    = list(string)<br>    exceptions = list(string)<br>  })</pre> | `null` | no |
-| aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
-| aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name   = string<br>    values = list(string)<br>  })))</pre> | `null` | no |
-| aws\_sso\_permission\_sets | Map of AWS SSO Permission Sets with the AWS Accounts and the names of the AWS SSO Groups that should be granted access to each account | <pre>map(object({<br>    accounts         = map(list(string))<br>    inline_policy    = string<br>    session_duration = string<br>  }))</pre> | `{}` | no |
-| datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
-| monitor\_iam\_activity | Whether IAM activity should be monitored | `bool` | `true` | no |
-| security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
-| sns\_aws\_config\_subscription | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
-| sns\_aws\_security\_hub\_subscription | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
-| sns\_monitor\_iam\_activity\_subscription | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| kms\_key\_arn | ARN of KMS key for SSM encryption |
-| kms\_key\_id | ID of KMS key for SSM encryption |
-| monitor\_iam\_activity\_sns\_topic\_arn | ARN of the SNS Topic in the Audit account for IAM activity monitoring notifications |
-
-<!--- END_TF_DOCS --->

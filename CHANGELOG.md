@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.9.0 (2021-04-12)
+
+ENHANCEMENTS
+
+- Removal of the local AVM module. AVM module has been split up into 2 modules to allow for more flexibility: AVM core functionality has been moved to [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm) and all other functionality has been moved to the [MCAF Account Baseline module](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline).  ([#102](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/102))
+
 ## 0.8.2 (2021-04-08)
 
 BUG FIXES
