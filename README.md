@@ -265,7 +265,7 @@ module "landing_zone" {
 | aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
 | aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name   = string<br>    values = list(string)<br>  })))</pre> | `null` | no |
 | aws\_sso\_permission\_sets | Map of AWS SSO Permission Sets with the AWS Accounts and the names of the AWS SSO Groups that should be granted access to each account | <pre>map(object({<br>    accounts         = map(list(string))<br>    inline_policy    = string<br>    session_duration = string<br>  }))</pre> | `{}` | no |
-| datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
+| datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    datadog_tags          = list(string)<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | monitor\_iam\_activity | Whether IAM activity should be monitored | `bool` | `true` | no |
 | security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
 | sns\_aws\_config\_subscription | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |

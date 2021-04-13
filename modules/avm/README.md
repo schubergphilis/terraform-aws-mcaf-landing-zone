@@ -86,7 +86,7 @@ In case you would like to NOT monitor AWS SSO roles, you can set `monitor_iam_ac
 | aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
 | create\_account\_password\_policy | Set to true to create the AWS account password policy | `bool` | `true` | no |
 | create\_workspace | Set to true to create a Terraform Cloud workspace | `bool` | `true` | no |
-| datadog | Datadog integration options | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
+| datadog | Datadog integration options | <pre>object({<br>    api_key               = string<br>    datadog_tags          = list(string)<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | email | Email address of the account | `string` | `null` | no |
 | environment | Stack environment | `string` | `null` | no |
 | kms\_key\_id | The KMS key ID used to encrypt the SSM parameters | `string` | `null` | no |
