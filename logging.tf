@@ -57,7 +57,7 @@ module "datadog_logging" {
 }
 
 resource "aws_iam_account_password_policy" "logging" {
-  count                          = var.aws_create_account_password_policy ? 1 : 0
+  count                          = var.aws_account_password_policy != null ? 1 : 0
   provider                       = aws.logging
   allow_users_to_change_password = var.aws_account_password_policy.allow_users_to_change
   max_password_age               = var.aws_account_password_policy.max_age

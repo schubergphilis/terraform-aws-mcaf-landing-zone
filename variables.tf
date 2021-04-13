@@ -31,12 +31,6 @@ variable "aws_account_password_policy" {
   description = "AWS account password policy parameters for the audit, logging and master account"
 }
 
-variable "aws_create_account_password_policy" {
-  type        = bool
-  default     = true
-  description = "Set to true to create the AWS account password policy in the audit, logging and master accounts"
-}
-
 variable "aws_config" {
   type = object({
     aggregator_account_ids = list(string)
@@ -44,6 +38,15 @@ variable "aws_config" {
   })
   default     = null
   description = "AWS Config settings"
+}
+
+variable "aws_config_sns_subscription" {
+  type = map(object({
+    endpoint = string
+    protocol = string
+  }))
+  default     = {}
+  description = "Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic"
 }
 
 variable "aws_deny_leaving_org" {
@@ -56,15 +59,6 @@ variable "aws_deny_root_user_ous" {
   type        = list(string)
   default     = []
   description = "List of AWS Organisation OUs to apply the \"DenyRootUser\" SCP to"
-}
-
-variable "aws_required_tags" {
-  type = map(list(object({
-    name   = string
-    values = list(string)
-  })))
-  default     = null
-  description = "AWS Required tags settings"
 }
 
 variable "aws_ebs_encryption_by_default" {
@@ -88,10 +82,34 @@ variable "aws_region_restrictions" {
   description = "List of allowed AWS regions and principals that are exempt from the restriction"
 }
 
+variable "aws_required_tags" {
+  type = map(list(object({
+    name   = string
+    values = list(string)
+  })))
+  default     = null
+  description = "AWS Required tags settings"
+}
+
 variable "aws_require_imdsv2" {
   type        = bool
   default     = true
   description = "Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service"
+}
+
+variable "aws_security_hub_product_arns" {
+  type        = list(string)
+  default     = []
+  description = "A list of the ARNs of the products you want to import into Security Hub"
+}
+
+variable "aws_security_hub_sns_subscription" {
+  type = map(object({
+    endpoint = string
+    protocol = string
+  }))
+  default     = {}
+  description = "Subscription options for the LandingZone-SecurityHubFindings SNS topic"
 }
 
 variable "aws_sso_permission_sets" {
@@ -129,31 +147,7 @@ variable "monitor_iam_activity" {
   description = "Whether IAM activity should be monitored"
 }
 
-variable "security_hub_product_arns" {
-  type        = list(string)
-  default     = []
-  description = "A list of the ARNs of the products you want to import into Security Hub"
-}
-
-variable "sns_aws_config_subscription" {
-  type = map(object({
-    endpoint = string
-    protocol = string
-  }))
-  default     = {}
-  description = "Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic"
-}
-
-variable "sns_aws_security_hub_subscription" {
-  type = map(object({
-    endpoint = string
-    protocol = string
-  }))
-  default     = {}
-  description = "Subscription options for the LandingZone-SecurityHubFindings SNS topic"
-}
-
-variable "sns_monitor_iam_activity_subscription" {
+variable "monitor_iam_activity_sns_subscription" {
   type = map(object({
     endpoint = string
     protocol = string

@@ -2,6 +2,15 @@
 
 Removal of the local AVM module. Modify the source to the new [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm).
 
+The following variables have been renamed:
+- `sns_aws_config_subscription` -> `aws_config_sns_subscription`
+- `security_hub_product_arns` -> `aws_security_hub_product_arns`
+- `sns_aws_security_hub_subscription` -> `aws_security_hub_sns_subscription`
+- `sns_monitor_iam_activity_subscription` -> `monitor_iam_activity_sns_subscription`
+
+The following variable has been removed:
+- `aws_create_account_password_policy`, if you do not want to enable the password policy set the `aws_account_password_policy` variable to `null`
+
 The provider alias has changed. Change the following occurence for all accounts, as shown below for the `sandbox` AVM module instance.
 
 ```shell
@@ -16,7 +25,7 @@ To prevent this happening, simply move the resources in the state to their new l
 terraform state mv 'module.sandbox.module.workspace[0]' 'module.sandbox.module.tfe_workspace[0]'
 ```
 
-Finally, if you are migrating to the [MCAF Account Baseline module](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline) as well. Then remove the following resources from the state and let these resource be manged by the baseline workspaces. Command shown below for the `sandbox` AVM module instance
+Finally, if you are migrating to the [MCAF Account Baseline module](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline) as well. Then remove the following resources from the state and let these resource be managed by the baseline workspaces. Command shown below for the `sandbox` AVM module instance
 
 ```shell
 terraform state mv -state-out=baseline-sandbox.tfstate 'module.sandbox.aws_cloudwatch_log_metric_filter.iam_activity' 'module.account_baseline.aws_cloudwatch_log_metric_filter.iam_activity'
