@@ -115,6 +115,7 @@ variable "control_tower_account_ids" {
 variable "datadog" {
   type = object({
     api_key               = string
+    datadog_tags          = list(string)
     enable_integration    = bool
     install_log_forwarder = bool
     site_url              = string

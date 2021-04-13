@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+ENHANCEMENTS
+
+- Update datadog module in the AVM module ([#103](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/103))
+
 ## 0.8.2 (2021-04-08)
 
 BUG FIXES
