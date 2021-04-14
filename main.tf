@@ -121,7 +121,7 @@ module "kms_key" {
 }
 
 resource "aws_iam_account_password_policy" "master" {
-  count                          = var.aws_create_account_password_policy ? 1 : 0
+  count                          = var.aws_account_password_policy != null ? 1 : 0
   allow_users_to_change_password = var.aws_account_password_policy.allow_users_to_change
   max_password_age               = var.aws_account_password_policy.max_age
   minimum_password_length        = var.aws_account_password_policy.minimum_length

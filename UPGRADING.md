@@ -1,3 +1,40 @@
+# Upgrading to 0.9.x
+
+Removal of the local AVM module. Modify the source to the new [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm).
+
+The following variables have been renamed:
+- `sns_aws_config_subscription` -> `aws_config_sns_subscription`
+- `security_hub_product_arns` -> `aws_security_hub_product_arns`
+- `sns_aws_security_hub_subscription` -> `aws_security_hub_sns_subscription`
+- `sns_monitor_iam_activity_subscription` -> `monitor_iam_activity_sns_subscription`
+
+The following variable has been removed:
+- `aws_create_account_password_policy`, if you do not want to enable the password policy set the `aws_account_password_policy` variable to `null`
+
+The provider alias has changed. Change the following occurence for all accounts, as shown below for the `sandbox` AVM module instance.
+
+```shell
+module.sandbox.provider[\"registry.terraform.io/hashicorp/aws\"].managed_by_inception => module.sandbox.provider[\"registry.terraform.io/hashicorp/aws\"].account
+```
+
+Moreover, resources in the AVM module are now stored under `module.tfe_workspace[0]`, resulting in a plan wanting to destroy and recreate the existing Terraform Cloud workspace and IAM user used by the workspace which is undesirable.
+
+To prevent this happening, simply move the resources in the state to their new location as shown below for the `sandbox` AVM module instance:
+
+```shell
+terraform state mv 'module.sandbox.module.workspace[0]' 'module.sandbox.module.tfe_workspace[0]'
+```
+
+Finally, if you are migrating to the [MCAF Account Baseline module](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline) as well. Then remove the following resources from the state and let these resource be managed by the baseline workspaces. Command shown below for the `sandbox` AVM module instance
+
+```shell
+terraform state mv -state-out=baseline-sandbox.tfstate 'module.sandbox.aws_cloudwatch_log_metric_filter.iam_activity' 'module.account_baseline.aws_cloudwatch_log_metric_filter.iam_activity'
+terraform state mv -state-out=baseline-sandbox.tfstate 'module.sandbox.aws_cloudwatch_metric_alarm.iam_activity' 'module.account_baseline.aws_cloudwatch_metric_alarm.iam_activity'
+terraform state mv -state-out=baseline-sandbox.tfstate 'module.sandbox.aws_iam_account_password_policy.default' 'module.account_baseline.aws_iam_account_password_policy.default'
+terraform state mv -state-out=baseline-sandbox.tfstate 'module.sandbox.aws_ebs_encryption_by_default.default' 'module.account_baseline.aws_ebs_encryption_by_default.default'
+```
+
+
 # Upgrading to 0.8.x
 
 Version `0.8.x` introduces the possibility of managing AWS SSO resources using this module. To avoid a race condition between Okta pushing groups to AWS SSO and Terraform trying to read them using data sources, the `okta_app_saml` resource has been removed from the module.

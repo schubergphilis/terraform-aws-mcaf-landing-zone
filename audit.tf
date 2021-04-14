@@ -55,7 +55,7 @@ resource "aws_cloudwatch_metric_alarm" "iam_activity_audit" {
 }
 
 resource "aws_iam_account_password_policy" "audit" {
-  count                          = var.aws_create_account_password_policy ? 1 : 0
+  count                          = var.aws_account_password_policy != null ? 1 : 0
   provider                       = aws.audit
   allow_users_to_change_password = var.aws_account_password_policy.allow_users_to_change
   max_password_age               = var.aws_account_password_policy.max_age
@@ -95,7 +95,7 @@ resource "aws_config_aggregate_authorization" "audit" {
 }
 
 resource "aws_sns_topic_subscription" "aws_config" {
-  for_each               = var.sns_aws_config_subscription
+  for_each               = var.aws_config_sns_subscription
   provider               = aws.audit
   endpoint               = each.value.endpoint
   endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
@@ -129,7 +129,7 @@ resource "aws_securityhub_account" "default" {
 }
 
 resource "aws_securityhub_product_subscription" "default" {
-  for_each    = toset(var.security_hub_product_arns)
+  for_each    = toset(var.aws_security_hub_product_arns)
   provider    = aws.audit
   product_arn = each.value
   depends_on  = [aws_securityhub_account.default]
@@ -175,7 +175,7 @@ resource "aws_sns_topic_policy" "security_hub_findings" {
 }
 
 resource "aws_sns_topic_subscription" "security_hub_findings" {
-  for_each               = var.sns_aws_security_hub_subscription
+  for_each               = var.aws_security_hub_sns_subscription
   provider               = aws.audit
   endpoint               = each.value.endpoint
   endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
@@ -211,7 +211,7 @@ resource "aws_sns_topic_policy" "iam_activity" {
 }
 
 resource "aws_sns_topic_subscription" "iam_activity" {
-  for_each               = var.sns_monitor_iam_activity_subscription
+  for_each               = var.monitor_iam_activity_sns_subscription
   provider               = aws.audit
   endpoint               = each.value.endpoint
   endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
