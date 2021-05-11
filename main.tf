@@ -117,6 +117,7 @@ module "kms_key" {
   name                = "inception"
   description         = "KMS key used for encrypting SSM parameters"
   enable_key_rotation = true
+  policy              = var.kms_key_policy
   tags                = var.tags
 }
 
