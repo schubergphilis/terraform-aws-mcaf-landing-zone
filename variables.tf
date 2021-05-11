@@ -141,6 +141,12 @@ variable "datadog" {
   description = "Datadog integration options for the core accounts"
 }
 
+variable "kms_policy" {
+  type        = string
+  default     = ""
+  description = "A valid KMS policy JSON document"
+}
+
 variable "monitor_iam_activity" {
   type        = bool
   default     = true
