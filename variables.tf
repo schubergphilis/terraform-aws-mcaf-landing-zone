@@ -141,7 +141,7 @@ variable "datadog" {
   description = "Datadog integration options for the core accounts"
 }
 
-variable "kms_policy" {
+variable "kms_key_policy" {
   type        = string
   default     = ""
   description = "A valid KMS policy JSON document"
