@@ -72,9 +72,9 @@ This module supports managing AWS SSO resources to control user access to all ac
 
 This feature can be controlled via the `aws_sso_permission_sets` variable by passing a map (key-value pair) where every key corresponds to an AWS SSO Permission Set name and the value follows the structure below:
 
+- `assignments`: list of maps (key-value pair) of AWS Account IDs as keys and a list of AWS SSO Group names that should have access to the account using the permission set defined
 - `inline_policy`: valid IAM policy in JSON format (maximum length of 10240 characters)
 - `session_duration`: length of time in the ISO-8601 standard
-- `accounts`: map (key-value pair) of AWS Account IDs as keys and a list of AWS SSO Group names that should have access to the account using the permission set defined
 
 Example:
 
@@ -84,13 +84,31 @@ Example:
       inline_policy = file("${path.module}/template_files/sso/platform_admin.json")
       session_duration = "PT2H"
 
-      accounts = {
-        for account in [ 123456789012, 012456789012 ] : account => [
-          okta_group.aws["AWSPlatformAdmins"].name
-        ]
-      }
+      assignments = [
+        {
+          for account in [ 123456789012, 012456789012 ] : account => [
+            okta_group.aws["AWSPlatformAdmins"].name
+          ]
+        },
+        {
+          for account in [ 925556789012 ] : account => [
+            okta_group.aws["AWSPlatformUsers"].name
+          ]
+        }
+      ]
     }
     PlatformUser = {
+      session_duration = "PT12H"
+
+      assignments = [
+        {
+          for account in [ 123456789012, 012456789012 ] : account => [
+            okta_group.aws["AWSPlatformAdmins"].name,
+            okta_group.aws["AWSPlatformUsers"].name
+          ]
+        }
+      ]
+
       inline_policy = jsonencode(
         {
           Version = "2012-10-17",
@@ -106,14 +124,6 @@ Example:
           )
         }
       )
-      session_duration = "PT12H"
-
-      accounts = {
-        for account in [ 123456789012, 012456789012 ] : account => [
-          okta_group.aws["AWSPlatformAdmins"].name,
-          okta_group.aws["AWSPlatformUsers"].name
-        ]
-      }
     }
   }
 ```
