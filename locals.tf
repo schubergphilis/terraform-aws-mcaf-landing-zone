@@ -19,12 +19,14 @@ locals {
   )
   aws_sso_account_assignment = flatten([
     for permission_set_name, permission_set in var.aws_sso_permission_sets : [
-      for aws_account_id, sso_groups in permission_set.accounts : [
-        for sso_group in sso_groups : {
-          aws_account_id      = aws_account_id
-          permission_set_name = permission_set_name
-          sso_group           = sso_group
-        }
+      for assignment in permission_set.assignments : [
+        for aws_account_id, sso_groups in assignment : [
+          for sso_group in sso_groups : {
+            aws_account_id      = aws_account_id
+            permission_set_name = permission_set_name
+            sso_group           = sso_group
+          }
+        ]
       ]
     ]
   ])

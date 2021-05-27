@@ -114,7 +114,7 @@ variable "aws_security_hub_sns_subscription" {
 
 variable "aws_sso_permission_sets" {
   type = map(object({
-    accounts         = map(list(string))
+    assignments      = list(map(list(string)))
     inline_policy    = string
     session_duration = string
   }))

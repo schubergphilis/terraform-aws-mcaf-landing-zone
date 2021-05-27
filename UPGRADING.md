@@ -1,3 +1,9 @@
+# Upgrading to 0.10.x
+
+Version `0.10.x` adds the possibility of assigning the same SSO Permission Set to different groups of accounts and SSO Groups. For example, the permission set `Administrator` can be assigned to group A for account 123 and for group B for account 456.
+
+This required changing the variable `aws_sso_permission_sets` where the `accounts` attribute was renamed to `assignments` and changed to a list.
+
 # Upgrading to 0.9.x
 
 Removal of the local AVM module. Modify the source to the new [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm).

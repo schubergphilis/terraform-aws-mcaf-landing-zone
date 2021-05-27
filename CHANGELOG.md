@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.10.0 (2021-05-27)
+
+ENHANCEMENTS
+
+- Add support for multiple SSO Permission Set assignments ([#106](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/106))
+
 ## 0.9.1 (2021-05-11)
 
 ENHANCEMENTS
