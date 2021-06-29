@@ -112,6 +112,12 @@ variable "aws_security_hub_sns_subscription" {
   description = "Subscription options for the LandingZone-SecurityHubFindings SNS topic"
 }
 
+variable "security_hub_standards_arns" {
+  type        = list(string)
+  default     = null
+  description = "A list of the ARNs of the standards you want to enable in Security Hub"
+}
+
 variable "aws_sso_permission_sets" {
   type = map(object({
     assignments      = list(map(list(string)))
