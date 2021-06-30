@@ -305,6 +305,7 @@ module "landing_zone" {
 | kms\_key\_policy | A valid KMS key policy JSON document | `string` | `""` | no |
 | monitor\_iam\_activity | Whether IAM activity should be monitored | `bool` | `true` | no |
 | monitor\_iam\_activity\_sns\_subscription | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
+| security\_hub\_standards\_arns | A list of the ARNs of the standards you want to enable in Security Hub | `list(string)` | `null` | no |
 
 ## Outputs
 
