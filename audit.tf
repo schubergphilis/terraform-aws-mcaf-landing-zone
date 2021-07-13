@@ -7,7 +7,7 @@ provider "aws" {
 }
 
 module "kms_key_audit" {
-  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.1.5"
+  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.2.0"
   providers           = { aws = aws.audit }
   name                = "audit"
   description         = "KMS key used for encrypting audit-related data"
