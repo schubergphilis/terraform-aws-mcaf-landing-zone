@@ -167,6 +167,12 @@ Service control policies (SCPs) are a type of organization policy that you can u
 
 This module allows using various SCPs as described below. We try to adhere to best practices of not attaching SCPs to the root of the organisation when possible; in the event you need to pass a list of OU names, be sure to have the exact name as the matching is case sensitive.
 
+#### Deny ability to disable Security Hub
+
+Enabling this SCP removes a member account's ability to disable Security Hub.
+
+This is SCP is enabled by default, but can be disabled by setting `aws_deny_disabling_security_hub` variable to `false`.
+
 #### Deny ability to leave Organization
 
 Enabling this SCP removes a member account's ability to leave the AWS organisation.
@@ -291,6 +297,7 @@ module "landing_zone" {
 | aws\_account\_password\_policy | AWS account password policy parameters for the audit, logging and master account | <pre>object({<br>    allow_users_to_change        = bool<br>    max_age                      = number<br>    minimum_length               = number<br>    require_lowercase_characters = bool<br>    require_numbers              = bool<br>    require_symbols              = bool<br>    require_uppercase_characters = bool<br>    reuse_prevention_history     = number<br>  })</pre> | <pre>{<br>  "allow_users_to_change": true,<br>  "max_age": 90,<br>  "minimum_length": 14,<br>  "require_lowercase_characters": true,<br>  "require_numbers": true,<br>  "require_symbols": true,<br>  "require_uppercase_characters": true,<br>  "reuse_prevention_history": 24<br>}</pre> | no |
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
 | aws\_config\_sns\_subscription | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
+| aws\_deny\_disabling\_security\_hub | Enable SCP that denies accounts the ability to disable Security Hub | `bool` | `true` | no |
 | aws\_deny\_leaving\_org | Enable SCP that denies accounts the ability to leave the AWS organisation | `bool` | `true` | no |
 | aws\_deny\_root\_user\_ous | List of AWS Organisation OUs to apply the "DenyRootUser" SCP to | `list(string)` | `[]` | no |
 | aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |

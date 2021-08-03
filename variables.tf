@@ -49,6 +49,12 @@ variable "aws_config_sns_subscription" {
   description = "Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic"
 }
 
+variable "aws_deny_disabling_security_hub" {
+  type        = bool
+  default     = true
+  description = "Enable SCP that denies accounts the ability to disable Security Hub"
+}
+
 variable "aws_deny_leaving_org" {
   type        = bool
   default     = true

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+- Add a `DenyDisablingSecurityHub` SCP that is attached to all AWS Organisation OUs
+
 ## 0.10.1 (2021-06-30)
 
 ENHANCEMENTS

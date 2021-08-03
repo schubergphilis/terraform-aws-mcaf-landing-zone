@@ -15,6 +15,18 @@ resource "aws_organizations_policy_attachment" "allowed_regions" {
   target_id = data.aws_organizations_organization.default.roots.0.id
 }
 
+resource "aws_organizations_policy" "deny_disabling_security_hub" {
+  count   = var.aws_deny_disabling_security_hub == true ? 1 : 0
+  name    = "LandingZone-DenyDisablingSecurityHub"
+  content = file("${path.module}/files/organizations/deny_disabling_security_hub.json")
+}
+
+resource "aws_organizations_policy_attachment" "deny_disabling_security_hub" {
+  count     = var.aws_deny_disabling_security_hub == true ? 1 : 0
+  policy_id = aws_organizations_policy.deny_disabling_security_hub.0.id
+  target_id = data.aws_organizations_organization.default.roots.0.id
+}
+
 resource "aws_organizations_policy" "deny_cloudtrail_log_stream" {
   name    = "LandingZone-DenyDeletingCloudTrailLogStream"
   content = file("${path.module}/files/organizations/cloudtrail_log_stream.json")
