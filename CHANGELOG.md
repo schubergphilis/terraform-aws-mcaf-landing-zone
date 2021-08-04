@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 0.10.2 (2021-08-04)
+## 0.10.3 (2021-08-04)
 
 ENHANCEMENTS
 
 - Enable by default AWS GuardDuty S3 protection ([#111](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/111))
+
+## 0.10.2 (2021-07-13)
+
+ENHANCEMENTS
+
+- Update KMS module ([#109](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/109))
 
 ## 0.10.1 (2021-06-30)
 
