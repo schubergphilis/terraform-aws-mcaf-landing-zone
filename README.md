@@ -295,6 +295,7 @@ module "landing_zone" {
 | aws\_deny\_root\_user\_ous | List of AWS Organisation OUs to apply the "DenyRootUser" SCP to | `list(string)` | `[]` | no |
 | aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
+| aws\_guardduty\_s3\_protection | Whether AWS GuardDuty S3 protection should be enabled | `bool` | `true` | no |
 | aws\_region\_restrictions | List of allowed AWS regions and principals that are exempt from the restriction | <pre>object({<br>    allowed    = list(string)<br>    exceptions = list(string)<br>  })</pre> | `null` | no |
 | aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
 | aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name   = string<br>    values = list(string)<br>  })))</pre> | `null` | no |
