@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+- Enable by default AWS GuardDuty S3 protection ([#111](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/111))
+
 ## 0.10.1 (2021-06-30)
 
 ENHANCEMENTS
