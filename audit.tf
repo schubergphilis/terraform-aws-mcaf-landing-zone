@@ -121,6 +121,12 @@ resource "aws_guardduty_detector" "audit" {
   count    = var.aws_guardduty == true ? 1 : 0
   provider = aws.audit
   tags     = var.tags
+
+  datasources {
+    s3_logs {
+      enable = var.aws_guardduty_s3_protection
+    }
+  }
 }
 
 // Security Hub

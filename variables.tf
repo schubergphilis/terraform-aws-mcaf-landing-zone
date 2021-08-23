@@ -79,6 +79,12 @@ variable "aws_guardduty" {
   description = "Whether AWS GuardDuty should be enabled"
 }
 
+variable "aws_guardduty_s3_protection" {
+  type        = bool
+  default     = true
+  description = "Whether AWS GuardDuty S3 protection should be enabled"
+}
+
 variable "aws_region_restrictions" {
   type = object({
     allowed    = list(string)

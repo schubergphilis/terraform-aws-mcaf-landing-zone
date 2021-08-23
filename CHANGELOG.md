@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Add a `DenyDisablingSecurityHub` SCP that is attached to all AWS Organisation OUs
 
+## 0.10.3 (2021-08-04)
+
+ENHANCEMENTS
+
+- Enable by default AWS GuardDuty S3 protection ([#111](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/111))
+
+## 0.10.2 (2021-07-13)
+
+ENHANCEMENTS
+
+- Update KMS module ([#109](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/109))
+
 ## 0.10.1 (2021-06-30)
 
 ENHANCEMENTS
