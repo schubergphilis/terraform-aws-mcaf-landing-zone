@@ -7,7 +7,8 @@
                 "securityhub:DisableSecurityHub",
                 "securityhub:DisassociateFromMasterAccount",
                 "securityhub:DeleteMembers",
-                "securityhub:DisassociateMembers"
+                "securityhub:DisassociateMembers",
+                "securityhub:BatchDisableStandards"
             ],
             "Resource": "*",
             "Effect": "Deny"
