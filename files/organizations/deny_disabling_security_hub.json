@@ -1,0 +1,17 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "securityhub:DeleteInvitations",
+                "securityhub:DisableSecurityHub",
+                "securityhub:DisassociateFromMasterAccount",
+                "securityhub:DeleteMembers",
+                "securityhub:DisassociateMembers",
+                "securityhub:BatchDisableStandards"
+            ],
+            "Resource": "*",
+            "Effect": "Deny"
+        }
+    ]
+}
