@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.10.4 (2021-08-23)
 
-- Add a `DenyDisablingSecurityHub` SCP that is attached to all AWS Organisation OUs
+- Add a `DenyDisablingSecurityHub` SCP that is attached to all AWS Organisation OUs ([#110](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/110))
 
 ## 0.10.3 (2021-08-04)
 
