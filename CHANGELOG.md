@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.10.5 (2021-09-07)
+
+- Update IAM Activity Monitor for root usage to match CIS AWS rule 1.1 ([#117](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/117))
+
 ## 0.10.4 (2021-08-23)
 
 - Add a `DenyDisablingSecurityHub` SCP that is attached to all AWS Organisation OUs ([#110](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/110))
