@@ -31,8 +31,8 @@ locals {
     ]
   ])
   iam_activity = {
-    Root = "{ $.userIdentity.type = \"Root\" }"
-    SSO  = "{ $.readOnly IS FALSE  && $.userIdentity.sessionContext.sessionIssuer.userName = \"AWSReservedSSO_*\" && $.eventName != \"ConsoleLogin\" }"
+    Root = "{$.userIdentity.type=\"Root\" && $.userIdentity.invokedBy NOT EXISTS && $.eventType != \"AwsServiceEvent\"}"
+    SSO  = "{$.readOnly IS FALSE && $.userIdentity.sessionContext.sessionIssuer.userName = \"AWSReservedSSO_*\" && $.eventName != \"ConsoleLogin\"}"
   }
   security_hub_standards_arns = var.security_hub_standards_arns != null ? var.security_hub_standards_arns : [
     "arn:aws:securityhub:${data.aws_region.current.name}::standards/aws-foundational-security-best-practices/v/1.0.0",
