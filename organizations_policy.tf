@@ -17,7 +17,7 @@ locals {
     cloudtrail_log_stream       = true
   }
 
-  iam_policies_to_merge = [for src in local.iam_policies_json : jsondecode(
+  iam_policies_to_merge = [for src in local.merge_policies : jsondecode(
     file(local.enabled_policies[src] == true ? "${path.module}/files/organizations/${src}.json" : "${path.module}/files/organizations/empty_policy.json")
   )]
   merged_iam_policy_statements = flatten([
