@@ -54,7 +54,7 @@ resource "aws_organizations_policy" "deny_policies" {
 }
 
 resource "aws_organizations_policy_attachment" "deny_policies" {
-  policy_id = aws_organizations_policy.deny_policies.0.id
+  policy_id = aws_organizations_policy.deny_policies.id
   target_id = data.aws_organizations_organization.default.roots.0.id
 }
 
