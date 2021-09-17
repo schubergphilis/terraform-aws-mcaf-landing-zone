@@ -50,7 +50,7 @@ resource "aws_organizations_policy" "deny_policies" {
   name        = local.merged_policy_name
   description = "DenyDisableSecurityHub, DenyLeavingOrg, DenyRootUser and DenyDeletingCloudTrailLogStream"
   content     = local.merged_policy
-  tags    = var.tags
+  tags        = var.tags
 }
 
 resource "aws_organizations_policy_attachment" "deny_policies" {
