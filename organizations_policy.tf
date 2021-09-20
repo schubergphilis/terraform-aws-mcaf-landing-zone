@@ -5,16 +5,13 @@ locals {
   merge_policies = [
     "deny_disabling_security_hub",
     "deny_leaving_org",
-    // https://summitroute.com/blog/2020/03/25/aws_scp_best_practices/#deny-ability-to-leave-organization
-    "deny_root_user",
     "cloudtrail_log_stream"
   ]
 
   enabled_policies = {
-    deny_disabling_security_hub = var.aws_deny_disabling_security_hub == true
-    deny_leaving_org            = var.aws_deny_leaving_org == true
-    deny_root_user              = length(var.aws_deny_root_user_ous) > 0 ? true : false
-    cloudtrail_log_stream       = true
+    deny_disabling_security_hub = var.aws_deny_disabling_security_hub
+    deny_leaving_org            = var.aws_deny_leaving_org
+    cloudtrail_log_stream       = true // This is not configurable and will be applied all the time.
   }
 
   iam_policies_to_merge = [for src in local.merge_policies : jsondecode(
@@ -56,6 +53,23 @@ resource "aws_organizations_policy" "deny_policies" {
 resource "aws_organizations_policy_attachment" "deny_policies" {
   policy_id = aws_organizations_policy.deny_policies.id
   target_id = data.aws_organizations_organization.default.roots.0.id
+}
+
+// https://summitroute.com/blog/2020/03/25/aws_scp_best_practices/#deny-ability-to-leave-organization
+resource "aws_organizations_policy" "deny_root_user" {
+  count   = length(var.aws_deny_root_user_ous) > 0 ? 1 : 0
+  name    = "LandingZone-DenyRootUser"
+  content = file("${path.module}/files/organizations/deny_root_user.json")
+  tags    = var.tags
+}
+
+resource "aws_organizations_policy_attachment" "deny_root_user" {
+  for_each = {
+    for ou in data.aws_organizations_organizational_units.default.children : ou.name => ou if contains(var.aws_deny_root_user_ous, ou.name)
+  }
+
+  policy_id = aws_organizations_policy.deny_root_user.0.id
+  target_id = each.value.id
 }
 
 // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ExamplePolicies_EC2.html#iam-example-instance-metadata-requireIMDSv2
