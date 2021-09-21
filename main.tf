@@ -10,7 +10,7 @@ resource "aws_cloudtrail" "additional_auditing_trail" {
 }
 
 resource "aws_cloudwatch_log_metric_filter" "iam_activity_master" {
-  for_each = var.monitor_iam_activity ? local.iam_activity : {}
+  for_each = var.monitor_iam_activity ? merge(local.iam_activity, local.cloudtrail_activity_cis_aws_foundations) : {}
 
   name           = "LandingZone-IAMActivity-${each.key}"
   pattern        = each.value
