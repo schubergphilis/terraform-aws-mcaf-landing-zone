@@ -1,3 +1,16 @@
+# Upgrading to 0.12.x
+
+Version `0.12.x` automatically sets the audit account as security hub administrator account for the organization and automatically enables Security Hub for new accounts in the organization. In case you already configured this manually please import these resources:
+
+```shell
+terraform import aws_securityhub_organization_admin_account.default <account id of the master account>
+terraform import aws_securityhub_organization_configuration.default <account id of the audit account>
+```
+
+# Upgrading to 0.11.x
+
+Version `0.11.x` adds additional IAM activity monitors, these will be created automatically if you have the cis-aws-foundations-benchmark standard enabled. To disable the creation of these monitors set the variable `security_hub_create_cis_metric_filters` to false. 
+
 # Upgrading to 0.10.x
 
 Version `0.10.x` adds the possibility of assigning the same SSO Permission Set to different groups of accounts and SSO Groups. For example, the permission set `Administrator` can be assigned to group A for account 123 and for group B for account 456.
