@@ -134,6 +134,17 @@ resource "aws_securityhub_account" "default" {
   provider = aws.audit
 }
 
+resource "aws_securityhub_organization_admin_account" "default" {
+  admin_account_id = data.aws_caller_identity.audit.account_id
+  depends_on       = [aws_securityhub_account.default]
+}
+
+resource "aws_securityhub_organization_configuration" "default" {
+  provider    = aws.audit
+  auto_enable = true
+  depends_on  = [aws_securityhub_organization_admin_account.default]
+}
+
 resource "aws_securityhub_product_subscription" "default" {
   for_each    = toset(var.aws_security_hub_product_arns)
   provider    = aws.audit
