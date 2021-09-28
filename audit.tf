@@ -22,7 +22,7 @@ module "kms_key_audit" {
 }
 
 resource "aws_cloudwatch_log_metric_filter" "iam_activity_audit" {
-  for_each = var.monitor_iam_activity ? local.iam_activity : {}
+  for_each = var.monitor_iam_activity ? merge(local.iam_activity, local.cloudtrail_activity_cis_aws_foundations) : {}
   provider = aws.audit
 
   name           = "LandingZone-IAMActivity-${each.key}"
@@ -134,6 +134,17 @@ resource "aws_securityhub_account" "default" {
   provider = aws.audit
 }
 
+resource "aws_securityhub_organization_admin_account" "default" {
+  admin_account_id = data.aws_caller_identity.audit.account_id
+  depends_on       = [aws_securityhub_account.default]
+}
+
+resource "aws_securityhub_organization_configuration" "default" {
+  provider    = aws.audit
+  auto_enable = true
+  depends_on  = [aws_securityhub_organization_admin_account.default]
+}
+
 resource "aws_securityhub_product_subscription" "default" {
   for_each    = toset(var.aws_security_hub_product_arns)
   provider    = aws.audit
@@ -173,7 +184,7 @@ resource "aws_sns_topic" "security_hub_findings" {
 resource "aws_sns_topic_policy" "security_hub_findings" {
   provider = aws.audit
   arn      = aws_sns_topic.security_hub_findings.arn
-  policy = templatefile("${path.module}/files/sns/topic_policy.json.tpl", {
+  policy = templatefile("${path.module}/files/sns/security_hub_topic_policy.json.tpl", {
     account_id               = data.aws_caller_identity.audit.account_id
     services_allowed_publish = jsonencode("events.amazonaws.com")
     sns_topic                = aws_sns_topic.security_hub_findings.arn
@@ -209,10 +220,14 @@ resource "aws_sns_topic" "iam_activity" {
 resource "aws_sns_topic_policy" "iam_activity" {
   provider = aws.audit
   arn      = aws_sns_topic.iam_activity.arn
-  policy = templatefile("${path.module}/files/sns/topic_policy.json.tpl", {
+  policy = templatefile("${path.module}/files/sns/iam_activity_topic_policy.json.tpl", {
     account_id               = data.aws_caller_identity.audit.account_id
     services_allowed_publish = jsonencode("cloudwatch.amazonaws.com")
     sns_topic                = aws_sns_topic.iam_activity.arn
+    security_hub_roles = local.security_hub_has_cis_aws_foundations_enabled ? sort([
+      for account_id, _ in local.aws_account_emails : "\"arn:aws:sts::${account_id}:assumed-role/AWSServiceRoleForSecurityHub/securityhub\""
+      if account_id != var.control_tower_account_ids.audit
+    ]) : []
   })
 }
 

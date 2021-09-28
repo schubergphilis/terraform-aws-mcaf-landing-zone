@@ -130,6 +130,12 @@ variable "security_hub_standards_arns" {
   description = "A list of the ARNs of the standards you want to enable in Security Hub"
 }
 
+variable "security_hub_create_cis_metric_filters" {
+  type        = bool
+  default     = true
+  description = "Enable the creation of metric filters related to the CIS AWS Foundation Security Hub Standard"
+}
+
 variable "aws_sso_permission_sets" {
   type = map(object({
     assignments      = list(map(list(string)))
