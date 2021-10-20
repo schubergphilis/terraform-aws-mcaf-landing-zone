@@ -38,7 +38,7 @@ resource "aws_organizations_policy_attachment" "allowed_regions" {
 }
 
 resource "aws_organizations_policy" "deny_policies" {
-  name        = "LandingZone-MergedDenyPolicies"
+  name        = "LandingZone-DenyPolicies"
   description = "Conditionally merged: DenyDisableSecurityHub, DenyLeavingOrg and DenyDeletingCloudTrailLogStream"
   content     = local.merged_policy
   tags        = var.tags
