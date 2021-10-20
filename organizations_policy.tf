@@ -1,24 +1,19 @@
 locals {
 
-  enabled_policies = {
+  enabled_policies_to_merge = {
     deny_disabling_security_hub = var.aws_deny_disabling_security_hub
     deny_leaving_org            = var.aws_deny_leaving_org
     cloudtrail_log_stream       = true // This is not configurable and will be applied all the time.
   }
 
-  iam_policies_to_merge = [for src in local.merge_policies : jsondecode(
-    file(local.enabled_policies[src] == true ? "${path.module}/files/organizations/${src}.json" : "${path.module}/files/organizations/empty_policy.json")
+  iam_policies_to_merge = [for src in local.enabled_policies_to_merge : jsondecode(
+    file(src.value == true ? "${path.module}/files/organizations/${src.key}.json" : "${path.module}/files/organizations/empty_policy.json")
   )]
 
   merged_iam_policy_statements = flatten([
     for policy in local.iam_policies_to_merge : policy.Statement
   ])
-
-  merge_policies = [
-    "deny_disabling_security_hub",
-    "deny_leaving_org",
-    "cloudtrail_log_stream"
-  ]
+  
   merged_policy = jsonencode({
     Version   = "2012-10-17"
     Statement = local.merged_iam_policy_statements
