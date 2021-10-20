@@ -1,13 +1,5 @@
 locals {
 
-  merged_policy_name = "LandingZone-MergedDenyPolicies"
-
-  merge_policies = [
-    "deny_disabling_security_hub",
-    "deny_leaving_org",
-    "cloudtrail_log_stream"
-  ]
-
   enabled_policies = {
     deny_disabling_security_hub = var.aws_deny_disabling_security_hub
     deny_leaving_org            = var.aws_deny_leaving_org
@@ -17,9 +9,16 @@ locals {
   iam_policies_to_merge = [for src in local.merge_policies : jsondecode(
     file(local.enabled_policies[src] == true ? "${path.module}/files/organizations/${src}.json" : "${path.module}/files/organizations/empty_policy.json")
   )]
+
   merged_iam_policy_statements = flatten([
     for policy in local.iam_policies_to_merge : policy.Statement
   ])
+
+  merge_policies = [
+    "deny_disabling_security_hub",
+    "deny_leaving_org",
+    "cloudtrail_log_stream"
+  ]
   merged_policy = jsonencode({
     Version   = "2012-10-17"
     Statement = local.merged_iam_policy_statements
@@ -44,8 +43,8 @@ resource "aws_organizations_policy_attachment" "allowed_regions" {
 }
 
 resource "aws_organizations_policy" "deny_policies" {
-  name        = local.merged_policy_name
-  description = "DenyDisableSecurityHub, DenyLeavingOrg, DenyRootUser and DenyDeletingCloudTrailLogStream"
+  name        = "LandingZone-MergedDenyPolicies"
+  description = "Conditionally merged: DenyDisableSecurityHub, DenyLeavingOrg and DenyDeletingCloudTrailLogStream"
   content     = local.merged_policy
   tags        = var.tags
 }
