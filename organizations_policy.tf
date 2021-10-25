@@ -1,12 +1,11 @@
 locals {
-
-  enabled_policies_to_merge = {
-    allowed_regions_scp = {
+  enabled_root_policies = {
+    allowed_regions = {
       enable = var.aws_region_restrictions != null ? true : false
-      policy = templatefile("${path.module}/files/organizations/allowed_regions_scp.json.tpl", {
-        allowed    = var.aws_region_restrictions.allowed
+      policy = var.aws_region_restrictions != null ? templatefile("${path.module}/files/organizations/allowed_regions.json.tpl", {
+        allowed    = var.aws_region_restrictions
         exceptions = var.aws_region_restrictions.exceptions
-      })
+      }) : null
     }
     cloudtrail_log_stream = {
       enable = true // This is not configurable and will be applied all the time.
@@ -27,23 +26,22 @@ locals {
     }
   }
 
-  iam_policies_to_merge = [for key, value in local.enabled_policies_to_merge : jsondecode(
+  root_policies_to_merge = [for key, value in local.enabled_root_policies : jsondecode(
     value.enable == true ? value.policy : "{\"Statement\": []}"
   )]
 
-  merged_iam_policy_statements = flatten([
-    for policy in local.iam_policies_to_merge : policy.Statement
+  root_policies_merged = flatten([
+    for policy in local.root_policies_to_merge : policy.Statement
   ])
-
 }
 
 resource "aws_organizations_policy" "lz_root_policies" {
   name = "LandingZone-RootPolicies"
   content = jsonencode({
     Version   = "2012-10-17"
-    Statement = local.merged_iam_policy_statements
+    Statement = local.root_policies_merged
   })
-  description = "LandingZone RootPolicies: DenyAllOutsideAllowedList, DenyDeletingCloudTrailLogStream, DenyDisablingSecurityHub, RequireAllEc2RolesToUseV2 and DenyLeavingOrg."
+  description = "LandingZone enabled Root OU policies"
   tags        = var.tags
 }
 

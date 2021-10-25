@@ -2,7 +2,7 @@
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "DenyAllOutsideAllowedList",
+            "Sid": "DenyAllRegionsOutsideAllowedList",
             "Effect": "Deny",
             "NotAction": [
                 "a4b:*",
