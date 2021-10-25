@@ -35,16 +35,15 @@ locals {
     for policy in local.iam_policies_to_merge : policy.Statement
   ])
 
-  merged_policy = jsonencode({
-    Version   = "2012-10-17"
-    Statement = local.merged_iam_policy_statements
-  })
 }
 
 resource "aws_organizations_policy" "lz_root_policies" {
   name        = "LandingZone-RootPolicies"
-  description = "LandingZone RootPolicies."
-  content     = local.merged_policy
+  content     = jsonencode({
+    Version   = "2012-10-17"
+    Statement = local.merged_iam_policy_statements
+  })
+  description = "LandingZone RootPolicies: DenyAllOutsideAllowedList, DenyDeletingCloudTrailLogStream, DenyDisablingSecurityHub, RequireAllEc2RolesToUseV2 and DenyLeavingOrg."
   tags        = var.tags
 }
 
