@@ -38,8 +38,8 @@ locals {
 }
 
 resource "aws_organizations_policy" "lz_root_policies" {
-  name        = "LandingZone-RootPolicies"
-  content     = jsonencode({
+  name = "LandingZone-RootPolicies"
+  content = jsonencode({
     Version   = "2012-10-17"
     Statement = local.merged_iam_policy_statements
   })
