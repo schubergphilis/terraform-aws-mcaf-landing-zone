@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.13.0 (2021-10-27)
+- Conditionally merges DenyAllOutsideAllowedList, DenyDeletingCloudTrailLogStream, DenyDisablingSecurityHub, RequireAllEc2RolesToUseV2 and DenyLeavingOrg into one LandinZone-RootPolicies to avoid exceeding SCP limit (5 policies per org)
+
 ## 0.12.0 (2021-09-22)
 
 - Set the audit account as security hub administrator account for the organization and automatically enable Security Hub for new accounts in the organization ([#121](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/121))
