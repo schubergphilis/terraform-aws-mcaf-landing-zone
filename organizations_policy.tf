@@ -1,43 +1,56 @@
-resource "aws_organizations_policy" "allowed_regions" {
-  count = var.aws_region_restrictions != null ? 1 : 0
-  name  = "LandingZone-AllowedRegions"
-  tags  = var.tags
+locals {
+  enabled_root_policies = {
+    allowed_regions = {
+      enable = var.aws_region_restrictions != null ? true : false
+      policy = var.aws_region_restrictions != null ? templatefile("${path.module}/files/organizations/allowed_regions.json.tpl", {
+        allowed    = var.aws_region_restrictions
+        exceptions = var.aws_region_restrictions.exceptions
+      }) : null
+    }
+    cloudtrail_log_stream = {
+      enable = true // This is not configurable and will be applied all the time.
+      policy = file("${path.module}/files/organizations/cloudtrail_log_stream.json")
+    }
+    deny_disabling_security_hub = {
+      enable = var.aws_deny_disabling_security_hub
+      policy = file("${path.module}/files/organizations/deny_disabling_security_hub.json")
+    }
+    deny_leaving_org = {
+      enable = var.aws_deny_leaving_org
+      policy = file("${path.module}/files/organizations/deny_leaving_org.json")
+    }
+    // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ExamplePolicies_EC2.html#iam-example-instance-metadata-requireIMDSv2
+    require_use_of_imdsv2 = {
+      enable = var.aws_require_imdsv2
+      policy = file("${path.module}/files/organizations/require_use_of_imdsv2.json")
+    }
+  }
 
-  content = templatefile("${path.module}/files/organizations/allowed_regions_scp.json.tpl", {
-    allowed    = var.aws_region_restrictions.allowed
-    exceptions = var.aws_region_restrictions.exceptions
+  root_policies_to_merge = [for key, value in local.enabled_root_policies : jsondecode(
+    value.enable == true ? value.policy : "{\"Statement\": []}"
+  )]
+
+  root_policies_merged = flatten([
+    for policy in local.root_policies_to_merge : policy.Statement
+  ])
+}
+
+resource "aws_organizations_policy" "lz_root_policies" {
+  name = "LandingZone-RootPolicies"
+  content = jsonencode({
+    Version   = "2012-10-17"
+    Statement = local.root_policies_merged
   })
+  description = "LandingZone enabled Root OU policies"
+  tags        = var.tags
 }
 
-resource "aws_organizations_policy_attachment" "allowed_regions" {
-  count     = var.aws_region_restrictions != null ? 1 : 0
-  policy_id = aws_organizations_policy.allowed_regions.0.id
+resource "aws_organizations_policy_attachment" "lz_root_policies" {
+  policy_id = aws_organizations_policy.lz_root_policies.id
   target_id = data.aws_organizations_organization.default.roots.0.id
 }
 
-resource "aws_organizations_policy" "deny_disabling_security_hub" {
-  count   = var.aws_deny_disabling_security_hub == true ? 1 : 0
-  name    = "LandingZone-DenyDisablingSecurityHub"
-  content = file("${path.module}/files/organizations/deny_disabling_security_hub.json")
-}
-
-resource "aws_organizations_policy_attachment" "deny_disabling_security_hub" {
-  count     = var.aws_deny_disabling_security_hub == true ? 1 : 0
-  policy_id = aws_organizations_policy.deny_disabling_security_hub.0.id
-  target_id = data.aws_organizations_organization.default.roots.0.id
-}
-
-resource "aws_organizations_policy" "deny_cloudtrail_log_stream" {
-  name    = "LandingZone-DenyDeletingCloudTrailLogStream"
-  content = file("${path.module}/files/organizations/cloudtrail_log_stream.json")
-  tags    = var.tags
-}
-
-resource "aws_organizations_policy_attachment" "deny_cloudtrail_log_stream" {
-  policy_id = aws_organizations_policy.deny_cloudtrail_log_stream.id
-  target_id = data.aws_organizations_organization.default.roots.0.id
-}
-
+// https://summitroute.com/blog/2020/03/25/aws_scp_best_practices/#deny-ability-to-leave-organization
 resource "aws_organizations_policy" "deny_root_user" {
   count   = length(var.aws_deny_root_user_ous) > 0 ? 1 : 0
   name    = "LandingZone-DenyRootUser"
@@ -52,34 +65,6 @@ resource "aws_organizations_policy_attachment" "deny_root_user" {
 
   policy_id = aws_organizations_policy.deny_root_user.0.id
   target_id = each.value.id
-}
-
-// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ExamplePolicies_EC2.html#iam-example-instance-metadata-requireIMDSv2
-resource "aws_organizations_policy" "require_use_of_imdsv2" {
-  count   = var.aws_require_imdsv2 == true ? 1 : 0
-  name    = "LandingZone-RequireUseOfIMDSv2"
-  content = file("${path.module}/files/organizations/require_use_of_imdsv2.json")
-  tags    = var.tags
-}
-
-resource "aws_organizations_policy_attachment" "require_use_of_imdsv2" {
-  count     = var.aws_require_imdsv2 == true ? 1 : 0
-  policy_id = aws_organizations_policy.require_use_of_imdsv2.0.id
-  target_id = data.aws_organizations_organization.default.roots.0.id
-}
-
-// https://summitroute.com/blog/2020/03/25/aws_scp_best_practices/#deny-ability-to-leave-organization
-resource "aws_organizations_policy" "deny_leaving_org" {
-  count   = var.aws_deny_leaving_org == true ? 1 : 0
-  name    = "LandingZone-DenyLeavingOrg"
-  content = file("${path.module}/files/organizations/deny_leaving_org.json")
-  tags    = var.tags
-}
-
-resource "aws_organizations_policy_attachment" "deny_leaving_org" {
-  count     = var.aws_deny_leaving_org == true ? 1 : 0
-  policy_id = aws_organizations_policy.deny_leaving_org.0.id
-  target_id = data.aws_organizations_organization.default.roots.0.id
 }
 
 // https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_supported-resources-enforcement.html
