@@ -3,7 +3,7 @@ locals {
     allowed_regions = {
       enable = var.aws_region_restrictions != null ? true : false
       policy = var.aws_region_restrictions != null ? templatefile("${path.module}/files/organizations/allowed_regions.json.tpl", {
-        allowed    = var.aws_region_restrictions
+        allowed    = var.aws_region_restrictions.allowed
         exceptions = var.aws_region_restrictions.exceptions
       }) : null
     }
