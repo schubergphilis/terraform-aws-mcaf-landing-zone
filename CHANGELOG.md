@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.12.2 (2021-11-10)
+
+BUG FIXES
+
+- Fixed malfunction policy issue. Allowed regions policy template wasn't using the appropariate allowed_region property ([#123](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/123))
+
 ## 0.12.1 (2021-10-27)
 - Conditionally merges DenyAllRegionsOutsideAllowedList, DenyDeletingCloudTrailLogStream, DenyDisablingSecurityHub, RequireAllEc2RolesToUseV2, RequireImdsV2, MaxImdsHopLimit, and DenyLeavingOrg policies into one `LandinZone-RootPolicies` policy to avoid exceeding SCP limit (5 policies per org) [Quotas for AWS Organizations](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_reference_limits.html)
 ([#120](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/120))
