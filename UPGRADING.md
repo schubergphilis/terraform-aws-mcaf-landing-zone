@@ -1,3 +1,7 @@
+# Upgrading to 0.13.x
+
+Version `0.13.x` adds support for managed policies. This required changing the variable `aws_sso_permission_sets` where each permission set now requires an additional field called `managed_policy_arns` which must be a list of strings or can be an empty list.
+
 # Upgrading to 0.12.x
 
 Version `0.12.x` automatically sets the audit account as security hub administrator account for the organization and automatically enables Security Hub for new accounts in the organization. In case you already configured this manually please import these resources:
@@ -9,7 +13,7 @@ terraform import aws_securityhub_organization_configuration.default <account id 
 
 # Upgrading to 0.11.x
 
-Version `0.11.x` adds additional IAM activity monitors, these will be created automatically if you have the cis-aws-foundations-benchmark standard enabled. To disable the creation of these monitors set the variable `security_hub_create_cis_metric_filters` to false. 
+Version `0.11.x` adds additional IAM activity monitors, these will be created automatically if you have the cis-aws-foundations-benchmark standard enabled. To disable the creation of these monitors set the variable `security_hub_create_cis_metric_filters` to false.
 
 # Upgrading to 0.10.x
 

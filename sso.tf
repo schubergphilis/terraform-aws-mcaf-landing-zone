@@ -18,7 +18,7 @@ resource "aws_ssoadmin_account_assignment" "default" {
 }
 
 resource "aws_ssoadmin_permission_set_inline_policy" "default" {
-  for_each           = { for permission_set_name, permission_set in var.aws_sso_permission_sets: permission_set_name => permission_set if permission_set.inline_policy != "" }
+  for_each           = { for permission_set_name, permission_set in var.aws_sso_permission_sets : permission_set_name => permission_set if permission_set.inline_policy != "" }
   inline_policy      = each.value.inline_policy
   instance_arn       = aws_ssoadmin_permission_set.default[each.key].instance_arn
   permission_set_arn = aws_ssoadmin_permission_set.default[each.key].arn
