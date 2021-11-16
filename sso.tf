@@ -23,3 +23,10 @@ resource "aws_ssoadmin_permission_set_inline_policy" "default" {
   instance_arn       = aws_ssoadmin_permission_set.default[each.key].instance_arn
   permission_set_arn = aws_ssoadmin_permission_set.default[each.key].arn
 }
+
+resource "aws_ssoadmin_managed_policy_attachment" "default" {
+  for_each           = { for assignment in local.aws_sso_managed_policy_arn_assignment : "${assignment.permission_set_name}-${assignment.managed_policy_arn}" => assignment }
+  instance_arn       = aws_ssoadmin_permission_set.default[each.value.permission_set_name].instance_arn
+  managed_policy_arn = each.value.managed_policy_arn
+  permission_set_arn = aws_ssoadmin_permission_set.default[each.value.permission_set_name].arn
+}

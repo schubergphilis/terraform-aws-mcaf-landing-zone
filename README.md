@@ -1,9 +1,9 @@
 # terraform-aws-mcaf-landing-zone
 Terraform module to setup and manage various components of the SBP AWS Landing Zone.
 
-Overview of Landing Zone tools & services: 
+Overview of Landing Zone tools & services:
 
-<img src="images/MCAF_landing_zone_tools_and_services_v040.png" width="600"> 
+<img src="images/MCAF_landing_zone_tools_and_services_v040.png" width="600">
 
 The SBP AWS Landing Zone consists of 3 repositories:
 - [MCAF Landing Zone module (current repository)](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone): the foundation of the Landing Zone and manages the 3 core accounts: audit, logging, master
@@ -44,7 +44,7 @@ additional_auditing_trail = {
 
 This module provisions by default a set of basic AWS Config Rules. In order to add extra rules, a list of [rule identifiers](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html) can be passed via the variable `aws_config` using the attribute `rule_identifiers`.
 
-If you would like to authorize other accounts to aggregate AWS Config data, the account IDs and regions can also be passed via the variable `aws_config` using the attributes `aggregator_account_ids` and `aggregator_regions` respectively. 
+If you would like to authorize other accounts to aggregate AWS Config data, the account IDs and regions can also be passed via the variable `aws_config` using the attributes `aggregator_account_ids` and `aggregator_regions` respectively.
 
 NOTE: This module already authorizes the `audit` account to aggregate Config data from all other accounts in the organization, so there is no need to specify the `audit` account ID in the `aggregator_account_ids` list.
 
@@ -74,6 +74,7 @@ This feature can be controlled via the `aws_sso_permission_sets` variable by pas
 
 - `assignments`: list of maps (key-value pair) of AWS Account IDs as keys and a list of AWS SSO Group names that should have access to the account using the permission set defined
 - `inline_policy`: valid IAM policy in JSON format (maximum length of 10240 characters)
+- `managed_policy_arns`: list of strings that contain the ARN's of the managed policies that should be attached to the permission set
 - `session_duration`: length of time in the ISO-8601 standard
 
 Example:
@@ -81,8 +82,12 @@ Example:
 ```hcl
   aws_sso_permission_sets = {
     PlatformAdmin = {
-      inline_policy = file("${path.module}/template_files/sso/platform_admin.json")
+      inline_policy    = file("${path.module}/template_files/sso/platform_admin.json")
       session_duration = "PT2H"
+
+      managed_policy_arns = [
+        "arn:aws:iam::aws:policy/ReadOnlyAccess"
+      ]
 
       assignments = [
         {
@@ -99,6 +104,11 @@ Example:
     }
     PlatformUser = {
       session_duration = "PT12H"
+
+      managed_policy_arns = [
+        "arn:aws:iam::aws:policy/ReadOnlyAccess",
+        "arn:aws:iam::aws:policy/AWSSupportAccess"
+      ]
 
       assignments = [
         {
@@ -225,7 +235,7 @@ module "landing_zone" {
 
 Tag policies are a type of policy that can help you standardize tags across resources in your organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged. See [this page](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_tag-policies.html) for an introduction to tag policies and the value they add.
 
-If you would like to enforce certain tags in an OU, you can pass a map of OU names containing the tags to the `aws_required_tags` variable. Be sure to pass the exact OU name as the matching is case sensitive. If the OU provided does not match any existing OU the tag policy is not created. 
+If you would like to enforce certain tags in an OU, you can pass a map of OU names containing the tags to the `aws_required_tags` variable. Be sure to pass the exact OU name as the matching is case sensitive. If the OU provided does not match any existing OU the tag policy is not created.
 
 Example:
 
@@ -263,7 +273,7 @@ Example for https protocol and specified webhook endpoint:
 ```hcl
 module "landing_zone" {
   ...
-  
+
   aws_config_sns_subscription = {
     endpoint = "https://app.datadoghq.com/intake/webhook/sns?api_key=qwerty0123456789"
     protocol = "https"

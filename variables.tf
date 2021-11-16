@@ -138,9 +138,10 @@ variable "security_hub_create_cis_metric_filters" {
 
 variable "aws_sso_permission_sets" {
   type = map(object({
-    assignments      = list(map(list(string)))
-    inline_policy    = string
-    session_duration = string
+    assignments         = list(map(list(string)))
+    inline_policy       = string
+    managed_policy_arns = list(string)
+    session_duration    = string
   }))
   default     = {}
   description = "Map of AWS SSO Permission Sets with the AWS Accounts and the names of the AWS SSO Groups that should be granted access to each account"
