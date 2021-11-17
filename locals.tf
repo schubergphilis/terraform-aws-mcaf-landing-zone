@@ -30,6 +30,14 @@ locals {
       ]
     ]
   ])
+  aws_sso_managed_policy_arn_assignment = flatten([
+    for permission_set_name, permission_set in var.aws_sso_permission_sets : [
+      for managed_policy_arn in permission_set.managed_policy_arns : {
+        permission_set_name = permission_set_name
+        managed_policy_arn  = managed_policy_arn
+      }
+    ]
+  ])
   iam_activity = {
     SSO = "{$.readOnly IS FALSE && $.userIdentity.sessionContext.sessionIssuer.userName = \"AWSReservedSSO_*\" && $.eventName != \"ConsoleLogin\"}"
   }

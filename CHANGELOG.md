@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.13.0 (2021-11-17)
+
+- Add support for assigning managed policies in SSO permission sets ([#124](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/124))
+
 ## 0.12.2 (2021-11-10)
 
 BUG FIXES
