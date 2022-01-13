@@ -136,3 +136,10 @@ resource "aws_iam_account_password_policy" "master" {
 resource "aws_ebs_encryption_by_default" "master" {
   enabled = var.aws_ebs_encryption_by_default
 }
+
+resource "aws_s3_account_public_access_block" "default" {
+  block_public_acls       = var.s3_account_level_public_access_block.block_public_acls
+  block_public_policy     = var.s3_account_level_public_access_block.block_public_policy
+  ignore_public_acls      = var.s3_account_level_public_access_block.ignore_public_acls
+  restrict_public_buckets = var.s3_account_level_public_access_block.restrict_public_buckets
+}

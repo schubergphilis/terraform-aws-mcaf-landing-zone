@@ -187,6 +187,22 @@ variable "monitor_iam_activity_sns_subscription" {
   description = "Subscription options for the LandingZone-IAMActivity SNS topic"
 }
 
+variable "s3_account_level_public_access_block" {
+  type = object({
+    block_public_acls       = bool
+    block_public_policy     = bool
+    ignore_public_acls      = bool
+    restrict_public_buckets = bool
+  })
+  default = {
+    block_public_acls       = true
+    block_public_policy     = true
+    ignore_public_acls      = true
+    restrict_public_buckets = true
+  }
+  description = "Account level S3 public access block settings"
+}
+
 variable "tags" {
   type        = map(string)
   description = "Map of tags"
