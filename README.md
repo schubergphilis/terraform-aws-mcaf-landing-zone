@@ -323,7 +323,6 @@ module "landing_zone" {
 | kms\_key\_policy | A valid KMS key policy JSON document | `string` | `""` | no |
 | monitor\_iam\_activity | Whether IAM activity should be monitored | `bool` | `true` | no |
 | monitor\_iam\_activity\_sns\_subscription | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
-| s3\_account\_level\_public\_access\_block | Account level S3 public access block settings | <pre>object({<br>    block_public_acls       = bool<br>    block_public_policy     = bool<br>    ignore_public_acls      = bool<br>    restrict_public_buckets = bool<br>  })</pre> | <pre>{<br>  "block_public_acls": true,<br>  "block_public_policy": true,<br>  "ignore_public_acls": true,<br>  "restrict_public_buckets": true<br>}</pre> | no |
 | security\_hub\_create\_cis\_metric\_filters | Enable the creation of metric filters related to the CIS AWS Foundation Security Hub Standard | `bool` | `true` | no |
 | security\_hub\_standards\_arns | A list of the ARNs of the standards you want to enable in Security Hub | `list(string)` | `null` | no |
 
