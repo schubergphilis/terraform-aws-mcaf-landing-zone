@@ -4,9 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 0.14.0 (2022-01-13)
+## 0.14.0 (2022-01-14)
 
-- Add an account level S3 public access policy to by default block public access to all S3 buckets within the landing zone accounts. ([#125](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/125))
+- Add an account level S3 public access policy to block public access to all S3 buckets within the landing zone core accounts. ([#125](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/125))
 
 ## 0.13.0 (2021-11-17)
 

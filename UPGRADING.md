@@ -1,6 +1,6 @@
 # Upgrading to 0.14.x
 
-Version `0.14.x` adds an account level S3 public access policy, by default blocking public access to all buckets in landing zone accounts. If you require public access to any bucket within a landing zone (unlikely), make sure to override the variable with the correct settings.
+Version `0.14.x` introduces an account level S3 public access policy that blocks public access to all S3 buckets in the landing zone core accounts. Please make sure you have no S3 buckets that require public access in any of the landing zone core accounts before upgrading.
 
 # Upgrading to 0.13.x
 

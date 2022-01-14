@@ -74,10 +74,10 @@ resource "aws_ebs_encryption_by_default" "audit" {
 
 resource "aws_s3_account_public_access_block" "audit" {
   provider                = aws.audit
-  block_public_acls       = var.s3_account_level_public_access_block.block_public_acls
-  block_public_policy     = var.s3_account_level_public_access_block.block_public_policy
-  ignore_public_acls      = var.s3_account_level_public_access_block.ignore_public_acls
-  restrict_public_buckets = var.s3_account_level_public_access_block.restrict_public_buckets
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 // AWS Config
