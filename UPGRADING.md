@@ -1,3 +1,7 @@
+# Upgrading to 0.14.x
+
+Version `0.14.x` introduces an account level S3 public access policy that blocks public access to all S3 buckets in the landing zone core accounts. Please make sure you have no S3 buckets that require public access in any of the landing zone core accounts before upgrading.
+
 # Upgrading to 0.13.x
 
 Version `0.13.x` adds support for managed policies. This required changing the variable `aws_sso_permission_sets` where each permission set now requires an additional field called `managed_policy_arns` which must be a list of strings or can be an empty list.
