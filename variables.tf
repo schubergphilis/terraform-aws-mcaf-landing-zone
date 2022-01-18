@@ -166,6 +166,12 @@ variable "datadog" {
   description = "Datadog integration options for the core accounts"
 }
 
+variable "datadog_excluded_regions" {
+  type        = list(string)
+  description = "List of regions where metrics collection will be disabled."
+  default     = []
+}
+
 variable "kms_key_policy" {
   type        = string
   default     = ""
