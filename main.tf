@@ -105,8 +105,9 @@ resource "aws_iam_role_policy_attachment" "config_recorder_config_role" {
 
 module "datadog_master" {
   count                 = try(var.datadog.enable_integration, false) == true ? 1 : 0
-  source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.7"
+  source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.8"
   api_key               = try(var.datadog.api_key, null)
+  excluded_regions      = var.datadog_excluded_regions
   install_log_forwarder = try(var.datadog.install_log_forwarder, false)
   site_url              = try(var.datadog.site_url, null)
   tags                  = var.tags

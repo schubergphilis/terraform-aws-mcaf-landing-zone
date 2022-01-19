@@ -211,9 +211,10 @@ resource "aws_sns_topic_subscription" "security_hub_findings" {
 // Monitoring
 module "datadog_audit" {
   count                 = try(var.datadog.enable_integration, false) == true ? 1 : 0
-  source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.7"
+  source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.8"
   providers             = { aws = aws.audit }
   api_key               = try(var.datadog.api_key, null)
+  excluded_regions      = var.datadog_excluded_regions
   install_log_forwarder = try(var.datadog.install_log_forwarder, false)
   tags                  = var.tags
 }
