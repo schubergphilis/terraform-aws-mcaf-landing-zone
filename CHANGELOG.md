@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.14.1 (2022-02-16)
+- Add support for providing secure mailboxes/IT service catalog aliases for all root accounts using Amazon SES/Lambda. Adding the `ses_root_accounts_mail_alias` variable creates the necessary resources to accept mail sent to a verified email address and forward it to an external recipient or recipients
+
+
 ## 0.14.0 (2022-01-14)
 
 - Add an account level S3 public access policy to block public access to all S3 buckets within the landing zone core accounts. ([#125](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/125))

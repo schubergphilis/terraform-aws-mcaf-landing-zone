@@ -25,6 +25,26 @@ module "landing_zone" {
 
 # Detailed configuration
 
+## AWS SES Accounts mail alias
+By setting the `ses_root_accounts_mail_alias` variable you can enable secure mailboxes/IT service catalog aliases for all root accounts and forward it to an external recipient or recipients. Emails are received via AWS Simple Email Service (SES) and forwarded to an email forwarder lambda which sends the email to the destination email server as specified in the `recipient_mapping` variable of `ses_root_accounts_mail_alias`.
+
+Before setting the `ses_root_accounts_mail_alias` variable, make sure that an AWS Route53 hosted zone is created. For example aws.yourcompany.com. Pass this domain using the `domain` variable of `ses_root_accounts_mail_alias`.
+
+Example:
+
+```hcl
+ses_root_accounts_mail_alias = {
+  domain   = "aws.yourcompany.com"
+  from_email = "int@aws.yourcompany.com"
+  recipient_mapping = {
+    "int@aws.yourcompany.com" = [
+      "inbox@yourcompany.com"
+    ]
+  }
+}
+```
+By default, you have to create the email addresses for the accounts created using the [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm) yourself. Using this functionality you can pass aliases of the mailbox created. E.g. int+\<account-name\>@aws.yourcompany.com. 
+
 ## AWS CloudTrail
 
 By default, all CloudTrail logs will be stored in a S3 bucket in the `logging` account of your AWS Organization. However, this module also supports creating an additional CloudTrail configuration to publish logs to any S3 bucket chosen by you. This trail will be set at the Organization level, meaning that logs from all accounts will be published to the provided bucket.
