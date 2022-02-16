@@ -4,11 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.15.0 (2022-02-21)
+
+ENHANCEMENTS
+
+- Add an optional mail forwarder using Amazon SES: adding the `ses_root_accounts_mail_forward` variable creates the necessary SES resources to accept mail sent to an AWS hosted domain and forward it to an external recipient or recipients. ([#128](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/128))
+
 ## 0.14.0 (2022-01-14)
+
+ENHANCEMENTS
 
 - Add an account level S3 public access policy to block public access to all S3 buckets within the landing zone core accounts. ([#125](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/125))
 
 ## 0.13.0 (2021-11-17)
+
+ENHANCEMENTS
 
 - Add support for assigning managed policies in SSO permission sets ([#124](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/124))
 
@@ -19,26 +29,39 @@ BUG FIXES
 - Fixed malfunction policy issue. Allowed regions policy template wasn't using the appropariate allowed_region property ([#123](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/123))
 
 ## 0.12.1 (2021-10-27)
+
+BUG FIXES
+
 - Conditionally merges DenyAllRegionsOutsideAllowedList, DenyDeletingCloudTrailLogStream, DenyDisablingSecurityHub, RequireAllEc2RolesToUseV2, RequireImdsV2, MaxImdsHopLimit, and DenyLeavingOrg policies into one `LandinZone-RootPolicies` policy to avoid exceeding SCP limit (5 policies per org) [Quotas for AWS Organizations](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_reference_limits.html)
 ([#120](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/120))
 
 ## 0.12.0 (2021-09-22)
 
+ENHANCEMENTS
+
 - Set the audit account as security hub administrator account for the organization and automatically enable Security Hub for new accounts in the organization ([#121](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/121))
 
 ## 0.11.0 (2021-09-22)
+
+ENHANCEMENTS
 
 - Add additional IAM activity monitors ([#119](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/119))
 
 ## 0.10.6 (2021-09-13)
 
+ENHANCEMENTS
+
 - Upgrade Datadog MCAF module used in core accounts to latest version ([#118](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/118))
 
 ## 0.10.5 (2021-09-07)
 
+ENHANCEMENTS
+
 - Update IAM Activity Monitor for root usage to match CIS AWS rule 1.1 ([#117](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/117))
 
 ## 0.10.4 (2021-08-23)
+
+ENHANCEMENTS
 
 - Add a `DenyDisablingSecurityHub` SCP that is attached to all AWS Organisation OUs ([#110](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/110))
 

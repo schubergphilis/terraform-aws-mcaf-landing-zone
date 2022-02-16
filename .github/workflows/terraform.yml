@@ -22,11 +22,8 @@ jobs:
 
   terraform-validate:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: [ ., ./modules/avm, ./modules/security_hub ]
     steps:
-      - name: Check out code for ${{ matrix.module }}
+      - name: Check out code
         uses: actions/checkout@master
       - name: Terraform Init
         uses: hashicorp/terraform-github-actions@master
@@ -34,19 +31,14 @@ jobs:
           tf_actions_version: latest
           tf_actions_subcommand: init
           tf_actions_comment: true
-          tf_actions_working_dir: ${{ matrix.module }}
-      - name: Terraform Validate for ${{ matrix.module }}
+      - name: Terraform Validate
         uses: hashicorp/terraform-github-actions@master
         env:
           AWS_DEFAULT_REGION: eu-west-1
-          GITLAB_TOKEN: 1
-          O365_GROUP_ID: 13474e33-5fb3-4567-b1ef-d11585d29c0d  # This is a random UUID
         with:
           tf_actions_version: latest
           tf_actions_subcommand: validate
           tf_actions_comment: true
-          tf_actions_working_dir: ${{ matrix.module }}
-
 
   terraform-docs:
     runs-on: ubuntu-latest
@@ -59,19 +51,21 @@ jobs:
       - name: Update module usage docs and push any changes back to PR branch
         uses: Dirrk/terraform-docs@v1.0.8
         with:
-          tf_docs_args: '--sort-inputs-by-required'
-          tf_docs_git_commit_message: 'terraform-docs: Update module usage'
-          tf_docs_git_push: 'true'
+          tf_docs_args: "--sort-inputs-by-required"
+          tf_docs_git_commit_message: "terraform-docs: Update module usage"
+          tf_docs_git_push: "true"
           tf_docs_output_file: README.md
           tf_docs_output_method: inject
           tf_docs_find_dir: .
         continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
 
   tfsec:
-    name: tfsec
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@master
-      - name: Terraform security scan
-        uses: triat/terraform-security-scan@v3.0.0
+      - name: Terraform pr commenter
+        uses: aquasecurity/tfsec-pr-commenter-action@v1.0.2
+        with:
+          tfsec_args: --concise-output
+          github_token: ${{ github.token }}

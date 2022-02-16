@@ -193,6 +193,16 @@ variable "monitor_iam_activity_sns_subscription" {
   description = "Subscription options for the LandingZone-IAMActivity SNS topic"
 }
 
+variable "ses_root_accounts_mail_forward" {
+  type = object({
+    domain            = string
+    from_email        = string
+    recipient_mapping = map(any)
+  })
+  default     = null
+  description = "SES config to receive and forward root account emails"
+}
+
 variable "tags" {
   type        = map(string)
   description = "Map of tags"
