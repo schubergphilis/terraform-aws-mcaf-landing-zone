@@ -309,16 +309,16 @@ module "landing_zone" {
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.13 |
-| aws | >= 3.50.0 |
+| terraform | >= 1.0 |
+| aws | >= 3.50.0, < 4.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.50.0 |
-| aws.audit | >= 3.50.0 |
-| aws.logging | >= 3.50.0 |
+| aws | >= 3.50.0, < 4.0.0 |
+| aws.audit | >= 3.50.0, < 4.0.0 |
+| aws.logging | >= 3.50.0, < 4.0.0 |
 
 ## Inputs
 
@@ -349,6 +349,7 @@ module "landing_zone" {
 | monitor\_iam\_activity\_sns\_subscription | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | security\_hub\_create\_cis\_metric\_filters | Enable the creation of metric filters related to the CIS AWS Foundation Security Hub Standard | `bool` | `true` | no |
 | security\_hub\_standards\_arns | A list of the ARNs of the standards you want to enable in Security Hub | `list(string)` | `null` | no |
+| ses\_root\_accounts\_mail\_forward | SES config to receive and forward root account emails | <pre>object({<br>    domain            = string<br>    from_email        = string<br>    recipient_mapping = map(any)<br>  })</pre> | `null` | no |
 
 ## Outputs
 
