@@ -1,3 +1,7 @@
+# Upgrading to 0.15.x
+
+Version `0.15` adds an optional mail forwarder using Amazon SES. Adding the `ses_root_accounts_mail_forward` variable creates the necessary resources to accept mail sent to a verified email address and forward it to an external recipient or recipients. Due to the usage of `configuration_aliases` in the provider configurations of some submodules, this module now requires to use Terraform version 1.0.0 or higher. 
+
 # Upgrading to 0.14.x
 
 Version `0.14.x` introduces an account level S3 public access policy that blocks public access to all S3 buckets in the landing zone core accounts. Please make sure you have no S3 buckets that require public access in any of the landing zone core accounts before upgrading.

@@ -1,4 +1,5 @@
 # terraform-aws-mcaf-landing-zone
+
 Terraform module to setup and manage various components of the SBP AWS Landing Zone.
 
 Overview of Landing Zone tools & services:
@@ -6,11 +7,13 @@ Overview of Landing Zone tools & services:
 <img src="images/MCAF_landing_zone_tools_and_services_v040.png" width="600">
 
 The SBP AWS Landing Zone consists of 3 repositories:
+
 - [MCAF Landing Zone module (current repository)](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone): the foundation of the Landing Zone and manages the 3 core accounts: audit, logging, master
 - [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm): providing an AWS AVM. This module sets up an AWS account with one or more Terraform Cloud/Enterprise (TFE) workspace(s) backed by a VCS project
 - [MCAF Account Baseline module](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline): optional module providing baseline configuration for AWS accounts
 
-# Basic configuration
+## Basic configuration
+
 ```hcl
 module "landing_zone" {
   source             = "github.com/schubergphilis/terraform-aws-mcaf-landing-zone?ref=VERSION"
@@ -23,9 +26,32 @@ module "landing_zone" {
 }
 ```
 
-# Detailed configuration
+## Detailed configuration
 
-## AWS CloudTrail
+### AWS SES Root Accounts mail forwarder
+
+Setting the `ses_root_accounts_mail_forward` variable creates the necessary AWS Simple Email Service (SES) resources to accept mail sent to an AWS hosted domain and forward it to an external recipient or recipients. This can be used to enable secure mailboxes/IT service catalog aliases for all root accounts. Emails are received via AWS SES and forwarded to an email forwarder lambda which sends the email to the destination email server as specified in the `recipient_mapping` variable of `ses_root_accounts_mail_forward`.
+
+Before setting the `ses_root_accounts_mail_forward` variable, make sure that an AWS Route53 hosted zone is created. For example aws.yourcompany.com. Pass this domain using the `domain` variable of `ses_root_accounts_mail_forward`.
+
+Example:
+
+```hcl
+ses_root_accounts_mail_forward = {
+  domain     = "aws.yourcompany.com"
+  from_email = "root@aws.yourcompany.com"
+
+  recipient_mapping = {
+    "root@aws.yourcompany.com" = [
+      "inbox@yourcompany.com"
+    ]
+  }
+}
+```
+
+By default, you have to create the email addresses for the accounts created using the [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm) yourself. Using this functionality you can pass aliases of the mailbox created. E.g. root+\<account-name\>@aws.yourcompany.com.
+
+### AWS CloudTrail
 
 By default, all CloudTrail logs will be stored in a S3 bucket in the `logging` account of your AWS Organization. However, this module also supports creating an additional CloudTrail configuration to publish logs to any S3 bucket chosen by you. This trail will be set at the Organization level, meaning that logs from all accounts will be published to the provided bucket.
 
@@ -40,7 +66,7 @@ additional_auditing_trail = {
 }
 ```
 
-## AWS Config Rules
+### AWS Config Rules
 
 This module provisions by default a set of basic AWS Config Rules. In order to add extra rules, a list of [rule identifiers](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html) can be passed via the variable `aws_config` using the attribute `rule_identifiers`.
 
@@ -58,7 +84,7 @@ aws_config = {
 }
 ```
 
-## AWS GuardDuty
+### AWS GuardDuty
 
 This module supports enabling GuardDuty at the organization level which means that all new accounts that are created in, or added to, the organization are added as a member accounts of the `audit` account GuardDuty detector.
 
@@ -66,7 +92,7 @@ This feature can be controlled via the `aws_guardduty` variable and is enabled b
 
 Note: In case you are migrating an existing AWS organization to this module, all existing accounts except for the `master` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
 
-## AWS SSO
+### AWS SSO
 
 This module supports managing AWS SSO resources to control user access to all accounts belonging to the AWS Organization.
 
@@ -138,7 +164,7 @@ Example:
   }
 ```
 
-## Datadog Integration
+### Datadog Integration
 
 This module supports an optional Datadog-AWS integration. This integration makes it easier for you to forward metrics and logs from your AWS account to Datadog.
 
@@ -158,7 +184,7 @@ provider "datadog" {
 
 This should prevent the provider from asking you for a Datadog API Key and allow the module to be provisioned without the integration resources.
 
-## Monitoring IAM Activity
+### Monitoring IAM Activity
 
 By default, this module monitors and notifies activities performed by the `root` user of all core accounts and AWS SSO Roles. All notifications will be sent to the SNS Topic `LandingZone-IAMActivity` in the `audit` account.
 
@@ -169,9 +195,7 @@ These are the type of events that will be monitored:
 
 In case you would like to disable this functionality, you can set the variable `monitor_iam_activity` to `false`.
 
-## Organizations Policies
-
-### Service Control Policies (SCPs)
+### Organizations Policies: Service Control Policies (SCPs)
 
 Service control policies (SCPs) are a type of organization policy that you can use to manage permissions in your organization. See [this page](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html) for an introduction to SCPs and the value they add.
 
@@ -231,7 +255,7 @@ module "landing_zone" {
   ]
 ```
 
-### Tag Policies
+### Organizations Policies: Tag Policies
 
 Tag policies are a type of policy that can help you standardize tags across resources in your organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged. See [this page](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_tag-policies.html) for an introduction to tag policies and the value they add.
 
@@ -259,14 +283,13 @@ module "landing_zone" {
   }
 ```
 
-## SNS topic subscription
+### SNS topic subscription
 
 | Topic Name  |  Variable | Content  |
 |---|---|---|
 | `aws-controltower-AggregateSecurityNotifications` | `aws_config_sns_subscription`  |  Aggregated AWS Config notifications |
 | `LandingZone-SecurityHubFindings` |  `aws_security_hub_sns_subscription` |  Aggregated Security Hub findings |
 | `LandingZone-IAMActivity` | `monitor_iam_activity_sns_subscription`  |  IAM activity findings |
-
 
 Example for https protocol and specified webhook endpoint:
 
@@ -286,16 +309,16 @@ module "landing_zone" {
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.13 |
-| aws | >= 3.50.0 |
+| terraform | >= 1.0 |
+| aws | >= 3.50.0, < 4.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.50.0 |
-| aws.audit | >= 3.50.0 |
-| aws.logging | >= 3.50.0 |
+| aws | >= 3.50.0, < 4.0.0 |
+| aws.audit | >= 3.50.0, < 4.0.0 |
+| aws.logging | >= 3.50.0, < 4.0.0 |
 
 ## Inputs
 
@@ -326,6 +349,7 @@ module "landing_zone" {
 | monitor\_iam\_activity\_sns\_subscription | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | security\_hub\_create\_cis\_metric\_filters | Enable the creation of metric filters related to the CIS AWS Foundation Security Hub Standard | `bool` | `true` | no |
 | security\_hub\_standards\_arns | A list of the ARNs of the standards you want to enable in Security Hub | `list(string)` | `null` | no |
+| ses\_root\_accounts\_mail\_forward | SES config to receive and forward root account emails | <pre>object({<br>    domain            = string<br>    from_email        = string<br>    recipient_mapping = map(any)<br>  })</pre> | `null` | no |
 
 ## Outputs
 
@@ -341,7 +365,7 @@ module "landing_zone" {
 
 **Copyright:** Schuberg Philis
 
-```
+```text
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
