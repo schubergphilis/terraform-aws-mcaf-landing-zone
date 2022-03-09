@@ -1,6 +1,11 @@
 data "aws_caller_identity" "audit" {
   provider = aws.audit
 }
+
+data "aws_caller_identity" "logging" {
+  provider = aws.logging
+}
+
 data "aws_caller_identity" "master" {}
 
 data "aws_cloudwatch_log_group" "cloudtrail_audit" {

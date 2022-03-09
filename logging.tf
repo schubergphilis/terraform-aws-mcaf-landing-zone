@@ -82,3 +82,80 @@ resource "aws_s3_account_public_access_block" "logging" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+
+module "kms_key_logging" {
+  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.2.0"
+  providers           = { aws = aws.logging }
+  name                = "logging"
+  description         = "KMS key to use with logging account"
+  enable_key_rotation = true
+  policy              = data.aws_iam_policy_document.kms_key_logging.json
+  tags                = var.tags
+}
+
+data "aws_iam_policy_document" "kms_key_logging" {
+  source_json = var.kms_key_policy_logging
+
+  statement {
+    sid       = "Full permissions for the root user only"
+    actions   = ["kms:*"]
+    effect    = "Allow"
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalType"
+      values   = ["Account"]
+    }
+
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.logging.account_id}:root"
+      ]
+    }
+  }
+
+  statement {
+    sid = "Administrative permissions for pipeline"
+    actions = [
+      "kms:Create*",
+      "kms:Describe*",
+      "kms:Enable*",
+      "kms:Get*",
+      "kms:List*",
+      "kms:Put*",
+      "kms:Revoke*",
+      "kms:TagResource",
+      "kms:UntagResource",
+      "kms:Update*"
+    ]
+    effect    = "Allow"
+    resources = ["*"]
+
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${var.control_tower_account_ids.logging}:role/AWSControlTowerExecution"
+      ]
+    }
+  }
+
+  statement {
+    sid = "List KMS keys permissions for all IAM users"
+    actions = [
+      "kms:Describe*",
+      "kms:ListAliases",
+      "kms:ListKeys"
+    ]
+    effect    = "Allow"
+    resources = ["*"]
+
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.logging.account_id}:root"
+      ]
+    }
+  }
+}

@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.15.1 (2022-03-10)
+
+ENHANCEMENTS
+
+- Added a KMS key for logging account with support for KMS key policy([#129](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/129))
+
+
 ## 0.15.0 (2022-02-21)
 
 ENHANCEMENTS
