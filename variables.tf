@@ -178,6 +178,12 @@ variable "kms_key_policy" {
   description = "A valid KMS key policy JSON document"
 }
 
+variable "kms_key_policy_logging" {
+  type        = string
+  default     = ""
+  description = "A valid KMS key policy JSON document for use with logging KMS key"
+}
+
 variable "monitor_iam_activity" {
   type        = bool
   default     = true
