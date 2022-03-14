@@ -145,8 +145,8 @@ data "aws_iam_policy_document" "kms_key_logging" {
     sid = "List KMS keys permissions for all IAM users"
     actions = [
       "kms:Describe*",
-      "kms:ListAliases",
-      "kms:ListKeys"
+      "kms:Get*",
+      "kms:List*"
     ]
     effect    = "Allow"
     resources = ["*"]
