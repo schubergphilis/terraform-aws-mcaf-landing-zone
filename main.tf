@@ -35,7 +35,7 @@ resource "aws_cloudwatch_metric_alarm" "iam_activity_master" {
   statistic                 = "Sum"
   threshold                 = "1"
   alarm_description         = "Monitors IAM activity for ${each.key}"
-  alarm_actions             = [aws_sns_topic.iam_activity.arn]
+  alarm_actions             = [aws_sns_topic.iam_activity.0.arn]
   insufficient_data_actions = []
   tags                      = var.tags
 }

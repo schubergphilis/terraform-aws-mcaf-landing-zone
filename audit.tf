@@ -49,7 +49,7 @@ resource "aws_cloudwatch_metric_alarm" "iam_activity_audit" {
   statistic                 = "Sum"
   threshold                 = "1"
   alarm_description         = "Monitors IAM activity for ${each.key}"
-  alarm_actions             = [aws_sns_topic.iam_activity.arn]
+  alarm_actions             = [aws_sns_topic.iam_activity.0.arn]
   insufficient_data_actions = []
   tags                      = var.tags
 }
@@ -220,19 +220,25 @@ module "datadog_audit" {
 }
 
 resource "aws_sns_topic" "iam_activity" {
-  provider          = aws.audit
+  count    = var.monitor_iam_activity ? 1 : 0
+  provider = aws.audit
+
   name              = "LandingZone-IAMActivity"
   kms_master_key_id = module.kms_key_audit.id
   tags              = var.tags
 }
 
 resource "aws_sns_topic_policy" "iam_activity" {
+  count    = var.monitor_iam_activity ? 1 : 0
   provider = aws.audit
-  arn      = aws_sns_topic.iam_activity.arn
+
+  arn = aws_sns_topic.iam_activity.0.arn
+
   policy = templatefile("${path.module}/files/sns/iam_activity_topic_policy.json.tpl", {
     account_id               = data.aws_caller_identity.audit.account_id
     services_allowed_publish = jsonencode("cloudwatch.amazonaws.com")
-    sns_topic                = aws_sns_topic.iam_activity.arn
+    sns_topic                = aws_sns_topic.iam_activity.0.arn
+
     security_hub_roles = local.security_hub_has_cis_aws_foundations_enabled ? sort([
       for account_id, _ in local.aws_account_emails : "\"arn:aws:sts::${account_id}:assumed-role/AWSServiceRoleForSecurityHub/securityhub\""
       if account_id != var.control_tower_account_ids.audit
@@ -241,10 +247,11 @@ resource "aws_sns_topic_policy" "iam_activity" {
 }
 
 resource "aws_sns_topic_subscription" "iam_activity" {
-  for_each               = var.monitor_iam_activity_sns_subscription
-  provider               = aws.audit
+  for_each = var.monitor_iam_activity ? var.monitor_iam_activity_sns_subscription : {}
+  provider = aws.audit
+
   endpoint               = each.value.endpoint
   endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
   protocol               = each.value.protocol
-  topic_arn              = aws_sns_topic.iam_activity.arn
+  topic_arn              = aws_sns_topic.iam_activity.0.arn
 }

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+BUG FIXES
+
+- When `var.monitor_iam_activity` is set `false` we shouldn't create any `iam_activity` related resources.
+
 ## 0.15.2 (2022-03-14)
 
 ENHANCEMENTS
