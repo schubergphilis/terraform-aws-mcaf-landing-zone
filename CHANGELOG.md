@@ -4,24 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.15.3 (2022-04-05)
 
 BUG FIXES
 
-- When `var.monitor_iam_activity` is set `false` we shouldn't create any `iam_activity` related resources.
+- When `var.monitor_iam_activity` is set `false` we shouldn't create any `iam_activity` related resources. ([#131](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/131))
 
 ## 0.15.2 (2022-03-14)
 
 ENHANCEMENTS
 
-- Updated KMS key policy for logging KMS key have more default Get permissions([#130](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/129))
+- Updated KMS key policy for logging KMS key have more default Get permissions. ([#130](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/130))
 
 ## 0.15.1 (2022-03-10)
 
 ENHANCEMENTS
 
-- Added a KMS key for logging account with support for KMS key policy([#129](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/129))
-
+- Added a KMS key for logging account with support for KMS key policy. ([#129](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/129))
 
 ## 0.15.0 (2022-02-21)
 
@@ -39,62 +38,62 @@ ENHANCEMENTS
 
 ENHANCEMENTS
 
-- Add support for assigning managed policies in SSO permission sets ([#124](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/124))
+- Add support for assigning managed policies in SSO permission sets. ([#124](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/124))
 
 ## 0.12.2 (2021-11-10)
 
 BUG FIXES
 
-- Fixed malfunction policy issue. Allowed regions policy template wasn't using the appropariate allowed_region property ([#123](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/123))
+- Fixed malfunction policy issue. Allowed regions policy template wasn't using the appropariate allowed_region property. ([#123](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/123))
 
 ## 0.12.1 (2021-10-27)
 
 BUG FIXES
 
-- Conditionally merges DenyAllRegionsOutsideAllowedList, DenyDeletingCloudTrailLogStream, DenyDisablingSecurityHub, RequireAllEc2RolesToUseV2, RequireImdsV2, MaxImdsHopLimit, and DenyLeavingOrg policies into one `LandinZone-RootPolicies` policy to avoid exceeding SCP limit (5 policies per org) [Quotas for AWS Organizations](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_reference_limits.html)
+- Conditionally merges DenyAllRegionsOutsideAllowedList, DenyDeletingCloudTrailLogStream, DenyDisablingSecurityHub, RequireAllEc2RolesToUseV2, RequireImdsV2, MaxImdsHopLimit, and DenyLeavingOrg policies into one `LandinZone-RootPolicies` policy to avoid exceeding SCP limit (5 policies per org) [Quotas for AWS Organizations](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_reference_limits.html).
 ([#120](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/120))
 
 ## 0.12.0 (2021-09-22)
 
 ENHANCEMENTS
 
-- Set the audit account as security hub administrator account for the organization and automatically enable Security Hub for new accounts in the organization ([#121](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/121))
+- Set the audit account as security hub administrator account for the organization and automatically enable Security Hub for new accounts in the organization. ([#121](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/121))
 
 ## 0.11.0 (2021-09-22)
 
 ENHANCEMENTS
 
-- Add additional IAM activity monitors ([#119](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/119))
+- Add additional IAM activity monitors. ([#119](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/119))
 
 ## 0.10.6 (2021-09-13)
 
 ENHANCEMENTS
 
-- Upgrade Datadog MCAF module used in core accounts to latest version ([#118](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/118))
+- Upgrade Datadog MCAF module used in core accounts to latest version. ([#118](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/118))
 
 ## 0.10.5 (2021-09-07)
 
 ENHANCEMENTS
 
-- Update IAM Activity Monitor for root usage to match CIS AWS rule 1.1 ([#117](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/117))
+- Update IAM Activity Monitor for root usage to match CIS AWS rule 1.1. ([#117](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/117))
 
 ## 0.10.4 (2021-08-23)
 
 ENHANCEMENTS
 
-- Add a `DenyDisablingSecurityHub` SCP that is attached to all AWS Organisation OUs ([#110](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/110))
+- Add a `DenyDisablingSecurityHub` SCP that is attached to all AWS Organisation OUs. ([#110](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/110))
 
 ## 0.10.3 (2021-08-04)
 
 ENHANCEMENTS
 
-- Enable by default AWS GuardDuty S3 protection ([#111](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/111))
+- Enable by default AWS GuardDuty S3 protection. ([#111](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/111))
 
 ## 0.10.2 (2021-07-13)
 
 ENHANCEMENTS
 
-- Update KMS module ([#109](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/109))
+- Update KMS module. ([#109](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/109))
 
 ## 0.10.1 (2021-06-30)
 
@@ -106,19 +105,19 @@ ENHANCEMENTS
 
 ENHANCEMENTS
 
-- Add support for multiple SSO Permission Set assignments ([#106](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/106))
+- Add support for multiple SSO Permission Set assignments. ([#106](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/106))
 
 ## 0.9.1 (2021-05-11)
 
 ENHANCEMENTS
 
-- Added support for KMS Key policy ([#104](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/104))
+- Added support for KMS Key policy. ([#104](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/104))
 
 ## 0.9.0 (2021-04-12)
 
 ENHANCEMENTS
 
-- Removal of the local AVM module. AVM module has been split up into 2 modules to allow for more flexibility: AVM core functionality has been moved to [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm) and all other functionality has been moved to the [MCAF Account Baseline module](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline).  ([#102](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/102))
+- Removal of the local AVM module. AVM module has been split up into 2 modules to allow for more flexibility: AVM core functionality has been moved to [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm) and all other functionality has been moved to the [MCAF Account Baseline module](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline). ([#102](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/102))
 
 ## 0.8.2 (2021-04-08)
 
@@ -281,7 +280,7 @@ ENHANCEMENTS
 
 BUG FIXES
 
-- Fix support for Datadog region ([#36]https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/36))
+- Fix support for Datadog region ([#36](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/36))
 
 ## 0.3.1 (2020-12-09)
 
