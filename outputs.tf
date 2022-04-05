@@ -20,5 +20,5 @@ output "kms_key_logging_id" {
 
 output "monitor_iam_activity_sns_topic_arn" {
   description = "ARN of the SNS Topic in the Audit account for IAM activity monitoring notifications"
-  value       = aws_sns_topic.iam_activity.arn
+  value       = var.monitor_iam_activity ? aws_sns_topic.iam_activity.0.arn : ""
 }
