@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.15.4 (2022-04-15)
+
+BUG FIXES
+
+- Datadog site url is now also passed to datadog forwarder module for audit and logging accounts. ([#133](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/133))
+
 ## 0.15.3 (2022-04-05)
 
 BUG FIXES

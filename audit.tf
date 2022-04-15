@@ -216,6 +216,7 @@ module "datadog_audit" {
   api_key               = try(var.datadog.api_key, null)
   excluded_regions      = var.datadog_excluded_regions
   install_log_forwarder = try(var.datadog.install_log_forwarder, false)
+  site_url              = try(var.datadog.site_url, null)
   tags                  = var.tags
 }
 
