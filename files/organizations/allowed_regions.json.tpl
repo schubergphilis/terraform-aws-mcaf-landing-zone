@@ -44,6 +44,7 @@
                 "shield:*",
                 "sts:*",
                 "support:*",
+                "sustainability:*",
                 "trustedadvisor:*",
                 "waf-regional:*",
                 "waf:*",
