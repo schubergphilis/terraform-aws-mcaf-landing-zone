@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.15.6 (2022-07-13)
+
+BUG FIXES
+
+- Modify KMS key input of the internal `ses-root-accounts-mail-forward` module to use ARN in stead of ID. ([#135](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/135))
+
 ## 0.15.5 (2022-05-31)
 
 ENHANCEMENTS
 
-- Whitelist Sustainability as a approved global service in the Allowed Regions Service Control Policy. ([#133](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/134))
+- Whitelist Sustainability as a approved global service in the Allowed Regions Service Control Policy. ([#134](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/134))
 
 ## 0.15.4 (2022-04-15)
 
