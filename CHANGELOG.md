@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.16.0 (2022-08-08)
+
+ENHANCEMENTS
+
+- Add support for AWS Provider version 4. ([#136](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/136))
+
 ## 0.15.6 (2022-07-13)
 
 BUG FIXES
