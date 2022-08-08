@@ -1,6 +1,27 @@
+# Upgrading to 0.16.x
+
+Version `0.16` adds support for [AWS provider version 4](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/guides/version-4-upgrade)
+
+Many parameters are removed from the `aws_s3_bucket` resource configuration, Terraform will not pick up on these changes on a subsequent terraform plan or terraform apply.
+
+Please run the following commands before migrating to this version (assuming you have called the module `landing_zone`):
+
+```shell
+terraform import 'module.landing_zone.module.ses-root-accounts-mail-forward[0].module.s3_bucket.aws_s3_bucket_server_side_encryption_configuration.default' <bucket-name>
+
+terraform import 'module.landing_zone.module.ses-root-accounts-mail-forward[0].module.s3_bucket.aws_s3_bucket_versioning.default' <bucket-name>
+
+terraform import  'module.landing_zone.module.ses-root-accounts-mail-forward[0].module.s3_bucket.aws_s3_bucket_acl.default' <bucket-name>
+
+terraform import 'module.landing_zone.module.ses-root-accounts-mail-forward[0].module.s3_bucket.aws_s3_bucket_policy.default' <bucket-name>
+
+terraform import 'module.landing_zone.module.ses-root-accounts-mail-forward[0].module.s3_bucket.aws_s3_bucket_lifecycle_configuration.default[0]' <bucket-name>
+
+```
+
 # Upgrading to 0.15.x
 
-Version `0.15` adds an optional mail forwarder using Amazon SES. Adding the `ses_root_accounts_mail_forward` variable creates the necessary resources to accept mail sent to a verified email address and forward it to an external recipient or recipients. Due to the usage of `configuration_aliases` in the provider configurations of some submodules, this module now requires to use Terraform version 1.0.0 or higher. 
+Version `0.15` adds an optional mail forwarder using Amazon SES. Adding the `ses_root_accounts_mail_forward` variable creates the necessary resources to accept mail sent to a verified email address and forward it to an external recipient or recipients. Due to the usage of `configuration_aliases` in the provider configurations of some submodules, this module now requires to use Terraform version 1.0.0 or higher.
 
 # Upgrading to 0.14.x
 
@@ -34,12 +55,14 @@ This required changing the variable `aws_sso_permission_sets` where the `account
 Removal of the local AVM module. Modify the source to the new [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm).
 
 The following variables have been renamed:
+
 - `sns_aws_config_subscription` -> `aws_config_sns_subscription`
 - `security_hub_product_arns` -> `aws_security_hub_product_arns`
 - `sns_aws_security_hub_subscription` -> `aws_security_hub_sns_subscription`
 - `sns_monitor_iam_activity_subscription` -> `monitor_iam_activity_sns_subscription`
 
 The following variable has been removed:
+
 - `aws_create_account_password_policy`, if you do not want to enable the password policy set the `aws_account_password_policy` variable to `null`
 
 The provider alias has changed. Change the following occurence for all accounts, as shown below for the `sandbox` AVM module instance.
@@ -64,7 +87,6 @@ terraform state mv -state-out=baseline-sandbox.tfstate 'module.sandbox.aws_cloud
 terraform state mv -state-out=baseline-sandbox.tfstate 'module.sandbox.aws_iam_account_password_policy.default' 'module.account_baseline.aws_iam_account_password_policy.default'
 terraform state mv -state-out=baseline-sandbox.tfstate 'module.sandbox.aws_ebs_encryption_by_default.default' 'module.account_baseline.aws_ebs_encryption_by_default.default'
 ```
-
 
 # Upgrading to 0.8.x
 
