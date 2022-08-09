@@ -113,15 +113,6 @@ module "datadog_master" {
   tags                  = var.tags
 }
 
-module "kms_key" {
-  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.2.0"
-  name                = "inception"
-  description         = "KMS key used for encrypting SSM parameters"
-  enable_key_rotation = true
-  policy              = var.kms_key_policy
-  tags                = var.tags
-}
-
 resource "aws_iam_account_password_policy" "master" {
   count                          = var.aws_account_password_policy != null ? 1 : 0
   allow_users_to_change_password = var.aws_account_password_policy.allow_users_to_change

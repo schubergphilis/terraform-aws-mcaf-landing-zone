@@ -1,11 +1,21 @@
 output "kms_key_arn" {
-  description = "ARN of KMS key for SSM encryption"
+  description = "ARN of KMS key for master account"
   value       = module.kms_key.arn
 }
 
 output "kms_key_id" {
-  description = "ID of KMS key for SSM encryption"
+  description = "ID of KMS key for master account"
   value       = module.kms_key.id
+}
+
+output "kms_key_audit_arn" {
+  description = "ARN of KMS key for audit account"
+  value       = module.kms_key_audit.arn
+}
+
+output "kms_key_audit_id" {
+  description = "ID of KMS key for audit account"
+  value       = module.kms_key_audit.id
 }
 
 output "kms_key_logging_arn" {
