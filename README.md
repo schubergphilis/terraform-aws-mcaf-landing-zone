@@ -344,8 +344,9 @@ module "landing_zone" {
 | aws\_sso\_permission\_sets | Map of AWS SSO Permission Sets with the AWS Accounts and the names of the AWS SSO Groups that should be granted access to each account | <pre>map(object({<br>    assignments         = list(map(list(string)))<br>    inline_policy       = string<br>    managed_policy_arns = list(string)<br>    session_duration    = string<br>  }))</pre> | `{}` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | datadog\_excluded\_regions | List of regions where metrics collection will be disabled. | `list(string)` | `[]` | no |
-| kms\_key\_policy | A valid KMS key policy JSON document | `string` | `""` | no |
-| kms\_key\_policy\_logging | A valid KMS key policy JSON document for use with logging KMS key | `string` | `""` | no |
+| kms\_key\_policy | A list of valid KMS key policy JSON documents | `list(string)` | `[]` | no |
+| kms\_key\_policy\_audit | A list of valid KMS key policy JSON document for use with audit KMS key | `list(string)` | `[]` | no |
+| kms\_key\_policy\_logging | A list of valid KMS key policy JSON document for use with logging KMS key | `list(string)` | `[]` | no |
 | monitor\_iam\_activity | Whether IAM activity should be monitored | `bool` | `true` | no |
 | monitor\_iam\_activity\_sns\_subscription | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | security\_hub\_create\_cis\_metric\_filters | Enable the creation of metric filters related to the CIS AWS Foundation Security Hub Standard | `bool` | `true` | no |
@@ -356,8 +357,10 @@ module "landing_zone" {
 
 | Name | Description |
 |------|-------------|
-| kms\_key\_arn | ARN of KMS key for SSM encryption |
-| kms\_key\_id | ID of KMS key for SSM encryption |
+| kms\_key\_arn | ARN of KMS key for master account |
+| kms\_key\_audit\_arn | ARN of KMS key for audit account |
+| kms\_key\_audit\_id | ID of KMS key for audit account |
+| kms\_key\_id | ID of KMS key for master account |
 | kms\_key\_logging\_arn | ARN of KMS key for logging account |
 | kms\_key\_logging\_id | ID of KMS key for logging account |
 | monitor\_iam\_activity\_sns\_topic\_arn | ARN of the SNS Topic in the Audit account for IAM activity monitoring notifications |
