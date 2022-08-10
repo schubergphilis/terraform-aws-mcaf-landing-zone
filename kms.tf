@@ -270,4 +270,22 @@ data "aws_iam_policy_document" "kms_key_logging" {
       ]
     }
   }
+
+  statement {
+    sid    = "KMS permissions for AWS logs service"
+    effect = "Allow"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+    ]
+    resources = ["*"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["logs.${data.aws_region.current.name}.amazonaws.com"]
+    }
+  }
 }
