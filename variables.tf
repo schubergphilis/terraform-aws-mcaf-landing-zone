@@ -173,21 +173,21 @@ variable "datadog_excluded_regions" {
 }
 
 variable "kms_key_policy" {
-  type        = string
-  default     = ""
-  description = "A valid KMS key policy JSON document"
+  type        = list(string)
+  default     = []
+  description = "A list of valid KMS key policy JSON documents"
 }
 
 variable "kms_key_policy_audit" {
-  type        = string
-  default     = ""
-  description = "A valid KMS key policy JSON document for use with audit KMS key"
+  type        = list(string)
+  default     = []
+  description = "A list of valid KMS key policy JSON document for use with audit KMS key"
 }
 
 variable "kms_key_policy_logging" {
-  type        = string
-  default     = ""
-  description = "A valid KMS key policy JSON document for use with logging KMS key"
+  type        = list(string)
+  default     = []
+  description = "A list of valid KMS key policy JSON document for use with logging KMS key"
 }
 
 variable "monitor_iam_activity" {
