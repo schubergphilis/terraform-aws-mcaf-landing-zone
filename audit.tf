@@ -6,21 +6,6 @@ provider "aws" {
   }
 }
 
-module "kms_key_audit" {
-  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.2.0"
-  providers           = { aws = aws.audit }
-  name                = "audit"
-  description         = "KMS key used for encrypting audit-related data"
-  enable_key_rotation = true
-  tags                = var.tags
-
-  policy = templatefile("${path.module}/files/kms/audit_key_policy.json.tpl", {
-    audit_account_id  = var.control_tower_account_ids.audit
-    master_account_id = data.aws_caller_identity.master.account_id
-    services          = jsonencode(["cloudwatch.amazonaws.com", "events.amazonaws.com"])
-  })
-}
-
 resource "aws_cloudwatch_log_metric_filter" "iam_activity_audit" {
   for_each = var.monitor_iam_activity ? merge(local.iam_activity, local.cloudtrail_activity_cis_aws_foundations) : {}
   provider = aws.audit

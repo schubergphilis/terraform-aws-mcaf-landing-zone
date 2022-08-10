@@ -1,3 +1,30 @@
+# Upgrading to 0.17.x
+
+The following variables are now typed from string to list(string):
+
+- `kms_key_policy`
+- `kms_key_policy_audit`
+- `kms_key_policy_logging`
+
+The following default key policy has been removed from the audit KMS key and a more secure default has been provided:
+
+```shell
+ {
+      "Sid": "Enable IAM User Permissions",
+      "Effect": "Allow",
+      "Principal": {
+          "AWS": [
+            "arn:aws:iam::${audit_account_id}:root",
+            "arn:aws:iam::${master_account_id}:root"
+          ]
+      },
+      "Action": "kms:*",
+      "Resource": "*"
+    }
+```
+
+If this new key policy is too restrictive for your deployment add extra key policies statements using the `kms_key_policy_audit` variable.
+
 # Upgrading to 0.16.x
 
 Version `0.16` adds support for [AWS provider version 4](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/guides/version-4-upgrade)
