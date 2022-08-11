@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.17.1 (2022-08-11)
+
+BUG FIXES
+
+- Allow sns.amazonaws.com access to the audit kms key and remove an unneeded statement in the master key. ([#138](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/138))
+
 ## 0.17.0 (2022-08-10)
 
 ENHANCEMENTS
