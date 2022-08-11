@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 BUG FIXES
 
 - Allow sns.amazonaws.com access to the audit kms key and remove an unneeded statement in the master key. ([#138](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/138))
+- Modify master account KMS key policy allowing override. ([#139](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/139))
 
 ## 0.17.0 (2022-08-10)
 

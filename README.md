@@ -92,6 +92,34 @@ This feature can be controlled via the `aws_guardduty` variable and is enabled b
 
 Note: In case you are migrating an existing AWS organization to this module, all existing accounts except for the `master` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
 
+## AWS KMS
+
+The module creates 3 AWS KMS keys, one for the master account, one for the audit account, and one for the log archive account. We recommend to further scope down the AWS KMS key policy in the master account by providing a secure policy using `kms_key_policy`. The default policy "Base Permissions" can be overwritten and should be limited to the root account only, for example by using the statement below:
+
+```hcl
+  statement {
+    sid       = "Base Permissions"
+    actions   = ["kms:*"]
+    effect    = "Allow"
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalType"
+      values   = ["Account"]
+    }
+
+    principals {
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.master.account_id}:root"
+      ]
+    }
+  }
+```
+
+Note that you have to add additional policies allowing for example access to the pipeline user or role. Only applying this policy will result in a `The new key policy will not allow you to update the key policy in the future` exception.
+
 ### AWS SSO
 
 This module supports managing AWS SSO resources to control user access to all accounts belonging to the AWS Organization.

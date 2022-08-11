@@ -10,35 +10,11 @@ module "kms_key" {
 }
 
 data "aws_iam_policy_document" "kms_key" {
-  source_policy_documents = var.kms_key_policy
+  override_policy_documents = var.kms_key_policy
 
   statement {
-    sid       = "Full permissions for the root user only"
+    sid       = "Base Permissions"
     actions   = ["kms:*"]
-    effect    = "Allow"
-    resources = ["*"]
-
-    condition {
-      test     = "StringEquals"
-      variable = "aws:PrincipalType"
-      values   = ["Account"]
-    }
-
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.master.account_id}:root"
-      ]
-    }
-  }
-
-  statement {
-    sid = "List KMS keys permissions for all IAM users"
-    actions = [
-      "kms:Describe*",
-      "kms:Get*",
-      "kms:List*"
-    ]
     effect    = "Allow"
     resources = ["*"]
 
