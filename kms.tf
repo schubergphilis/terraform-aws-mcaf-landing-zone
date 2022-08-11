@@ -33,31 +33,6 @@ data "aws_iam_policy_document" "kms_key" {
   }
 
   statement {
-    sid = "Administrative permissions for pipeline"
-    actions = [
-      "kms:Create*",
-      "kms:Describe*",
-      "kms:Enable*",
-      "kms:Get*",
-      "kms:List*",
-      "kms:Put*",
-      "kms:Revoke*",
-      "kms:TagResource",
-      "kms:UntagResource",
-      "kms:Update*"
-    ]
-    effect    = "Allow"
-    resources = ["*"]
-
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.master.account_id}:role/AWSControlTowerExecution"
-      ]
-    }
-  }
-
-  statement {
     sid = "List KMS keys permissions for all IAM users"
     actions = [
       "kms:Describe*",
@@ -189,6 +164,23 @@ data "aws_iam_policy_document" "kms_key_audit" {
       identifiers = [
         "cloudwatch.amazonaws.com",
         "events.amazonaws.com"
+      ]
+    }
+  }
+
+  statement {
+    sid = "Allow SNS Decrypt"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey"
+    ]
+    effect    = "Allow"
+    resources = ["*"]
+
+    principals {
+      type = "Service"
+      identifiers = [
+        "sns.amazonaws.com"
       ]
     }
   }
