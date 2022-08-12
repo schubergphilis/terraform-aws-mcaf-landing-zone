@@ -89,6 +89,7 @@ data "aws_iam_policy_document" "kms_key_audit" {
       "kms:Create*",
       "kms:Describe*",
       "kms:Enable*",
+      "kms:GenerateDataKey*",
       "kms:Get*",
       "kms:List*",
       "kms:Put*",
