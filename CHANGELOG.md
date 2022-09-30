@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.17.3 (2022-09-30)
+
+ENHANCEMENTS
+
+- Update the terraform-aws-mcaf-ses module to v0.1.1 to support DMARC record creation. ([#141](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/141))
+
 ## 0.17.2 (2022-08-12)
 
 BUG FIXES
