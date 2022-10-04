@@ -168,10 +168,12 @@ resource "aws_cloudwatch_event_target" "security_hub_findings" {
 }
 
 resource "aws_sns_topic" "security_hub_findings" {
-  provider          = aws.audit
-  name              = "LandingZone-SecurityHubFindings"
-  kms_master_key_id = module.kms_key_audit.id
-  tags              = var.tags
+  provider                       = aws.audit
+  name                           = "LandingZone-SecurityHubFindings"
+  http_success_feedback_role_arn = aws_iam_role.sns_feedback.arn
+  http_failure_feedback_role_arn = aws_iam_role.sns_feedback.arn
+  kms_master_key_id              = module.kms_key_audit.id
+  tags                           = var.tags
 }
 
 resource "aws_sns_topic_policy" "security_hub_findings" {
@@ -209,9 +211,11 @@ resource "aws_sns_topic" "iam_activity" {
   count    = var.monitor_iam_activity ? 1 : 0
   provider = aws.audit
 
-  name              = "LandingZone-IAMActivity"
-  kms_master_key_id = module.kms_key_audit.id
-  tags              = var.tags
+  name                           = "LandingZone-IAMActivity"
+  http_success_feedback_role_arn = aws_iam_role.sns_feedback.arn
+  http_failure_feedback_role_arn = aws_iam_role.sns_feedback.arn
+  kms_master_key_id              = module.kms_key_audit.id
+  tags                           = var.tags
 }
 
 resource "aws_sns_topic_policy" "iam_activity" {
@@ -240,4 +244,43 @@ resource "aws_sns_topic_subscription" "iam_activity" {
   endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
   protocol               = each.value.protocol
   topic_arn              = aws_sns_topic.iam_activity.0.arn
+}
+
+resource "aws_iam_role" "sns_feedback" {
+  provider = aws.audit
+  name     = "LandingZone-SNSFeedback"
+  tags     = var.tags
+
+  assume_role_policy = templatefile("${path.module}/files/iam/service_assume_role.json.tpl", {
+    service = "sns.amazonaws.com"
+  })
+}
+
+data "aws_iam_policy_document" "sns_feedback" {
+  statement {
+    sid = "SNSFeedbackPolicy"
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:PutMetricFilter",
+      "logs:PutRetentionPolicy"
+    ]
+
+    resources = [aws_sns_topic.security_hub_findings.arn, var.monitor_iam_activity ? aws_sns_topic.iam_activity.0.arn : null]
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceOwner"
+      values   = [data.aws_caller_identity.audit.account_id]
+    }
+  }
+}
+
+resource "aws_iam_role_policy" "sns_feedback_policy" {
+  provider = aws.audit
+  name     = "LandingZone-SNSFeedbackPolicy"
+  policy   = data.aws_iam_policy_document.sns_feedback.json
+  role     = aws_iam_role.sns_feedback.id
 }
