@@ -268,7 +268,7 @@ data "aws_iam_policy_document" "sns_feedback" {
       "logs:PutRetentionPolicy"
     ]
 
-    resources = [aws_sns_topic.security_hub_findings.arn, var.monitor_iam_activity ? aws_sns_topic.iam_activity.0.arn : null]
+    resources = compact([aws_sns_topic.security_hub_findings.arn, var.monitor_iam_activity ? aws_sns_topic.iam_activity.0.arn : null])
 
     condition {
       test     = "StringEquals"
