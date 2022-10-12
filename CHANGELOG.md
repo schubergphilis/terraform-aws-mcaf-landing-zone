@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.17.5 (2022-10-13)
+
+BUG FIXES
+
+- Only use `aws_cloudwatch_log_group` data sources when the variable `monitor_iam_activity` is set to true. ([#145](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/145))
+
+## 0.17.4 (2022-10-05)
+
+BUG FIXES
+
+- Fix error: Null values are not allowed for this attribute value. ([#144](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/144))
+- Fix SH finding SNS.2 on core-audit account -- Configuring delivery status logging. ([#142](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/142))
+
 ## 0.17.3 (2022-09-30)
 
 ENHANCEMENTS
@@ -15,7 +28,6 @@ ENHANCEMENTS
 BUG FIXES
 
 - Modify audit kms key policy to grant GenerateDataKey permissions to pipeline . ([#140](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/140))
-
 
 ## 0.17.1 (2022-08-11)
 
