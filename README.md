@@ -214,6 +214,8 @@ This should prevent the provider from asking you for a Datadog API Key and allow
 
 ### Monitoring IAM Activity
 
+> NOTE: From Control Tower 3.0 and later, this is only performed within the master account.
+
 By default, this module monitors and notifies activities performed by the `root` user of all core accounts and AWS SSO Roles. All notifications will be sent to the SNS Topic `LandingZone-IAMActivity` in the `audit` account.
 
 These are the type of events that will be monitored:

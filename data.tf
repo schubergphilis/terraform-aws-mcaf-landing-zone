@@ -8,16 +8,6 @@ data "aws_caller_identity" "logging" {
 
 data "aws_caller_identity" "master" {}
 
-data "aws_cloudwatch_log_group" "cloudtrail_audit" {
-  provider = aws.audit
-  name     = "aws-controltower/CloudTrailLogs"
-}
-
-data "aws_cloudwatch_log_group" "cloudtrail_logging" {
-  provider = aws.logging
-  name     = "aws-controltower/CloudTrailLogs"
-}
-
 data "aws_cloudwatch_log_group" "cloudtrail_master" {
   name = "aws-controltower/CloudTrailLogs"
 }

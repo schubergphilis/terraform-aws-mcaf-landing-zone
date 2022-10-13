@@ -6,39 +6,6 @@ provider "aws" {
   }
 }
 
-resource "aws_cloudwatch_log_metric_filter" "iam_activity_logging" {
-  for_each = var.monitor_iam_activity ? merge(local.iam_activity, local.cloudtrail_activity_cis_aws_foundations) : {}
-  provider = aws.logging
-
-  name           = "LandingZone-IAMActivity-${each.key}"
-  pattern        = each.value
-  log_group_name = data.aws_cloudwatch_log_group.cloudtrail_logging.name
-
-  metric_transformation {
-    name      = "LandingZone-IAMActivity-${each.key}"
-    namespace = "LandingZone-IAMActivity"
-    value     = "1"
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "iam_activity_logging" {
-  for_each = aws_cloudwatch_log_metric_filter.iam_activity_logging
-  provider = aws.logging
-
-  alarm_name                = each.value.name
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = "1"
-  metric_name               = each.value.name
-  namespace                 = each.value.metric_transformation.0.namespace
-  period                    = "300"
-  statistic                 = "Sum"
-  threshold                 = "1"
-  alarm_description         = "Monitors IAM activity for ${each.key}"
-  alarm_actions             = [aws_sns_topic.iam_activity.0.arn]
-  insufficient_data_actions = []
-  tags                      = var.tags
-}
-
 resource "aws_config_aggregate_authorization" "logging" {
   for_each   = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator if aggregator.account_id != var.control_tower_account_ids.audit }
   provider   = aws.logging

@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.17.5 (2022-10-13)
+
+BUG FIXES
+
+- Removed the dependency on the "aws-controltower/CloudTrailLogs" Cloudwatch Log Group in every account due to changes in [Control Tower 3.0](https://docs.aws.amazon.com/controltower/latest/userguide/2022-all.html#version-3.0) ([#146](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/146))
+
+ENHANCEMENTS
+
+- Bumped aws provider to version >= 4.34.0 ([#146](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/146))
+
 ## 0.17.3 (2022-09-30)
 
 ENHANCEMENTS
