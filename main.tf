@@ -100,7 +100,7 @@ resource "aws_iam_role_policy_attachment" "config_recorder_read_only" {
 
 resource "aws_iam_role_policy_attachment" "config_recorder_config_role" {
   role       = aws_iam_role.config_recorder.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSConfigRole"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
 }
 
 module "datadog_master" {
