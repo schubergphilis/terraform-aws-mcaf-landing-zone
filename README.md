@@ -340,15 +340,15 @@ module "landing_zone" {
 | Name | Version |
 |------|---------|
 | terraform | >= 1.0 |
-| aws | >= 4.9.0 |
+| aws | >= 4.34.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 4.9.0 |
-| aws.audit | >= 4.9.0 |
-| aws.logging | >= 4.9.0 |
+| aws | >= 4.34.0 |
+| aws.audit | >= 4.34.0 |
+| aws.logging | >= 4.34.0 |
 
 ## Inputs
 
