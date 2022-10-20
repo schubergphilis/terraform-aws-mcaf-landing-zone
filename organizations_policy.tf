@@ -77,9 +77,9 @@ resource "aws_organizations_policy" "required_tags" {
   type = "TAG_POLICY"
   tags = var.tags
 
-  content = templatefile("${path.module}/files/organizations/required_tags.json.tpl", {
+  content = jsonencode(templatefile("${path.module}/files/organizations/required_tags.json.tpl", {
     tags = var.aws_required_tags[each.key]
-  })
+  }))
 }
 
 resource "aws_organizations_policy_attachment" "required_tags" {
