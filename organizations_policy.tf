@@ -77,9 +77,17 @@ resource "aws_organizations_policy" "required_tags" {
   type = "TAG_POLICY"
   tags = var.tags
 
-  content = jsonencode(templatefile("${path.module}/files/organizations/required_tags.json.tpl", {
-    tags = var.aws_required_tags[each.key]
-  }))
+  content = merge(flatten([
+    for tag in var.aws_required_tags[each.key] : {
+      (tag.name) = merge(
+        {
+          tag_key = { "@@assign" = tag.name, "@@operators_allowed_for_child_policies" = ["@@none"] }
+        },
+        can(tag.values) ? {
+          tag_value = { "@@assign" = tag.values }
+      } : {})
+    }
+  ])...)
 }
 
 resource "aws_organizations_policy_attachment" "required_tags" {
