@@ -1,3 +1,8 @@
+provider "mcaf" {
+  aws {}
+}
+
+
 data "aws_caller_identity" "audit" {
   provider = aws.audit
 }
