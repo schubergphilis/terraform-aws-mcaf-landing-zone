@@ -1,8 +1,7 @@
 provider "mcaf" {
-  aws {
-    region = "eu-central-1"
-  }
+  aws {}
 }
+
 
 data "aws_caller_identity" "audit" {
   provider = aws.audit
@@ -47,9 +46,7 @@ data "aws_organizations_organizational_units" "default" {
   parent_id = data.aws_organizations_organization.default.roots[0].id
 }
 
-data "mcaf_aws_all_organizational_units" "default" {
-  for_each = local.aws_organizations_organizational_nested_units
-}
+data "mcaf_aws_all_organizational_units" "default" {}
 
 data "aws_region" "current" {}
 
