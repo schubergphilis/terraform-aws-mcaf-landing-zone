@@ -1,3 +1,57 @@
+# Upgrading to 0.20.x
+
+Resources managing permission sets in AWS IAM Identity Center have been moved to a sub-module, meaning you will need to create `moved` blocks to update the state. The user interface remains unchanged.
+
+To move the resources to their new locations in the state, create a `moved.tf` in your workspace and add the following for each managed permission set (assuming your module is called `landing_zone`):
+
+```hcl
+moved {
+  from = module.landing_zone.aws_ssoadmin_permission_set.default["<< PERMISSION SET NAME >>"]
+  to   = module.landing_zone.module.aws_sso_permission_sets["<< PERMISSION SET NAME >>"].aws_ssoadmin_permission_set.default[0]
+}
+
+moved {
+  from = module.landing_zone.aws_ssoadmin_permission_set_inline_policy.default["<< PERMISSION SET NAME >>"]
+  to   = module.landing_zone.module.aws_sso_permission_sets["<< PERMISSION SET NAME >>"].aws_ssoadmin_permission_set_inline_policy.default[0]
+}
+```
+
+Example, if you have a "PlatformAdmin" permission set:
+
+```hcl
+moved {
+  from = module.landing_zone.aws_ssoadmin_permission_set.default["PlatformAdmin"]
+  to   = module.landing_zone.module.aws_sso_permission_sets["PlatformAdmin"].aws_ssoadmin_permission_set.default[0]
+}
+
+moved {
+  from = module.landing_zone.aws_ssoadmin_permission_set_inline_policy.default["PlatformAdmin"]
+  to   = module.landing_zone.module.aws_sso_permission_sets["PlatformAdmin"].aws_ssoadmin_permission_set_inline_policy.default[0]
+}
+```
+
+For each permission set assignment, add the following block and substitute the placeholders:
+
+```hcl
+moved {
+  from = module.landing_zone.aws_ssoadmin_account_assignment.default["<< SSO GROUP NAME >>-<< AWS ACCOUNT ID >>-<< PERMISSION SET NAME >>"
+  to   = module.landing_zone.module.aws_sso_permission_sets["PlatformAdmin"].aws_ssoadmin_account_assignment.default["<< SSO GROUP NAME >>:<< AWS ACCOUNT ID >>"]
+}
+```
+
+Example:
+
+```hcl
+moved {
+  from = module.landing_zone.aws_ssoadmin_account_assignment.default["PlatformAdminTeam-123456789012-PlatformAdmin"]
+  to   = module.landing_zone.module.aws_sso_permission_sets["PlatformAdmin"].aws_ssoadmin_account_assignment.default["PlatformAdminTeam:123456789012"]
+}
+```
+
+Repeat adding these `moved` blocks until `terraform plan` doesn't report any planned changed.
+
+This version requires Terraform 1.3 or newer.
+
 # Upgrading to 0.19.x
 
 Be aware that all tag policies will be recreated since they are now created per tag policy instead of per OU.
