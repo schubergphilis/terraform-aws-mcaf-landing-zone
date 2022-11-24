@@ -64,4 +64,9 @@ locals {
   security_hub_has_cis_aws_foundations_enabled = length(regexall(
     "ruleset/cis-aws-foundations-benchmark/v", join(",", local.security_hub_standards_arns)
   )) > 0 ? true : false
+  aws_organizations_organizational_nested_units = [
+    for ou in var.aws_required_tags : [
+      split("/", ou)
+    ]
+  ]
 }
