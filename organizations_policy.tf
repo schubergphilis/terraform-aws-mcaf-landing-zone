@@ -70,24 +70,16 @@ resource "aws_organizations_policy_attachment" "deny_root_user" {
 // https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_supported-resources-enforcement.html
 resource "aws_organizations_policy" "required_tags" {
   for_each = {
-    for ou in data.mcaf_aws_all_organizational_units.default.organizational_units : ou.name => ou if contains(keys(var.aws_required_tags), ou.name)
+    for ou in data.mcaf_aws_all_organizational_units.default.organizational_units : ou.name => ou if contains(keys(coalesce(var.aws_required_tags)), ou.name)
   }
 
   name = "LandingZone-RequiredTags-${each.key}"
   type = "TAG_POLICY"
   tags = var.tags
 
-  content = merge(flatten([
-    for tag in var.aws_required_tags[each.key] : {
-      (tag.name) = merge(
-        {
-          tag_key = { "@@assign" = tag.name, "@@operators_allowed_for_child_policies" = ["@@none"] }
-        },
-        can(tag.values) ? {
-          tag_value = { "@@assign" = tag.values }
-      } : {})
-    }
-  ])...)
+  content = templatefile("${path.module}/files/organizations/required_tags.json.tpl", {
+    tags = var.aws_required_tags[each.key]
+  })
 }
 
 resource "aws_organizations_policy_attachment" "required_tags" {
