@@ -77,14 +77,14 @@ resource "aws_organizations_policy" "required_tags" {
   type = "TAG_POLICY"
   tags = var.tags
 
-  content = templatefile("${path.module}/files/organizations/required_tags.json.tpl", {
+  content = jsonencode(templatefile("${path.module}/files/organizations/required_tags.json.tpl", {
     tags = var.aws_required_tags[each.key]
-  })
+  }))
 }
 
 resource "aws_organizations_policy_attachment" "required_tags" {
   for_each = {
-    for ou in data.aws_organizations_organizational_units.default.children : ou.name => ou if contains(keys(coalesce(var.aws_required_tags, {})), ou.name)
+    for ou in data.mcaf_aws_all_organizational_units.default.organizational_units : ou.name => ou if contains(keys(coalesce(var.aws_required_tags)), ou.name)
   }
 
   policy_id = aws_organizations_policy.required_tags[each.key].id
