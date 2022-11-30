@@ -92,7 +92,7 @@ resource "aws_organizations_policy" "required_tags" {
 
 resource "aws_organizations_policy_attachment" "required_tags" {
   for_each = {
-    for ou in data.mcaf_aws_all_organizational_units.default : ou.path => ou if contains(keys(coalesce(var.aws_required_tags, {})), ou.path)
+    for ou in data.mcaf_aws_all_organizational_units.default.organizational_units : ou.path => ou if contains(keys(coalesce(var.aws_required_tags, {})), ou.path)
   }
 
   policy_id = aws_organizations_policy.required_tags[each.key].id
