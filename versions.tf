@@ -6,7 +6,7 @@ terraform {
     }
     mcaf = {
       source  = "schubergphilis/mcaf"
-      version = "0.4.2"
+      version = ">= 0.4.2"
     }
   }
   required_version = ">= 1.3"
