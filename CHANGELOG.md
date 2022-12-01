@@ -8,9 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ENHANCEMENTS
 
-- Allow Tag Policies on nested Organizational units. ([#151](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/151))
-- Allow optional `values` for Tag policies. Therefore the Terraform version requirement is now `>= 1.3` ([#151](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/151))
-
+- Allow Tag Policies on nested Organizational units and allow optional `values` for Tag policies. Therefore the Terraform version requirement is now `>= 1.3`  ([#151](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/151))
 
 ## 0.17.8 (2022-11-23)
 
