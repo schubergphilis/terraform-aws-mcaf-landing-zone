@@ -77,7 +77,7 @@ resource "aws_organizations_policy" "required_tags" {
   type = "TAG_POLICY"
   tags = var.tags
 
-  content = jsonencode(merge(flatten([
+  content = jsonencode({ tags = merge(flatten([
     for tag in var.aws_required_tags[each.key] : {
       (tag.name) = merge(
         {
@@ -87,7 +87,7 @@ resource "aws_organizations_policy" "required_tags" {
           tag_value = { "@@assign" = tag.values }
       } : {})
     }
-  ])...))
+  ])...) })
 }
 
 resource "aws_organizations_policy_attachment" "required_tags" {
