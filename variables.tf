@@ -95,7 +95,6 @@ variable "aws_region_restrictions" {
 }
 
 variable "aws_required_tags" {
-  type        = map(list(object({})))
   default     = null
   description = "AWS Required tags settings"
 }
