@@ -83,7 +83,7 @@ resource "aws_organizations_policy" "required_tags" {
         {
           tag_key = { "@@assign" = tag.name, "@@operators_allowed_for_child_policies" = ["@@none"] }
         },
-        can(tag.values) ? {
+        try(tag.values != null, false) ? {
           tag_value = { "@@assign" = tag.values }
       } : {})
     }
