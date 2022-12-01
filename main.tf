@@ -1,3 +1,7 @@
+provider "mcaf" {
+  aws {}
+}
+
 #tfsec:ignore:AWS065
 resource "aws_cloudtrail" "additional_auditing_trail" {
   count                      = var.additional_auditing_trail != null ? 1 : 0

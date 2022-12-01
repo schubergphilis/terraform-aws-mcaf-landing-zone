@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.18.0 (2022-11-30)
+
+ENHANCEMENTS
+
+- Allow Tag Policies on nested Organizational units and allow optional `values` for Tag policies. Therefore the Terraform version requirement is now `>= 1.3`  ([#151](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/151))
+
 ## 0.17.8 (2022-11-23)
 
 ENHANCEMENTS

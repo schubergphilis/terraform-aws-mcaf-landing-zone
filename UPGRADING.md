@@ -1,3 +1,26 @@
+# Upgrading to 0.18.x
+
+Version 0.18.x allows Tag Policies on nested Organizational units. Therefore the variable `aws_required_tags` needs the Organizational unit paths including 'Root', e.g.:
+
+```hcl
+module "landing_zone" {
+  ...
+
+  aws_required_tags = {
+    "Root/Production" = [
+      {
+        name   = "Tag1"
+        values = ["A", "B"]
+      }
+    ]
+    "Root/Environments/Non-Production" = [
+      {
+        name   = "Tag2"
+      }
+    ]
+  }
+```
+
 # Upgrading to 0.17.x
 
 The following variables are now typed from string to list(string):
