@@ -367,7 +367,7 @@ module "landing_zone" {
 | aws\_guardduty\_s3\_protection | Whether AWS GuardDuty S3 protection should be enabled | `bool` | `true` | no |
 | aws\_region\_restrictions | List of allowed AWS regions and principals that are exempt from the restriction | <pre>object({<br>    allowed    = list(string)<br>    exceptions = list(string)<br>  })</pre> | `null` | no |
 | aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
-| aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name   = string<br>    values = optional(list(string))<br>  })))</pre> | `null` | no |
+| aws\_required\_tags | AWS Required tags settings | `map()` | `null` | no |
 | aws\_security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
 | aws\_security\_hub\_sns\_subscription | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | aws\_sso\_permission\_sets | Map of AWS SSO Permission Sets with the AWS Accounts and the names of the AWS SSO Groups that should be granted access to each account | <pre>map(object({<br>    assignments         = list(map(list(string)))<br>    inline_policy       = string<br>    managed_policy_arns = list(string)<br>    session_duration    = string<br>  }))</pre> | `{}` | no |
