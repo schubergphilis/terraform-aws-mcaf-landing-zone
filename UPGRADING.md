@@ -1,3 +1,7 @@
+# Upgrading to 0.19.x
+
+Be aware that all tag policies will be recreated since they are now created per tag policy instead of per OU.
+
 # Upgrading to 0.18.x
 
 Version 0.18.x allows Tag Policies on nested Organizational units. Therefore the variable `aws_required_tags` needs the Organizational unit paths including 'Root', e.g.:

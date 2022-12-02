@@ -67,34 +67,13 @@ resource "aws_organizations_policy_attachment" "deny_root_user" {
   target_id = each.value.id
 }
 
-// https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_supported-resources-enforcement.html
-resource "aws_organizations_policy" "required_tags" {
+module "tag_policy_assignment" {
   for_each = {
     for ou in data.mcaf_aws_all_organizational_units.default.organizational_units : ou.path => ou if contains(keys(coalesce(var.aws_required_tags, {})), ou.path)
   }
 
-  name = "LandingZone-RequiredTags-${each.key}"
-  type = "TAG_POLICY"
-  tags = var.tags
-
-  content = jsonencode({ tags = merge(flatten([
-    for tag in var.aws_required_tags[each.key] : {
-      (tag.name) = merge(
-        {
-          tag_key = { "@@assign" = tag.name, "@@operators_allowed_for_child_policies" = ["@@none"] }
-        },
-        try(tag.values != null, false) ? {
-          tag_value = { "@@assign" = tag.values }
-      } : {})
-    }
-  ])...) })
-}
-
-resource "aws_organizations_policy_attachment" "required_tags" {
-  for_each = {
-    for ou in data.mcaf_aws_all_organizational_units.default.organizational_units : ou.path => ou if contains(keys(coalesce(var.aws_required_tags, {})), ou.path)
-  }
-
-  policy_id = aws_organizations_policy.required_tags[each.key].id
-  target_id = each.value.id
+  source      = "./modules/tag-policy-assignment"
+  aws_ou_tags = { for k, v in var.aws_required_tags[each.key] : v.name => v }
+  target_id   = each.value.id
+  tags        = var.tags
 }
