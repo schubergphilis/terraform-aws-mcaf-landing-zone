@@ -1,10 +1,10 @@
 locals {
   enabled_root_policies = {
     allowed_regions = {
-      enable = var.aws_region_restrictions != null ? true : false
-      policy = var.aws_region_restrictions != null ? templatefile("${path.module}/files/organizations/allowed_regions.json.tpl", {
-        allowed    = var.aws_region_restrictions.allowed
-        exceptions = var.aws_region_restrictions.exceptions
+      enable = var.aws_root_scp_exceptions.allowed_regions != null ? true : false
+      policy = var.aws_root_scp_exceptions.allowed_regions != null != null ? templatefile("${path.module}/files/organizations/allowed_regions.json.tpl", {
+        allowed    = var.aws_root_scp_exceptions.allowed_regions != null ? var.aws_root_scp_exceptions.allowed_regions : []
+        exceptions = var.aws_root_scp_exceptions.principal_exceptions != null ? var.aws_root_scp_exceptions.principal_exceptions : []
       }) : null
     }
     cloudtrail_log_stream = {
@@ -12,12 +12,16 @@ locals {
       policy = file("${path.module}/files/organizations/cloudtrail_log_stream.json")
     }
     deny_disabling_security_hub = {
-      enable = var.aws_deny_disabling_security_hub
-      policy = file("${path.module}/files/organizations/deny_disabling_security_hub.json")
+      enable = var.aws_deny_disabling_security_hub != false ? true : false
+      policy = var.aws_deny_disabling_security_hub != false ? templatefile("${path.module}/files/organizations/deny_disabling_security_hub.json.tpl", {
+        exceptions = var.aws_root_scp_exceptions.principal_exceptions != null ? var.aws_root_scp_exceptions.principal_exceptions : []
+      }) : null
     }
     deny_leaving_org = {
-      enable = var.aws_deny_leaving_org
-      policy = file("${path.module}/files/organizations/deny_leaving_org.json")
+      enable = var.aws_deny_leaving_org != false ? true : false
+      policy = var.aws_deny_leaving_org != false ? templatefile("${path.module}/files/organizations/deny_leaving_org.json.tpl", {
+        exceptions = var.aws_root_scp_exceptions.principal_exceptions != null ? var.aws_root_scp_exceptions.principal_exceptions : []
+      }) : null
     }
     // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ExamplePolicies_EC2.html#iam-example-instance-metadata-requireIMDSv2
     require_use_of_imdsv2 = {

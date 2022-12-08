@@ -85,10 +85,10 @@ variable "aws_guardduty_s3_protection" {
   description = "Whether AWS GuardDuty S3 protection should be enabled"
 }
 
-variable "aws_region_restrictions" {
+variable "aws_root_scp_exceptions" {
   type = object({
-    allowed    = list(string)
-    exceptions = list(string)
+    allowed_regions      = list(string)
+    principal_exceptions = list(string)
   })
   default     = null
   description = "List of allowed AWS regions and principals that are exempt from the restriction"
