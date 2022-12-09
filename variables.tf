@@ -48,24 +48,6 @@ variable "aws_config_sns_subscription" {
   default     = {}
   description = "Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic"
 }
-#
-#variable "aws_deny_disabling_security_hub" {
-#  type        = bool
-#  default     = true
-#  description = "Enable SCP that denies accounts the ability to disable Security Hub"
-#}
-
-#variable "aws_deny_leaving_org" {
-#  type        = bool
-#  default     = true
-#  description = "Enable SCP that denies accounts the ability to leave the AWS organisation"
-#}
-#
-#variable "aws_deny_root_user_ous" {
-#  type        = list(string)
-#  default     = []
-#  description = "List of AWS Organisation OUs to apply the \"DenyRootUser\" SCP to"
-#}
 
 variable "aws_ebs_encryption_by_default" {
   type        = bool
@@ -94,7 +76,7 @@ variable "aws_service_control_policies" {
     aws_deny_root_user_ous          = optional(list(string), [])
     aws_require_imdsv2              = optional(bool, true)
   })
-  description = "List of allowed AWS regions and principals that are exempt from the restriction"
+  description = "AWS SCP's parameters for allowed AWS regions, principals that are exempt from the restriction and required/denied policies"
 }
 
 variable "aws_required_tags" {
@@ -112,11 +94,6 @@ variable "aws_required_tags" {
   }
 }
 
-#variable "aws_require_imdsv2" {
-#  type        = bool
-#  default     = true
-#  description = "Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service"
-#}
 
 variable "aws_security_hub_product_arns" {
   type        = list(string)
