@@ -48,24 +48,24 @@ variable "aws_config_sns_subscription" {
   default     = {}
   description = "Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic"
 }
+#
+#variable "aws_deny_disabling_security_hub" {
+#  type        = bool
+#  default     = true
+#  description = "Enable SCP that denies accounts the ability to disable Security Hub"
+#}
 
-variable "aws_deny_disabling_security_hub" {
-  type        = bool
-  default     = true
-  description = "Enable SCP that denies accounts the ability to disable Security Hub"
-}
-
-variable "aws_deny_leaving_org" {
-  type        = bool
-  default     = true
-  description = "Enable SCP that denies accounts the ability to leave the AWS organisation"
-}
-
-variable "aws_deny_root_user_ous" {
-  type        = list(string)
-  default     = []
-  description = "List of AWS Organisation OUs to apply the \"DenyRootUser\" SCP to"
-}
+#variable "aws_deny_leaving_org" {
+#  type        = bool
+#  default     = true
+#  description = "Enable SCP that denies accounts the ability to leave the AWS organisation"
+#}
+#
+#variable "aws_deny_root_user_ous" {
+#  type        = list(string)
+#  default     = []
+#  description = "List of AWS Organisation OUs to apply the \"DenyRootUser\" SCP to"
+#}
 
 variable "aws_ebs_encryption_by_default" {
   type        = bool
@@ -85,12 +85,15 @@ variable "aws_guardduty_s3_protection" {
   description = "Whether AWS GuardDuty S3 protection should be enabled"
 }
 
-variable "aws_root_scp_exceptions" {
+variable "aws_service_control_policies" {
   type = object({
-    allowed_regions      = list(string)
-    principal_exceptions = list(string)
+    allowed_regions                 = optional(list(string), [])
+    principal_exceptions            = optional(list(string), [])
+    aws_deny_disabling_security_hub = optional(bool, true)
+    aws_deny_leaving_org            = optional(bool, true)
+    aws_deny_root_user_ous          = optional(list(string), [])
+    aws_require_imdsv2              = optional(bool, true)
   })
-  default     = null
   description = "List of allowed AWS regions and principals that are exempt from the restriction"
 }
 
@@ -109,11 +112,11 @@ variable "aws_required_tags" {
   }
 }
 
-variable "aws_require_imdsv2" {
-  type        = bool
-  default     = true
-  description = "Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service"
-}
+#variable "aws_require_imdsv2" {
+#  type        = bool
+#  default     = true
+#  description = "Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service"
+#}
 
 variable "aws_security_hub_product_arns" {
   type        = list(string)

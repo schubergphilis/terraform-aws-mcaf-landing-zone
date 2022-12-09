@@ -29,7 +29,7 @@ ENHANCEMENTS
 
 BUG FIXES
 
-- Allow AWSControlTowerExecution role as an exception to deny_disabling_security_hub and deny_leaving_org policies. Change variable from aws_region_restrictions to aws_root_scp_exceptions ([#153](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/153)).
+- Allow AWSControlTowerExecution role as an exception to organizations policy. Move SCP's variables into aws_service_control_policies ([#153](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/153)).
 
 >>>>>>> 888f0bd (adding changelog)
 
