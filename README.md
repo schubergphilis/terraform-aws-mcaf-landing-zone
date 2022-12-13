@@ -300,15 +300,15 @@ module "landing_zone" {
   aws_required_tags = {
     "Root/Environments/Production" = [
       {
-        name          = "Tag1"
-        values        = ["A", "B"]
-        enforced_fore = ["all"]
+        name         = "Tag1"
+        values       = ["A", "B"]
+        enforced_for = ["all"]
       }
     ]
     "Root/Environments/Non-Production" = [
       {
-        name          = "Tag2"
-        enforced_fore = ["secretsmanager:*"]
+        name         = "Tag2"
+        enforced_for = ["secretsmanager:*"]
       }
     ]
   }
