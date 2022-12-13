@@ -96,11 +96,17 @@ variable "aws_region_restrictions" {
 
 variable "aws_required_tags" {
   type = map(list(object({
-    name   = string
-    values = optional(list(string))
+    name         = string
+    values       = optional(list(string))
+    enforced_for = optional(list(string))
   })))
   default     = null
   description = "AWS Required tags settings"
+
+  validation {
+    condition     = alltrue([for taglist in var.aws_required_tags : length(taglist) <= 10])
+    error_message = "A maximum of 10 tag keys can be supplied to stay within the maximum policy length."
+  }
 }
 
 variable "aws_require_imdsv2" {

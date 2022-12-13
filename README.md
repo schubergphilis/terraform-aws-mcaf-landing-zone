@@ -287,7 +287,9 @@ module "landing_zone" {
 
 Tag policies are a type of policy that can help you standardize tags across resources in your organization's accounts. In a tag policy, you specify tagging rules applicable to resources when they are tagged. See [this page](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_tag-policies.html) for an introduction to tag policies and the value they add.
 
-If you would like to enforce certain tags in an OU, you can pass a map of OU names containing the tags to the `aws_required_tags` variable. Be sure to pass the exact OU path name as the matching is case sensitive. If the OU provided does not match any existing OU the tag policy is not created. The `values` list is optional.
+To create a tag policy, set the `aws_required_tags` variable using a map of OU names and their tag policies. To enforce a tag for all [services and resource types that support enforcement](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_supported-resources-enforcement.html), set `enforced_for` to `["all"]`.
+
+Please note the OU path key is case sensitive and tag policies will be created per tag key. 
 
 Example:
 
@@ -296,18 +298,21 @@ module "landing_zone" {
   ...
 
   aws_required_tags = {
-    "Root/Production" = [
+    "Root/Environments/Production" = [
       {
-        name   = "Tag1"
-        values = ["A", "B"]
+        name          = "Tag1"
+        values        = ["A", "B"]
+        enforced_fore = ["all"]
       }
     ]
     "Root/Environments/Non-Production" = [
       {
-        name   = "Tag2"
+        name          = "Tag2"
+        enforced_fore = ["secretsmanager:*"]
       }
     ]
   }
+}
 ```
 
 ### SNS topic subscription
@@ -367,7 +372,7 @@ module "landing_zone" {
 | aws\_guardduty\_s3\_protection | Whether AWS GuardDuty S3 protection should be enabled | `bool` | `true` | no |
 | aws\_region\_restrictions | List of allowed AWS regions and principals that are exempt from the restriction | <pre>object({<br>    allowed    = list(string)<br>    exceptions = list(string)<br>  })</pre> | `null` | no |
 | aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
-| aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name   = string<br>    values = optional(list(string))<br>  })))</pre> | `null` | no |
+| aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name         = string<br>    values       = optional(list(string))<br>    enforced_for = optional(list(string))<br>  })))</pre> | `null` | no |
 | aws\_security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
 | aws\_security\_hub\_sns\_subscription | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | aws\_sso\_permission\_sets | Map of AWS SSO Permission Sets with the AWS Accounts and the names of the AWS SSO Groups that should be granted access to each account | <pre>map(object({<br>    assignments         = list(map(list(string)))<br>    inline_policy       = string<br>    managed_policy_arns = list(string)<br>    session_duration    = string<br>  }))</pre> | `{}` | no |

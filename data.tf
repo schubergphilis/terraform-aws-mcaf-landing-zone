@@ -41,8 +41,6 @@ data "aws_organizations_organizational_units" "default" {
   parent_id = data.aws_organizations_organization.default.roots[0].id
 }
 
-data "mcaf_aws_all_organizational_units" "default" {}
-
 data "aws_region" "current" {}
 
 data "aws_sns_topic" "all_config_notifications" {
@@ -51,3 +49,5 @@ data "aws_sns_topic" "all_config_notifications" {
 }
 
 data "aws_ssoadmin_instances" "default" {}
+
+data "mcaf_aws_all_organizational_units" "default" {}
