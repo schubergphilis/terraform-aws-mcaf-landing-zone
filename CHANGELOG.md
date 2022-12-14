@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.19.1 (2022-12-14)
+
+ENHANCEMENTS
+
+- Generate unique names for tag policies and remove services that are not supported from the enforcement list. ([#155](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/155))
+
 ## 0.19.0 (2022-12-13)
 
 ENHANCEMENTS

@@ -75,5 +75,6 @@ module "tag_policy_assignment" {
   source      = "./modules/tag-policy-assignment"
   aws_ou_tags = { for k, v in var.aws_required_tags[each.key] : v.name => v }
   target_id   = each.value.id
+  ou_path     = each.key
   tags        = var.tags
 }

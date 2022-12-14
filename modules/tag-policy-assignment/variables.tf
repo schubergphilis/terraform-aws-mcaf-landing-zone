@@ -16,3 +16,8 @@ variable "target_id" {
   type        = string
   description = "The unique identifier (ID) organizational unit (OU) that you want to attach the policy to."
 }
+
+variable "ou_path" {
+  type        = string
+  description = "Path of the organizational unit (OU)"
+}
