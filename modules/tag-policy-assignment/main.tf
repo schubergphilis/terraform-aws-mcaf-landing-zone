@@ -1,8 +1,12 @@
+locals {
+  ou_path = replace(var.ou_path, "/", "-")
+}
+
 // https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_supported-resources-enforcement.html
 resource "aws_organizations_policy" "required_tags" {
   for_each = var.aws_ou_tags
 
-  name = "LandingZone-RequiredTags-${each.key}"
+  name = "LandingZone-RequiredTags-${local.ou_path}-${each.key}"
   type = "TAG_POLICY"
   tags = var.tags
 
