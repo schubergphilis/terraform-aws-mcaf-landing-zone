@@ -229,7 +229,7 @@ Service control policies (SCPs) are a type of organization policy that you can u
 
 This module allows using various SCPs as described below. We try to adhere to best practices of not attaching SCPs to the root of the organization when possible; in the event you need to pass a list of OU names, be sure to have the exact name as the matching is case sensitive.
 
-#### Deny ability to disable Security Hub
+#### SCP: Deny ability to disable Security Hub
 
 Enabling this SCP removes a member account's ability to disable Security Hub.
 
@@ -243,7 +243,7 @@ aws_service_control_policies = {
 }
 ```
 
-#### Deny ability to leave Organization
+#### SCP: Deny ability to leave Organization
 
 Enabling this SCP removes a member account's ability to leave the AWS organization.
 
@@ -257,7 +257,7 @@ aws_service_control_policies = {
 }
 ```
 
-#### Require the use of Instance Metadata Service Version 2
+#### SCP: Require the use of Instance Metadata Service Version 2
 
 By default, all EC2s still allow access to the original metadata service, which means that if an attacker finds an EC2 running a proxy or WAF, or finds and SSRF vulnerability, they likely can steal the IAM role of the EC2. By enforcing IMDSv2, you can mitigate that risk. Be aware that this potentially could break some applications that have not yet been updated to work with the new IMDSv2.
 
@@ -271,7 +271,7 @@ aws_service_control_policies = {
 }
 ```
 
-#### Restricting AWS Regions
+#### SCP: Restricting AWS Regions
 
 If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_service_control_policies` using the `allowed_regions` attribute. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.
 
@@ -283,18 +283,7 @@ aws_service_control_policies = {
 }
 ```
 
-#### AWS Principal exceptions
-
-In case you would like to exempt specific IAM entities from the [region restriction](#restricting-aws-regions), [leave the AWS organization](#deny-ability-to-leave-organization) and from the [ability to disable Security Hub](#deny-ability-to-disable-security-hub), you can pass a list of ARN patterns using the `principal_exceptions` attribute in `aws_service_control_policies`. This can be useful for roles used by AWS ControlTower, for example.
-Example:
-
-```hcl
-aws_service_control_policies = {
-  principal_exceptions = ["arn:aws:iam::*:role/RoleAllowedToBypassRegionRestrictions"]
-}
-```
-
-#### Restricting Root User Access
+#### SCP: Restricting Root User Access
 
 If you would like to restrict the root user's ability to log into accounts in an OU, you can pass a list of OU names to the `aws_deny_root_user_ous` attribute in `aws_service_control_policies`.
 
@@ -315,6 +304,17 @@ module "landing_zone" {
     ]
   }
 
+```
+
+#### AWS Principal exceptions
+
+In case you would like to exempt specific IAM entities from the [region restriction](#restricting-aws-regions), [leave the AWS organization](#deny-ability-to-leave-organization) and from the [ability to disable Security Hub](#deny-ability-to-disable-security-hub) SCP's, you can pass a list of ARN patterns using the `principal_exceptions` attribute in `aws_service_control_policies`. This can be useful for roles used by AWS ControlTower, for example.
+Example:
+
+```hcl
+aws_service_control_policies = {
+  principal_exceptions = ["arn:aws:iam::*:role/RoleAllowedToBypassRestrictions"]
+}
 ```
 
 ### Organizations Policies: Tag Policies

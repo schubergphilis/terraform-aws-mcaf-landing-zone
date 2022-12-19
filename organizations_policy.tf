@@ -12,13 +12,13 @@ locals {
       policy = file("${path.module}/files/organizations/cloudtrail_log_stream.json")
     }
     deny_disabling_security_hub = {
-      enable = var.aws_service_control_policies.aws_deny_disabling_security_hub != false ? true : false
+      enable = var.aws_service_control_policies.aws_deny_disabling_security_hub
       policy = var.aws_service_control_policies.aws_deny_disabling_security_hub != false ? templatefile("${path.module}/files/organizations/deny_disabling_security_hub.json.tpl", {
         exceptions = var.aws_service_control_policies.principal_exceptions != null ? var.aws_service_control_policies.principal_exceptions : []
       }) : null
     }
     deny_leaving_org = {
-      enable = var.aws_service_control_policies.aws_deny_leaving_org != false ? true : false
+      enable = var.aws_service_control_policies.aws_deny_leaving_org
       policy = var.aws_service_control_policies.aws_deny_leaving_org != false ? templatefile("${path.module}/files/organizations/deny_leaving_org.json.tpl", {
         exceptions = var.aws_service_control_policies.principal_exceptions != null ? var.aws_service_control_policies.principal_exceptions : []
       }) : null
@@ -47,10 +47,6 @@ resource "aws_organizations_policy" "lz_root_policies" {
   })
   description = "LandingZone enabled Root OU policies"
   tags        = var.tags
-}
-
-output "root_policy" {
-  value = aws_organizations_policy.lz_root_policies
 }
 
 resource "aws_organizations_policy_attachment" "lz_root_policies" {

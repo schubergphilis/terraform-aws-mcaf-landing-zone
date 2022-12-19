@@ -67,18 +67,6 @@ variable "aws_guardduty_s3_protection" {
   description = "Whether AWS GuardDuty S3 protection should be enabled"
 }
 
-variable "aws_service_control_policies" {
-  type = object({
-    allowed_regions                 = optional(list(string), [])
-    principal_exceptions            = optional(list(string), [])
-    aws_deny_disabling_security_hub = optional(bool, true)
-    aws_deny_leaving_org            = optional(bool, true)
-    aws_deny_root_user_ous          = optional(list(string), [])
-    aws_require_imdsv2              = optional(bool, true)
-  })
-  description = "AWS SCP's parameters for allowed AWS regions, principals that are exempt from the restriction and required/denied policies"
-}
-
 variable "aws_required_tags" {
   type = map(list(object({
     name         = string
@@ -94,7 +82,6 @@ variable "aws_required_tags" {
   }
 }
 
-
 variable "aws_security_hub_product_arns" {
   type        = list(string)
   default     = []
@@ -108,6 +95,18 @@ variable "aws_security_hub_sns_subscription" {
   }))
   default     = {}
   description = "Subscription options for the LandingZone-SecurityHubFindings SNS topic"
+}
+
+variable "aws_service_control_policies" {
+  type = object({
+    allowed_regions                 = optional(list(string), [])
+    aws_deny_disabling_security_hub = optional(bool, true)
+    aws_deny_leaving_org            = optional(bool, true)
+    aws_deny_root_user_ous          = optional(list(string), [])
+    aws_require_imdsv2              = optional(bool, true)
+    principal_exceptions            = optional(list(string), [])
+  })
+  description = "AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction"
 }
 
 variable "security_hub_standards_arns" {
