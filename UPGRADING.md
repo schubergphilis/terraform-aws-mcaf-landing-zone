@@ -1,5 +1,6 @@
 # Upgrading to 0.20.x
 
+<<<<<<< HEAD
 Resources managing permission sets in AWS IAM Identity Center have been moved to a sub-module, meaning you will need to create `moved` blocks to update the state. The user interface remains unchanged.
 
 To move the resources to their new locations in the state, create a `moved.tf` in your workspace and add the following for each managed permission set (assuming your module is called `landing_zone`):
@@ -51,6 +52,9 @@ moved {
 Repeat adding these `moved` blocks until `terraform plan` doesn't report any planned changed.
 
 This version requires Terraform 1.3 or newer.
+=======
+Version `0.20.x` introduce exceptions for IAM entities on `aws_deny_disabling_security_hub` and `aws_deny_leaving_org`. And move SCP setup to `aws_service_control_policies`
+>>>>>>> f7a6cca (adding updated to README.md and UPGRADING.md)
 
 # Upgrading to 0.19.x
 
