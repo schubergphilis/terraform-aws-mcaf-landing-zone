@@ -294,6 +294,7 @@ aws_service_control_policies = {
   principal_exceptions = ["arn:aws:iam::*:role/RoleAllowedToBypassRegionRestrictions"]
 }
 ```
+
 #### Restricting Root User Access
 
 If you would like to restrict the root user's ability to log into accounts in an OU, you can pass a list of OU names to the `aws_deny_root_user_ous` attribute in `aws_service_control_policies`.
@@ -402,6 +403,7 @@ module "landing_zone" {
 | aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
 | aws\_guardduty\_s3\_protection | Whether AWS GuardDuty S3 protection should be enabled | `bool` | `true` | no |
+| aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name         = string<br>    values       = optional(list(string))<br>    enforced_for = optional(list(string))<br>  })))</pre> | `null` | no |
 | aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name   = string<br>    values = optional(list(string))<br>  })))</pre> | `null` | no |
 | aws\_security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
 | aws\_security\_hub\_sns\_subscription | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
