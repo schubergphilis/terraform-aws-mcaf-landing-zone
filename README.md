@@ -392,7 +392,7 @@ module "landing_zone" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| aws\_service\_control\_policies | AWS SCP's parameters for allowed AWS regions, principals that are exempt from the restriction and required/denied policies | <pre>object({<br>    allowed_regions                 = optional(list(string), [])<br>    principal_exceptions            = optional(list(string), [])<br>    aws_deny_disabling_security_hub = optional(bool, true)<br>    aws_deny_leaving_org            = optional(bool, true)<br>    aws_deny_root_user_ous          = optional(list(string), [])<br>    aws_require_imdsv2              = optional(bool, true)<br>  })</pre> | n/a | yes |
+| aws\_service\_control\_policies | AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction | <pre>object({<br>    allowed_regions                 = optional(list(string), [])<br>    aws_deny_disabling_security_hub = optional(bool, true)<br>    aws_deny_leaving_org            = optional(bool, true)<br>    aws_deny_root_user_ous          = optional(list(string), [])<br>    aws_require_imdsv2              = optional(bool, true)<br>    principal_exceptions            = optional(list(string), [])<br>  })</pre> | n/a | yes |
 | control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
 | tags | Map of tags | `map(string)` | n/a | yes |
 | additional\_auditing\_trail | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name   = string<br>    bucket = string<br>  })</pre> | `null` | no |
@@ -429,7 +429,6 @@ module "landing_zone" {
 | kms\_key\_logging\_arn | ARN of KMS key for logging account |
 | kms\_key\_logging\_id | ID of KMS key for logging account |
 | monitor\_iam\_activity\_sns\_topic\_arn | ARN of the SNS Topic in the Audit account for IAM activity monitoring notifications |
-| root\_policy | n/a |
 
 <!--- END_TF_DOCS --->
 
