@@ -285,7 +285,7 @@ aws_service_control_policies = {
 
 #### AWS Principal exceptions
 
-In case you would like to exempt specific IAM entities from the region restriction [region restriction](#restricting-aws-regions), [leave the AWS organization](#deny-ability-to-leave-organization) and from the [ability to disable Security Hub](#deny-ability-to-disable-security-hub), you can pass a list of ARN patterns using the `principal_exceptions` attribute in `aws_service_control_policies`. This can be useful for roles used by AWS ControlTower, for example, to avoid preventing it from managing all regions properly.
+In case you would like to exempt specific IAM entities from the [region restriction](#restricting-aws-regions), [leave the AWS organization](#deny-ability-to-leave-organization) and from the [ability to disable Security Hub](#deny-ability-to-disable-security-hub), you can pass a list of ARN patterns using the `principal_exceptions` attribute in `aws_service_control_policies`. This can be useful for roles used by AWS ControlTower, for example, to avoid preventing it from managing all regions properly.
 
 Example:
 
