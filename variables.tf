@@ -106,6 +106,15 @@ variable "aws_service_control_policies" {
     aws_require_imdsv2              = optional(bool, true)
     principal_exceptions            = optional(list(string), [])
   })
+
+  default = {
+    allowed_regions                 = []
+    aws_deny_disabling_security_hub = true
+    aws_deny_leaving_org            = true
+    aws_deny_root_user_ous          = []
+    aws_require_imdsv2              = true
+    principal_exceptions            = []
+  }
   description = "AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction"
 }
 

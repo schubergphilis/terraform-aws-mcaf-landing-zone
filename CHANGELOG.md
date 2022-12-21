@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 0.20.0 (2022-12-13)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ENHANCEMENTS
 
 - Move AWS IAM Identity Center permission set resources to a sub-module. ([#150](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/150))
@@ -19,6 +20,9 @@ ENHANCEMENTS
 =======
 - Allow IAM entities exceptions on `aws_deny_disabling_security_hub` and `aws_deny_leaving_org` organizations policy. Move SCP's variables into `aws_service_control_policies` ([#153](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/153)).
 >>>>>>> 005ec78 (Updateing changelog)
+=======
+- Adding allowing IAM entities exceptions on `aws_deny_disabling_security_hub` and `aws_deny_leaving_org` organizations policy. Move SCP's variables into `aws_service_control_policies` ([#153](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/153)).
+>>>>>>> 06338ad (fixing default value and changelog.md)
   
 >>>>>>> f7a6cca (adding updated to README.md and UPGRADING.md)
 ## 0.19.1 (2022-12-14)
