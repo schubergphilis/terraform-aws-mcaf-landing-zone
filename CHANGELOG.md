@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.20.0 (2022-12-13)
+
+ENHANCEMENTS
+
+- Move AWS IAM Identity Center permission set resources to a sub-module. ([#150](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/150))
+
 ## 0.19.1 (2022-12-14)
 
 ENHANCEMENTS
