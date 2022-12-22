@@ -118,10 +118,10 @@ module "permission_set" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | name | Name of the permission set | `string` | n/a | yes |
-| assignments | List of account IDs and SSO groups to assign to the Permission Set | `list(map(list(string)))` | `[]` | no |
+| assignments | List of account IDs and Identity Center groups to assign to the permission set | `list(map(list(string)))` | `[]` | no |
 | create | Set to false to only manage assignments when the permission set already exists | `bool` | `true` | no |
-| inline\_policy | The IAM inline policy to attach to a Permission Set | `string` | `null` | no |
-| managed\_policy\_arns | List of IAM managed policy ARNs to be attached to the Permission Set | `list(string)` | `[]` | no |
+| inline\_policy | The IAM inline policy to attach to a permission set | `string` | `null` | no |
+| managed\_policy\_arns | List of IAM managed policy ARNs to be attached to the permission set | `list(string)` | `[]` | no |
 | module\_depends\_on | A list of external resources the module depends\_on | `any` | `[]` | no |
 | session\_duration | The length of time that the application user sessions are valid in the ISO-8601 standard | `string` | `"PT4H"` | no |
 
