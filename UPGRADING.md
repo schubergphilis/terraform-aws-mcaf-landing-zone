@@ -1,3 +1,13 @@
+# Upgrading to 0.21.x
+
+Version `0.21.x` introduces exceptions for IAM entities on the `DenyDisablingSecurityHub` and `DenyLeavingOrg` SCP. The following variables have been merged into a new variable `aws_service_control_policies`:
+
+- `aws_deny_disabling_security_hub`
+- `aws_deny_leaving_org`
+- `aws_deny_root_user_ous`
+- `aws_region_restrictions`
+- `aws_require_imdsv2`
+
 # Upgrading to 0.20.x
 
 Resources managing permission sets in AWS IAM Identity Center have been moved to a sub-module, meaning you will need to create `moved` blocks to update the state. The user interface remains unchanged.

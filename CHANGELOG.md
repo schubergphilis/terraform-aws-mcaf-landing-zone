@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 0.21.0 (2022-12-27)
+
+BUG FIXES
+
+- Adding allowing IAM entities exceptions on `aws_deny_disabling_security_hub` and `aws_deny_leaving_org` organizations policy. Move SCP's variables into `aws_service_control_policies` ([#153](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/153)).
+
 ## 0.20.0 (2022-12-13)
 
 ENHANCEMENTS

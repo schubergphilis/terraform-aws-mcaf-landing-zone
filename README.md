@@ -227,44 +227,65 @@ In case you would like to disable this functionality, you can set the variable `
 
 Service control policies (SCPs) are a type of organization policy that you can use to manage permissions in your organization. See [this page](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html) for an introduction to SCPs and the value they add.
 
-This module allows using various SCPs as described below. We try to adhere to best practices of not attaching SCPs to the root of the organisation when possible; in the event you need to pass a list of OU names, be sure to have the exact name as the matching is case sensitive.
+This module allows using various SCPs as described below. We try to adhere to best practices of not attaching SCPs to the root of the organization when possible; in the event you need to pass a list of OU names, be sure to have the exact name as the matching is case sensitive.
 
-#### Deny ability to disable Security Hub
+#### SCP: Deny ability to disable Security Hub
 
 Enabling this SCP removes a member account's ability to disable Security Hub.
 
-This is SCP is enabled by default, but can be disabled by setting `aws_deny_disabling_security_hub` variable to `false`.
-
-#### Deny ability to leave Organization
-
-Enabling this SCP removes a member account's ability to leave the AWS organisation.
-
-This is SCP is enabled by default, but can be disabled by setting `aws_deny_leaving_org` variable to `false`.
-
-#### Require the use of Instance Metadata Service Version 2
-
-By default, all EC2s still allow access to the original metadata service, which means that if an attacker finds an EC2 running a proxy or WAF, or finds and SSRF vulnerability, they likely can steal the IAM role of the EC2. By enforcing IMDSv2, you can mitigate that risk. Be aware that this potentially could break some applications that have not yet been updated to work with the new IMDSv2.
-
-This is SCP is enabled by default, but can be disabled by setting `aws_require_imdsv2` variable to `false`.
-
-#### Restricting AWS Regions
-
-If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_region_restrictions` using the `allowed` attribute. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.
-
-In case you would like to exempt specific IAM entities from the region restriction, you can pass a list of ARN patterns using the `exceptions` attribute. This can be useful for roles used by AWS ControlTower, for example, to avoid preventing it from managing all regions properly.
+This is SCP is enabled by default, but can be disabled by setting `aws_deny_disabling_security_hub` attribute to `false` in `aws_service_control_policies`.
 
 Example:
 
 ```hcl
-aws_region_restrictions = {
-  allowed    = ["eu-west-1"]
-  exceptions = ["arn:aws:iam::*:role/RoleAllowedToBypassRegionRestrictions"]
+aws_service_control_policies = {
+  aws_deny_disabling_security_hub = false
 }
 ```
 
-#### Restricting Root User Access
+#### SCP: Deny ability to leave Organization
 
-If you would like to restrict the root user's ability to log into accounts in an OU, you can pass a list of OU names to the `aws_deny_root_user_ous` variable.
+Enabling this SCP removes a member account's ability to leave the AWS organization.
+
+This is SCP is enabled by default, but can be disabled by setting `aws_deny_leaving_org` attribute to `false` in `aws_service_control_policies`.
+
+Example:
+
+```hcl
+aws_service_control_policies = {
+  aws_deny_leaving_org = false
+}
+```
+
+#### SCP: Require the use of Instance Metadata Service Version 2
+
+By default, all EC2s still allow access to the original metadata service, which means that if an attacker finds an EC2 running a proxy or WAF, or finds and SSRF vulnerability, they likely can steal the IAM role of the EC2. By enforcing IMDSv2, you can mitigate that risk. Be aware that this potentially could break some applications that have not yet been updated to work with the new IMDSv2.
+
+This is SCP is enabled by default, but can be disabled by setting `aws_require_imdsv2` attribute to `false` in `aws_service_control_policies`.
+
+Example:
+
+```hcl
+aws_service_control_policies = {
+  aws_require_imdsv2 = false
+}
+```
+
+#### SCP: Restricting AWS Regions
+
+If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_service_control_policies` using the `allowed_regions` attribute. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.
+
+Example:
+
+```hcl
+aws_service_control_policies = {
+  allowed_regions    = ["eu-west-1"]
+}
+```
+
+#### SCP: Restricting Root User Access
+
+If you would like to restrict the root user's ability to log into accounts in an OU, you can pass a list of OU names to the `aws_deny_root_user_ous` attribute in `aws_service_control_policies`.
 
 Example showing SCP applied to all OUs except the Root OU:
 
@@ -277,10 +298,23 @@ data "aws_organizations_organizational_units" "default" {
 
 module "landing_zone" {
   ...
+  aws_service_control_policies {
+    aws_deny_root_user_ous = [
+      for ou in data.aws_organizations_organizational_units.default.children : ou.name if ou.name != "Root"
+    ]
+  }
 
-  aws_deny_root_user_ous = [
-    for ou in data.aws_organizations_organizational_units.default.children : ou.name if ou.name != "Root"
-  ]
+```
+
+#### AWS Principal exceptions
+
+In case you would like to exempt specific IAM entities from the [region restriction](#restricting-aws-regions), [leave the AWS organization](#deny-ability-to-leave-organization) and from the [ability to disable Security Hub](#deny-ability-to-disable-security-hub) SCP's, you can pass a list of ARN patterns using the `principal_exceptions` attribute in `aws_service_control_policies`. This can be useful for roles used by AWS ControlTower, for example.
+Example:
+
+```hcl
+aws_service_control_policies = {
+  principal_exceptions = ["arn:aws:iam::*:role/RoleAllowedToBypassRestrictions"]
+}
 ```
 
 ### Organizations Policies: Tag Policies
@@ -289,7 +323,7 @@ Tag policies are a type of policy that can help you standardize tags across reso
 
 To create a tag policy, set the `aws_required_tags` variable using a map of OU names and their tag policies. To enforce a tag for all [services and resource types that support enforcement](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_supported-resources-enforcement.html), set `enforced_for` to `["all"]`.
 
-Please note the OU path key is case sensitive and tag policies will be created per tag key. 
+Please note the OU path key is case sensitive and tag policies will be created per tag key.
 
 Example:
 
@@ -364,17 +398,13 @@ module "landing_zone" {
 | aws\_account\_password\_policy | AWS account password policy parameters for the audit, logging and master account | <pre>object({<br>    allow_users_to_change        = bool<br>    max_age                      = number<br>    minimum_length               = number<br>    require_lowercase_characters = bool<br>    require_numbers              = bool<br>    require_symbols              = bool<br>    require_uppercase_characters = bool<br>    reuse_prevention_history     = number<br>  })</pre> | <pre>{<br>  "allow_users_to_change": true,<br>  "max_age": 90,<br>  "minimum_length": 14,<br>  "require_lowercase_characters": true,<br>  "require_numbers": true,<br>  "require_symbols": true,<br>  "require_uppercase_characters": true,<br>  "reuse_prevention_history": 24<br>}</pre> | no |
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
 | aws\_config\_sns\_subscription | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
-| aws\_deny\_disabling\_security\_hub | Enable SCP that denies accounts the ability to disable Security Hub | `bool` | `true` | no |
-| aws\_deny\_leaving\_org | Enable SCP that denies accounts the ability to leave the AWS organisation | `bool` | `true` | no |
-| aws\_deny\_root\_user\_ous | List of AWS Organisation OUs to apply the "DenyRootUser" SCP to | `list(string)` | `[]` | no |
 | aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
 | aws\_guardduty\_s3\_protection | Whether AWS GuardDuty S3 protection should be enabled | `bool` | `true` | no |
-| aws\_region\_restrictions | List of allowed AWS regions and principals that are exempt from the restriction | <pre>object({<br>    allowed    = list(string)<br>    exceptions = list(string)<br>  })</pre> | `null` | no |
-| aws\_require\_imdsv2 | Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service | `bool` | `true` | no |
 | aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name         = string<br>    values       = optional(list(string))<br>    enforced_for = optional(list(string))<br>  })))</pre> | `null` | no |
 | aws\_security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
 | aws\_security\_hub\_sns\_subscription | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
+| aws\_service\_control\_policies | AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction | <pre>object({<br>    allowed_regions                 = optional(list(string), [])<br>    aws_deny_disabling_security_hub = optional(bool, true)<br>    aws_deny_leaving_org            = optional(bool, true)<br>    aws_deny_root_user_ous          = optional(list(string), [])<br>    aws_require_imdsv2              = optional(bool, true)<br>    principal_exceptions            = optional(list(string), [])<br>  })</pre> | `{}` | no |
 | aws\_sso\_permission\_sets | Map of AWS IAM Identity Center permission sets with AWS accounts and group names that should be granted access to each account | <pre>map(object({<br>    assignments         = list(map(list(string)))<br>    inline_policy       = optional(string, null)<br>    managed_policy_arns = optional(list(string), [])<br>    session_duration    = optional(string, "PT4H")<br>  }))</pre> | `{}` | no |
 | datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
 | datadog\_excluded\_regions | List of regions where metrics collection will be disabled. | `list(string)` | `[]` | no |

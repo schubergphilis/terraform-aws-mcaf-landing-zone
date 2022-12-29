@@ -11,6 +11,13 @@
             "securityhub:DisassociateMembers",
             "securityhub:BatchDisableStandards"
         ],
-        "Resource": "*"
+        "Resource": "*",
+        "Condition": {
+            %{ if length(exceptions) > 0 ~}
+            "ArnNotLike": {
+                "aws:PrincipalARN": ${jsonencode(exceptions)}
+            }
+            %{ endif ~}
+        }
     }
 }

@@ -49,24 +49,6 @@ variable "aws_config_sns_subscription" {
   description = "Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic"
 }
 
-variable "aws_deny_disabling_security_hub" {
-  type        = bool
-  default     = true
-  description = "Enable SCP that denies accounts the ability to disable Security Hub"
-}
-
-variable "aws_deny_leaving_org" {
-  type        = bool
-  default     = true
-  description = "Enable SCP that denies accounts the ability to leave the AWS organisation"
-}
-
-variable "aws_deny_root_user_ous" {
-  type        = list(string)
-  default     = []
-  description = "List of AWS Organisation OUs to apply the \"DenyRootUser\" SCP to"
-}
-
 variable "aws_ebs_encryption_by_default" {
   type        = bool
   default     = true
@@ -85,15 +67,6 @@ variable "aws_guardduty_s3_protection" {
   description = "Whether AWS GuardDuty S3 protection should be enabled"
 }
 
-variable "aws_region_restrictions" {
-  type = object({
-    allowed    = list(string)
-    exceptions = list(string)
-  })
-  default     = null
-  description = "List of allowed AWS regions and principals that are exempt from the restriction"
-}
-
 variable "aws_required_tags" {
   type = map(list(object({
     name         = string
@@ -107,12 +80,6 @@ variable "aws_required_tags" {
     condition     = alltrue([for taglist in var.aws_required_tags : length(taglist) <= 10])
     error_message = "A maximum of 10 tag keys can be supplied to stay within the maximum policy length."
   }
-}
-
-variable "aws_require_imdsv2" {
-  type        = bool
-  default     = true
-  description = "Enable SCP which requires EC2 instances to use V2 of the Instance Metadata Service"
 }
 
 variable "aws_security_hub_product_arns" {
@@ -140,6 +107,19 @@ variable "security_hub_create_cis_metric_filters" {
   type        = bool
   default     = true
   description = "Enable the creation of metric filters related to the CIS AWS Foundation Security Hub Standard"
+}
+
+variable "aws_service_control_policies" {
+  type = object({
+    allowed_regions                 = optional(list(string), [])
+    aws_deny_disabling_security_hub = optional(bool, true)
+    aws_deny_leaving_org            = optional(bool, true)
+    aws_deny_root_user_ous          = optional(list(string), [])
+    aws_require_imdsv2              = optional(bool, true)
+    principal_exceptions            = optional(list(string), [])
+  })
+  default     = {}
+  description = "AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction"
 }
 
 variable "aws_sso_permission_sets" {
