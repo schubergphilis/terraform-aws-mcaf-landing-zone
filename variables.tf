@@ -97,27 +97,6 @@ variable "aws_security_hub_sns_subscription" {
   description = "Subscription options for the LandingZone-SecurityHubFindings SNS topic"
 }
 
-variable "aws_service_control_policies" {
-  type = object({
-    allowed_regions                 = optional(list(string), [])
-    aws_deny_disabling_security_hub = optional(bool, true)
-    aws_deny_leaving_org            = optional(bool, true)
-    aws_deny_root_user_ous          = optional(list(string), [])
-    aws_require_imdsv2              = optional(bool, true)
-    principal_exceptions            = optional(list(string), [])
-  })
-
-  default = {
-    allowed_regions                 = []
-    aws_deny_disabling_security_hub = true
-    aws_deny_leaving_org            = true
-    aws_deny_root_user_ous          = []
-    aws_require_imdsv2              = true
-    principal_exceptions            = []
-  }
-  description = "AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction"
-}
-
 variable "security_hub_standards_arns" {
   type        = list(string)
   default     = null
@@ -128,6 +107,19 @@ variable "security_hub_create_cis_metric_filters" {
   type        = bool
   default     = true
   description = "Enable the creation of metric filters related to the CIS AWS Foundation Security Hub Standard"
+}
+
+variable "aws_service_control_policies" {
+  type = object({
+    allowed_regions                 = optional(list(string), [])
+    aws_deny_disabling_security_hub = optional(bool, true)
+    aws_deny_leaving_org            = optional(bool, true)
+    aws_deny_root_user_ous          = optional(list(string), [])
+    aws_require_imdsv2              = optional(bool, true)
+    principal_exceptions            = optional(list(string), [])
+  })
+  default     = {}
+  description = "AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction"
 }
 
 variable "aws_sso_permission_sets" {
