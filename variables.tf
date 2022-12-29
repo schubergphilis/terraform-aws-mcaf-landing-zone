@@ -7,6 +7,29 @@ variable "additional_auditing_trail" {
   description = "CloudTrail configuration for additional auditing trail"
 }
 
+variable "alternate_contacts" {
+  type = object({
+    billing = object({
+      email_address = string
+      name          = string
+      phone_number  = string
+      title         = string
+    })
+    operations = object({
+      email_address = string
+      name          = string
+      phone_number  = string
+      title         = string
+    })
+    security = object({
+      email_address = string
+      name          = string
+      phone_number  = string
+      title         = string
+    })
+  })
+}
+
 variable "aws_account_password_policy" {
   type = object({
     allow_users_to_change        = bool
