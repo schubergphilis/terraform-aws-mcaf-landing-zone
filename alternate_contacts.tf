@@ -13,6 +13,10 @@ resource "aws_account_alternate_contact" "operations" {
   name                   = var.alternate_contacts.operations.name
   phone_number           = var.alternate_contacts.operations.phone_number
   title                  = var.alternate_contacts.operations.title
+
+  depends_on = [
+    null_resource.enable_aws_service_access_account_management
+  ]
 }
 
 resource "aws_account_alternate_contact" "billing" {
@@ -24,6 +28,10 @@ resource "aws_account_alternate_contact" "billing" {
   name                   = var.alternate_contacts.billing.name
   phone_number           = var.alternate_contacts.billing.phone_number
   title                  = var.alternate_contacts.billing.title
+
+  depends_on = [
+    null_resource.enable_aws_service_access_account_management
+  ]
 }
 
 resource "aws_account_alternate_contact" "security" {
@@ -35,4 +43,8 @@ resource "aws_account_alternate_contact" "security" {
   name                   = var.alternate_contacts.security.name
   phone_number           = var.alternate_contacts.security.phone_number
   title                  = var.alternate_contacts.security.title
+
+  depends_on = [
+    null_resource.enable_aws_service_access_account_management
+  ]
 }
