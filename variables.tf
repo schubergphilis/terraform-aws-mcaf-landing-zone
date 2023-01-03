@@ -196,6 +196,12 @@ variable "ses_root_accounts_mail_forward" {
     domain            = string
     from_email        = string
     recipient_mapping = map(any)
+
+    dmarc = object({
+      policy = optional(string)
+      rua    = optional(string)
+      ruf    = optional(string)
+    })
   })
   default     = null
   description = "SES config to receive and forward root account emails"

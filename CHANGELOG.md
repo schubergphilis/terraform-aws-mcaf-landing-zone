@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-# 0.21.0 (2022-12-27)
+## 0.21.1 (2023-01-03)
+
+ENHANCEMENTS
+
+- Add DMARC support for SES root accounts mail forward feature, this will make it possible to configure a RUA or RUF email adres to send DMARC reports to. ([#156](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/156)).
+
+## 0.21.0 (2022-12-27)
 
 BUG FIXES
 
