@@ -376,16 +376,16 @@ module "landing_zone" {
 | Name | Version |
 |------|---------|
 | terraform | >= 1.3 |
-| aws | >= 4.9.0 |
+| aws | >= 4.40.0 |
 | mcaf | >= 0.4.2 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 4.9.0 |
-| aws.audit | >= 4.9.0 |
-| aws.logging | >= 4.9.0 |
+| aws | >= 4.40.0 |
+| aws.audit | >= 4.40.0 |
+| aws.logging | >= 4.40.0 |
 | mcaf | >= 0.4.2 |
 
 ## Inputs

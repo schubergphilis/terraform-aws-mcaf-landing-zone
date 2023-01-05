@@ -113,6 +113,7 @@ resource "aws_guardduty_organization_configuration" "default" {
 resource "aws_guardduty_detector" "audit" {
   count    = var.aws_guardduty == true ? 1 : 0
   provider = aws.audit
+  enable   = true
   tags     = var.tags
 
   datasources {
