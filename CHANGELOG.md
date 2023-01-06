@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.21.3 (2023-01-06)
+
+ENHANCEMENTS
+
+- Fixed CheckOV finding because of `aws_guardduty_detector` not explicity enabled ([#158](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/158)).
+
 ## 0.21.2 (2023-01-03)
 
 ENHANCEMENTS
