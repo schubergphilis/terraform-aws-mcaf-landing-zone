@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ENHANCEMENTS
 
-- Adding the `supportplan:*` global service as exception to the `DenyAllRegionsOutsideAllowedList` SCP ([#159](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/159)).
+- Adding the `supportplans:*` global service as exception to the `DenyAllRegionsOutsideAllowedList` SCP ([#159](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/159)).
 
 ## 0.21.3 (2023-01-06)
 
