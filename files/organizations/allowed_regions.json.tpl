@@ -62,6 +62,7 @@
                 "shield:*",
                 "sts:*",
                 "support:*",
+                "supportplans:*",
                 "sustainability:*",
                 "trustedadvisor:*",
                 "waf-regional:*",
