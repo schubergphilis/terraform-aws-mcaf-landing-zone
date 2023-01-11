@@ -84,5 +84,5 @@ jobs:
           framework: terraform
           output_format: sarif
           quiet: true
-          skip_check: CKV2_GHA_1,CKV_AWS_252,CKV_AWS_35,CKV2_AWS_10
+          skip_check: CKV2_GHA_1
           soft_fail: false

@@ -16,4 +16,4 @@ repos:
     hooks:
       - id: checkov
         verbose: false
-        args: [--download-external-modules, "true", --quiet, --compact]
+        args: [--download-external-modules, "true", --quiet, --compact, --skip-check, CKV2_GHA_1]
