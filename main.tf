@@ -18,7 +18,7 @@ resource "aws_cloudwatch_log_metric_filter" "iam_activity_master" {
 
   name           = "LandingZone-IAMActivity-${each.key}"
   pattern        = each.value
-  log_group_name = data.aws_cloudwatch_log_group.cloudtrail_master.0.name
+  log_group_name = data.aws_cloudwatch_log_group.cloudtrail_management[0].name
 
   metric_transformation {
     name      = "LandingZone-IAMActivity-${each.key}"
@@ -34,12 +34,12 @@ resource "aws_cloudwatch_metric_alarm" "iam_activity_master" {
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = "1"
   metric_name               = each.value.name
-  namespace                 = each.value.metric_transformation.0.namespace
+  namespace                 = each.value.metric_transformation[0].namespace
   period                    = "300"
   statistic                 = "Sum"
   threshold                 = "1"
   alarm_description         = "Monitors IAM activity for ${each.key}"
-  alarm_actions             = [aws_sns_topic.iam_activity.0.arn]
+  alarm_actions             = [aws_sns_topic.iam_activity[0].arn]
   insufficient_data_actions = []
   tags                      = var.tags
 }
@@ -108,8 +108,9 @@ resource "aws_iam_role_policy_attachment" "config_recorder_config_role" {
 }
 
 module "datadog_master" {
+  #checkov:skip=CKV_AWS_124: since this is managed by terraform, we reason that this already provides feedback and a seperate SNS topic is therefore not required
   count                 = try(var.datadog.enable_integration, false) == true ? 1 : 0
-  source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.8"
+  source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.11"
   api_key               = try(var.datadog.api_key, null)
   excluded_regions      = var.datadog_excluded_regions
   install_log_forwarder = try(var.datadog.install_log_forwarder, false)

@@ -69,3 +69,20 @@ jobs:
         with:
           tfsec_args: --concise-output
           github_token: ${{ github.token }}
+
+  checkov:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@v12.1964.0 # checkov-action v12.1964.0 == checkov 2.2.182 - keep pre-commit and github action in sync
+        with:
+          container_user: 1000
+          directory: "/"
+          download_external_modules: true
+          framework: terraform
+          output_format: sarif
+          quiet: true
+          skip_check: CKV2_GHA_1,CKV_AWS_252,CKV_AWS_35,CKV2_AWS_10
+          soft_fail: false

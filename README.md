@@ -446,3 +446,23 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+## Using Pre-commit
+
+To make local development easier, we have added a pre-commit configuration to the repo. to use it, follow these steps:
+
+Install the following tools:
+
+```brew install tflint```
+
+Install pre-commit:
+
+```pip3 install pre-commit --upgrade```
+
+To run the pre-commit hooks to see if everything working as expected, (the first time run might take a few minutes):
+
+```pre-commit run -a```
+
+To install the pre-commit hooks to run before each commit:
+
+```pre-commit install```
