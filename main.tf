@@ -21,7 +21,7 @@ resource "aws_cloudwatch_log_metric_filter" "iam_activity_master" {
 
   name           = "LandingZone-IAMActivity-${each.key}"
   pattern        = each.value
-  log_group_name = data.aws_cloudwatch_log_group.cloudtrail_management[0].name
+  log_group_name = data.aws_cloudwatch_log_group.cloudtrail_master[0].name
 
   metric_transformation {
     name      = "LandingZone-IAMActivity-${each.key}"

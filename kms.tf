@@ -1,9 +1,9 @@
-# Management Account
+# Master Account
 
 module "kms_key" {
   source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.2.0"
   name                = "inception"
-  description         = "KMS key used in the management account"
+  description         = "KMS key used in the master account"
   enable_key_rotation = true
   policy              = data.aws_iam_policy_document.kms_key.json
   tags                = var.tags
@@ -16,12 +16,12 @@ data "aws_iam_policy_document" "kms_key" {
     sid       = "Base Permissions"
     actions   = ["kms:*"]
     effect    = "Allow"
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.management.account_id}:key/*"]
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.master.account_id}:key/*"]
 
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.management.account_id}:root"
+        "arn:aws:iam::${data.aws_caller_identity.master.account_id}:root"
       ]
     }
   }
@@ -31,7 +31,7 @@ data "aws_iam_policy_document" "kms_key" {
     content {
       sid       = "Allow SES Decrypt"
       effect    = "Allow"
-      resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.management.account_id}:key/*"]
+      resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.master.account_id}:key/*"]
 
       actions = [
         "kms:Decrypt",
