@@ -38,6 +38,4 @@ data "aws_sns_topic" "all_config_notifications" {
   name     = "aws-controltower-AllConfigNotifications"
 }
 
-data "aws_ssoadmin_instances" "default" {}
-
 data "mcaf_aws_all_organizational_units" "default" {}

@@ -12,7 +12,7 @@ resource "aws_cloudwatch_log_metric_filter" "iam_activity_audit" {
 
   name           = "LandingZone-IAMActivity-${each.key}"
   pattern        = each.value
-  log_group_name = data.aws_cloudwatch_log_group.cloudtrail_audit.0.name
+  log_group_name = data.aws_cloudwatch_log_group.cloudtrail_audit[0].name
 
   metric_transformation {
     name      = "LandingZone-IAMActivity-${each.key}"
@@ -29,12 +29,12 @@ resource "aws_cloudwatch_metric_alarm" "iam_activity_audit" {
   comparison_operator       = "GreaterThanOrEqualToThreshold"
   evaluation_periods        = "1"
   metric_name               = each.value.name
-  namespace                 = each.value.metric_transformation.0.namespace
+  namespace                 = each.value.metric_transformation[0].namespace
   period                    = "300"
   statistic                 = "Sum"
   threshold                 = "1"
   alarm_description         = "Monitors IAM activity for ${each.key}"
-  alarm_actions             = [aws_sns_topic.iam_activity.0.arn]
+  alarm_actions             = [aws_sns_topic.iam_activity[0].arn]
   insufficient_data_actions = []
   tags                      = var.tags
 }
@@ -198,8 +198,9 @@ resource "aws_sns_topic_subscription" "security_hub_findings" {
 
 // Monitoring
 module "datadog_audit" {
+  #checkov:skip=CKV_AWS_124: since this is managed by terraform, we reason that this already provides feedback and a seperate SNS topic is therefore not required
   count                 = try(var.datadog.enable_integration, false) == true ? 1 : 0
-  source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.8"
+  source                = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.3.11"
   providers             = { aws = aws.audit }
   api_key               = try(var.datadog.api_key, null)
   excluded_regions      = var.datadog_excluded_regions
@@ -223,12 +224,12 @@ resource "aws_sns_topic_policy" "iam_activity" {
   count    = var.monitor_iam_activity ? 1 : 0
   provider = aws.audit
 
-  arn = aws_sns_topic.iam_activity.0.arn
+  arn = aws_sns_topic.iam_activity[0].arn
 
   policy = templatefile("${path.module}/files/sns/iam_activity_topic_policy.json.tpl", {
     account_id               = data.aws_caller_identity.audit.account_id
     services_allowed_publish = jsonencode("cloudwatch.amazonaws.com")
-    sns_topic                = aws_sns_topic.iam_activity.0.arn
+    sns_topic                = aws_sns_topic.iam_activity[0].arn
 
     security_hub_roles = local.security_hub_has_cis_aws_foundations_enabled ? sort([
       for account_id, _ in local.aws_account_emails : "\"arn:aws:sts::${account_id}:assumed-role/AWSServiceRoleForSecurityHub/securityhub\""
@@ -244,7 +245,7 @@ resource "aws_sns_topic_subscription" "iam_activity" {
   endpoint               = each.value.endpoint
   endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
   protocol               = each.value.protocol
-  topic_arn              = aws_sns_topic.iam_activity.0.arn
+  topic_arn              = aws_sns_topic.iam_activity[0].arn
 }
 
 resource "aws_iam_role" "sns_feedback" {
@@ -269,7 +270,7 @@ data "aws_iam_policy_document" "sns_feedback" {
       "logs:PutRetentionPolicy"
     ]
 
-    resources = compact([aws_sns_topic.security_hub_findings.arn, var.monitor_iam_activity ? aws_sns_topic.iam_activity.0.arn : null])
+    resources = compact([aws_sns_topic.security_hub_findings.arn, var.monitor_iam_activity ? aws_sns_topic.iam_activity[0].arn : null])
 
     condition {
       test     = "StringEquals"

@@ -16,7 +16,7 @@ data "aws_iam_policy_document" "kms_key" {
     sid       = "Base Permissions"
     actions   = ["kms:*"]
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.master.account_id}:key/*"]
 
     principals {
       type = "AWS"
@@ -31,7 +31,7 @@ data "aws_iam_policy_document" "kms_key" {
     content {
       sid       = "Allow SES Decrypt"
       effect    = "Allow"
-      resources = ["*"]
+      resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.master.account_id}:key/*"]
 
       actions = [
         "kms:Decrypt",
@@ -67,7 +67,7 @@ data "aws_iam_policy_document" "kms_key_audit" {
     sid       = "Full permissions for the root user only"
     actions   = ["kms:*"]
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
 
     condition {
       test     = "StringEquals"
@@ -99,7 +99,7 @@ data "aws_iam_policy_document" "kms_key_audit" {
       "kms:Update*"
     ]
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
 
     principals {
       type = "AWS"
@@ -117,7 +117,7 @@ data "aws_iam_policy_document" "kms_key_audit" {
       "kms:List*"
     ]
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
 
     principals {
       type = "AWS"
@@ -134,7 +134,7 @@ data "aws_iam_policy_document" "kms_key_audit" {
       "kms:GenerateDataKey"
     ]
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
 
     principals {
       type = "Service"
@@ -152,7 +152,7 @@ data "aws_iam_policy_document" "kms_key_audit" {
       "kms:GenerateDataKey"
     ]
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
 
     principals {
       type = "Service"
@@ -181,7 +181,7 @@ data "aws_iam_policy_document" "kms_key_logging" {
     sid       = "Full permissions for the root user only"
     actions   = ["kms:*"]
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
 
     condition {
       test     = "StringEquals"
@@ -212,7 +212,7 @@ data "aws_iam_policy_document" "kms_key_logging" {
       "kms:Update*"
     ]
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
 
     principals {
       type = "AWS"
@@ -230,7 +230,7 @@ data "aws_iam_policy_document" "kms_key_logging" {
       "kms:List*"
     ]
     effect    = "Allow"
-    resources = ["*"]
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
 
     principals {
       type = "AWS"
@@ -250,7 +250,7 @@ data "aws_iam_policy_document" "kms_key_logging" {
       "kms:GenerateDataKey*",
       "kms:DescribeKey",
     ]
-    resources = ["*"]
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
 
     principals {
       type        = "Service"

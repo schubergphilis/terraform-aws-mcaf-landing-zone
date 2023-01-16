@@ -51,7 +51,7 @@ resource "aws_organizations_policy" "lz_root_policies" {
 
 resource "aws_organizations_policy_attachment" "lz_root_policies" {
   policy_id = aws_organizations_policy.lz_root_policies.id
-  target_id = data.aws_organizations_organization.default.roots.0.id
+  target_id = data.aws_organizations_organization.default.roots[0].id
 }
 
 // https://summitroute.com/blog/2020/03/25/aws_scp_best_practices/#deny-ability-to-leave-organization
@@ -67,7 +67,7 @@ resource "aws_organizations_policy_attachment" "deny_root_user" {
     for ou in data.aws_organizations_organizational_units.default.children : ou.name => ou if contains(var.aws_service_control_policies.aws_deny_root_user_ous, ou.name)
   }
 
-  policy_id = aws_organizations_policy.deny_root_user.0.id
+  policy_id = aws_organizations_policy.deny_root_user[0].id
   target_id = each.value.id
 }
 

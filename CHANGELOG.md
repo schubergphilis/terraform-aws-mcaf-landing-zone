@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.21.5 (2023-01-11)
+
+ENHANCEMENTS
+
+- Adding CheckOV to the workflow and solving all CheckOV findings ([#160](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/160)).
+
 ## 0.21.4 (2023-01-09)
 
 ENHANCEMENTS

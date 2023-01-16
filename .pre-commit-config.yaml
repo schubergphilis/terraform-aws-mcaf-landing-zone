@@ -1,0 +1,19 @@
+# .pre-commit-config.yaml
+default_stages: [commit]
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.77.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_tflint
+      - id: terraform_docs
+      - id: terraform_validate
+        exclude: "/modules/[^/]+$"
+        args:
+          - --hook-config=--retry-once-with-cleanup=true
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: 2.2.182 # checkov-action v12.1964.0 == checkov 2.2.182 - keep pre-commit and github action in sync
+    hooks:
+      - id: checkov
+        verbose: false
+        args: [--download-external-modules, "true", --quiet, --compact, --skip-check, CKV2_GHA_1]
