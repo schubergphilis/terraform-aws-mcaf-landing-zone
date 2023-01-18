@@ -61,6 +61,12 @@ variable "aws_guardduty" {
   description = "Whether AWS GuardDuty should be enabled"
 }
 
+variable "aws_guardduty_finding_publishing_frequency" {
+  type        = string
+  default     = "FIFTEEN_MINUTES"
+  description = "Specifies the frequency of notifications sent for subsequent finding occurrences"
+}
+
 variable "aws_guardduty_s3_protection" {
   type        = bool
   default     = true
