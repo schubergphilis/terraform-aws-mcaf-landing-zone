@@ -400,6 +400,7 @@ module "landing_zone" {
 | aws\_config\_sns\_subscription | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
 | aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
+| aws\_guardduty\_finding\_publishing\_frequency | Specifies the frequency of notifications sent for subsequent finding occurrences | `string` | `"FIFTEEN_MINUTES"` | no |
 | aws\_guardduty\_s3\_protection | Whether AWS GuardDuty S3 protection should be enabled | `bool` | `true` | no |
 | aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name         = string<br>    values       = optional(list(string))<br>    enforced_for = optional(list(string))<br>  })))</pre> | `null` | no |
 | aws\_security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
