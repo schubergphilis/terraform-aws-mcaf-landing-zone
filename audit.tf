@@ -111,10 +111,11 @@ resource "aws_guardduty_organization_configuration" "default" {
 }
 
 resource "aws_guardduty_detector" "audit" {
-  count    = var.aws_guardduty == true ? 1 : 0
-  provider = aws.audit
-  enable   = true
-  tags     = var.tags
+  count                        = var.aws_guardduty == true ? 1 : 0
+  provider                     = aws.audit
+  enable                       = true
+  finding_publishing_frequency = var.aws_guardduty_finding_publishing_frequency
+  tags                         = var.tags
 
   datasources {
     s3_logs {
