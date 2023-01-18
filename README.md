@@ -86,9 +86,9 @@ aws_config = {
 
 ### AWS GuardDuty
 
-This module supports enabling GuardDuty at the organization level which means that all new accounts that are created in, or added to, the organization are added as a member accounts of the `audit` account GuardDuty detector.
+This module supports enabling GuardDuty at the organization level which means that all new accounts that are created in, or added to, the organization are added as member accounts to the `audit` account GuardDuty detector.
 
-This feature can be controlled via the `aws_guardduty` variable and is enabled by default. With `aws_guardduty_s3_protection` you control if you want to have GuardDuty protecting S3, it is turned on by default.
+The feature can be controlled via the `aws_guardduty` variable and is enabled by default. The finding publishing frequency has been reduced from 6 hours to every 15 minutes, and the Malware Protection, Kubernetes and S3 Logs data sources are enabled out of the box.
 
 Note: In case you are migrating an existing AWS organization to this module, all existing accounts except for the `master` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
 

@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ENHANCEMENTS
 
-- Make GuardDuty finding publishing frequency configurable ([#162](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/162)).
+- Make GuardDuty more configurable, adds ability to set publishing frequency and data sources ([#161](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/161)).
 
 ## 0.21.5 (2023-01-11)
 
