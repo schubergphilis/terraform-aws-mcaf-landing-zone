@@ -56,15 +56,25 @@ variable "aws_ebs_encryption_by_default" {
 }
 
 variable "aws_guardduty" {
-  type        = bool
-  default     = true
-  description = "Whether AWS GuardDuty should be enabled"
-}
-
-variable "aws_guardduty_s3_protection" {
-  type        = bool
-  default     = true
-  description = "Whether AWS GuardDuty S3 protection should be enabled"
+  type = object({
+    enabled                      = optional(bool, true)
+    finding_publishing_frequency = optional(string, "FIFTEEN_MINUTES")
+    datasources = object({
+      malware_protection = optional(bool, true)
+      kubernetes         = optional(bool, true)
+      s3_logs            = optional(bool, true)
+    })
+  })
+  default = {
+    enabled                      = true
+    finding_publishing_frequency = "FIFTEEN_MINUTES"
+    datasources = {
+      malware_protection = true
+      kubernetes         = true
+      s3_logs            = true
+    }
+  }
+  description = "AWS GuardDuty settings"
 }
 
 variable "aws_required_tags" {

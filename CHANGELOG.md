@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.22.0 (2023-01-18)
+
+ENHANCEMENTS
+
+- Make GuardDuty more configurable, adds ability to set publishing frequency and data sources ([#161](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/161)).
+
 ## 0.21.5 (2023-01-11)
 
 ENHANCEMENTS

@@ -96,29 +96,50 @@ resource "aws_sns_topic_subscription" "aws_config" {
   topic_arn              = "arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_account_ids.audit}:aws-controltower-AggregateSecurityNotifications"
 }
 
-// Guardduty
+// GuardDuty
 resource "aws_guardduty_organization_admin_account" "audit" {
-  count            = var.aws_guardduty == true ? 1 : 0
+  count            = var.aws_guardduty.enabled == true ? 1 : 0
   admin_account_id = var.control_tower_account_ids.audit
 }
 
 resource "aws_guardduty_organization_configuration" "default" {
-  count       = var.aws_guardduty == true ? 1 : 0
+  count       = var.aws_guardduty.enabled == true ? 1 : 0
   provider    = aws.audit
-  auto_enable = true
-  detector_id = aws_guardduty_detector.audit[0].id
-  depends_on  = [aws_guardduty_organization_admin_account.audit]
+  auto_enable = var.aws_guardduty.enabled
+  detector_id = aws_guardduty_detector.audit.id
+
+  datasources {
+    kubernetes {
+      audit_logs {
+        enable = var.aws_guardduty.datasources.kubernetes
+      }
+    }
+
+    malware_protection {
+      scan_ec2_instance_with_findings {
+        ebs_volumes {
+          auto_enable = var.aws_guardduty.datasources.malware_protection
+        }
+      }
+    }
+
+    s3_logs {
+      auto_enable = var.aws_guardduty.datasources.s3_logs
+    }
+  }
+
+  depends_on = [aws_guardduty_organization_admin_account.audit]
 }
 
 resource "aws_guardduty_detector" "audit" {
-  count    = var.aws_guardduty == true ? 1 : 0
-  provider = aws.audit
-  enable   = true
-  tags     = var.tags
+  provider                     = aws.audit
+  enable                       = var.aws_guardduty.enabled
+  finding_publishing_frequency = var.aws_guardduty.finding_publishing_frequency
+  tags                         = var.tags
 
   datasources {
     s3_logs {
-      enable = var.aws_guardduty_s3_protection
+      enable = true
     }
   }
 }

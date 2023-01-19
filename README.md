@@ -86,9 +86,9 @@ aws_config = {
 
 ### AWS GuardDuty
 
-This module supports enabling GuardDuty at the organization level which means that all new accounts that are created in, or added to, the organization are added as a member accounts of the `audit` account GuardDuty detector.
+This module supports enabling GuardDuty at the organization level which means that all new accounts that are created in, or added to, the organization are added as member accounts to the `audit` account GuardDuty detector.
 
-This feature can be controlled via the `aws_guardduty` variable and is enabled by default. With `aws_guardduty_s3_protection` you control if you want to have GuardDuty protecting S3, it is turned on by default.
+The feature can be controlled via the `aws_guardduty` variable and is enabled by default. The finding publishing frequency has been reduced from 6 hours to every 15 minutes, and the Malware Protection, Kubernetes and S3 Logs data sources are enabled out of the box.
 
 Note: In case you are migrating an existing AWS organization to this module, all existing accounts except for the `master` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
 
@@ -399,8 +399,7 @@ module "landing_zone" {
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
 | aws\_config\_sns\_subscription | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
-| aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
-| aws\_guardduty\_s3\_protection | Whether AWS GuardDuty S3 protection should be enabled | `bool` | `true` | no |
+| aws\_guardduty | AWS GuardDuty settings | <pre>object({<br>    enabled                      = optional(bool, true)<br>    finding_publishing_frequency = optional(string, "FIFTEEN_MINUTES")<br>    datasources = object({<br>      malware_protection = optional(bool, true)<br>      kubernetes         = optional(bool, true)<br>      s3_logs            = optional(bool, true)<br>    })<br>  })</pre> | <pre>{<br>  "datasources": {<br>    "kubernetes": true,<br>    "malware_protection": true,<br>    "s3_logs": true<br>  },<br>  "enabled": true,<br>  "finding_publishing_frequency": "FIFTEEN_MINUTES"<br>}</pre> | no |
 | aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name         = string<br>    values       = optional(list(string))<br>    enforced_for = optional(list(string))<br>  })))</pre> | `null` | no |
 | aws\_security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
 | aws\_security\_hub\_sns\_subscription | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
