@@ -399,8 +399,7 @@ module "landing_zone" {
 | aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
 | aws\_config\_sns\_subscription | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
-| aws\_guardduty | Whether AWS GuardDuty should be enabled | `bool` | `true` | no |
-| aws\_guardduty\_s3\_protection | Whether AWS GuardDuty S3 protection should be enabled | `bool` | `true` | no |
+| aws\_guardduty | AWS GuardDuty settings | <pre>object({<br>    enabled                      = optional(bool, true)<br>    finding_publishing_frequency = optional(string, "FIFTEEN_MINUTES")<br>    datasources = object({<br>      malware_protection = optional(bool, true)<br>      kubernetes         = optional(bool, true)<br>      s3_logs            = optional(bool, true)<br>    })<br>  })</pre> | <pre>{<br>  "datasources": {<br>    "kubernetes": true,<br>    "malware_protection": true,<br>    "s3_logs": true<br>  },<br>  "enabled": true,<br>  "finding_publishing_frequency": "FIFTEEN_MINUTES"<br>}</pre> | no |
 | aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name         = string<br>    values       = optional(list(string))<br>    enforced_for = optional(list(string))<br>  })))</pre> | `null` | no |
 | aws\_security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
 | aws\_security\_hub\_sns\_subscription | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
