@@ -1,8 +1,7 @@
 module "aws_sso_permission_sets" {
   for_each = var.aws_sso_permission_sets
 
-  source = "./modules/permission-set"
-
+  source              = "./modules/permission-set"
   name                = each.key
   session_duration    = each.value.session_duration
   assignments         = each.value.assignments

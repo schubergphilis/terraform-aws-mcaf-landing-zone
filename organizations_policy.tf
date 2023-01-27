@@ -56,7 +56,8 @@ resource "aws_organizations_policy_attachment" "lz_root_policies" {
 
 // https://summitroute.com/blog/2020/03/25/aws_scp_best_practices/#deny-ability-to-leave-organization
 resource "aws_organizations_policy" "deny_root_user" {
-  count   = length(var.aws_service_control_policies.aws_deny_root_user_ous) > 0 ? 1 : 0
+  count = length(var.aws_service_control_policies.aws_deny_root_user_ous) > 0 ? 1 : 0
+
   name    = "LandingZone-DenyRootUser"
   content = file("${path.module}/files/organizations/deny_root_user.json")
   tags    = var.tags
