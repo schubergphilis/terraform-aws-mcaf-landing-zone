@@ -83,7 +83,10 @@ data "aws_iam_policy_document" "kms_key_audit" {
   }
 
   statement {
-    sid = "Administrative permissions for pipeline"
+    sid       = "Administrative permissions for pipeline"
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
+
     actions = [
       "kms:Create*",
       "kms:Describe*",
@@ -97,8 +100,6 @@ data "aws_iam_policy_document" "kms_key_audit" {
       "kms:UntagResource",
       "kms:Update*"
     ]
-    effect    = "Allow"
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
 
     principals {
       type = "AWS"
@@ -109,14 +110,15 @@ data "aws_iam_policy_document" "kms_key_audit" {
   }
 
   statement {
-    sid = "List KMS keys permissions for all IAM users"
+    sid       = "List KMS keys permissions for all IAM users"
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
+
     actions = [
       "kms:Describe*",
       "kms:Get*",
       "kms:List*"
     ]
-    effect    = "Allow"
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
 
     principals {
       type = "AWS"
@@ -127,13 +129,14 @@ data "aws_iam_policy_document" "kms_key_audit" {
   }
 
   statement {
-    sid = "Allow CloudWatch Decrypt"
+    sid       = "Allow CloudWatch Decrypt"
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
+
     actions = [
       "kms:Decrypt",
       "kms:GenerateDataKey"
     ]
-    effect    = "Allow"
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
 
     principals {
       type = "Service"
@@ -145,13 +148,14 @@ data "aws_iam_policy_document" "kms_key_audit" {
   }
 
   statement {
-    sid = "Allow SNS Decrypt"
+    sid       = "Allow SNS Decrypt"
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
+
     actions = [
       "kms:Decrypt",
       "kms:GenerateDataKey"
     ]
-    effect    = "Allow"
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
 
     principals {
       type = "Service"
@@ -198,7 +202,10 @@ data "aws_iam_policy_document" "kms_key_logging" {
   }
 
   statement {
-    sid = "Administrative permissions for pipeline"
+    sid       = "Administrative permissions for pipeline"
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
+
     actions = [
       "kms:Create*",
       "kms:Describe*",
@@ -211,8 +218,6 @@ data "aws_iam_policy_document" "kms_key_logging" {
       "kms:UntagResource",
       "kms:Update*"
     ]
-    effect    = "Allow"
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
 
     principals {
       type = "AWS"
@@ -223,14 +228,15 @@ data "aws_iam_policy_document" "kms_key_logging" {
   }
 
   statement {
-    sid = "List KMS keys permissions for all IAM users"
+    sid       = "List KMS keys permissions for all IAM users"
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
+
     actions = [
       "kms:Describe*",
       "kms:Get*",
       "kms:List*"
     ]
-    effect    = "Allow"
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
 
     principals {
       type = "AWS"
@@ -241,8 +247,10 @@ data "aws_iam_policy_document" "kms_key_logging" {
   }
 
   statement {
-    sid    = "KMS permissions for AWS logs service"
-    effect = "Allow"
+    sid       = "KMS permissions for AWS logs service"
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
+
     actions = [
       "kms:Encrypt",
       "kms:Decrypt",
@@ -250,7 +258,6 @@ data "aws_iam_policy_document" "kms_key_logging" {
       "kms:GenerateDataKey*",
       "kms:DescribeKey",
     ]
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
 
     principals {
       type        = "Service"
@@ -259,13 +266,14 @@ data "aws_iam_policy_document" "kms_key_logging" {
   }
 
   statement {
-    sid = "AllowAWSConfigToEncryptDecryptLogs"
+    sid       = "AllowAWSConfigToEncryptDecryptLogs"
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
+
     actions = [
       "kms:Decrypt",
       "kms:GenerateDataKey*"
     ]
-    effect    = "Allow"
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
 
     principals {
       type = "Service"

@@ -16,7 +16,10 @@ locals {
       "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
     ]
   )
-  aws_config_s3_name = coalesce(var.aws_config.delivery_channel_s3_bucket_name, "aws-config-configuration-history-${var.control_tower_account_ids.logging}-${data.aws_region.current.name}")
+  aws_config_s3_name = coalesce(
+    var.aws_config.delivery_channel_s3_bucket_name,
+    "aws-config-configuration-history-${var.control_tower_account_ids.logging}-${data.aws_region.current.name}"
+  )
 }
 
 // AWS Config - Management account configuration
@@ -134,57 +137,48 @@ resource "aws_config_aggregate_authorization" "logging" {
 
 data "aws_iam_policy_document" "aws_config_s3" {
   statement {
-    sid = "AWSConfigBucketPermissionsCheck"
+    sid       = "AWSConfigBucketPermissionsCheck"
+    actions   = ["s3:GetBucketAcl"]
+    resources = ["arn:aws:s3:::${local.aws_config_s3_name}"]
+
     principals {
       type        = "Service"
       identifiers = ["config.amazonaws.com"]
     }
-    actions = [
-      "s3:GetBucketAcl"
-    ]
-    resources = [
-      "arn:aws:s3:::${local.aws_config_s3_name}"
-    ]
   }
 
   statement {
-    sid = "AWSConfigBucketExistenceCheck"
+    sid       = "AWSConfigBucketExistenceCheck"
+    actions   = ["s3:ListBucket"]
+    resources = ["arn:aws:s3:::${local.aws_config_s3_name}"]
+
     principals {
       type        = "Service"
       identifiers = ["config.amazonaws.com"]
     }
-    actions = [
-      "s3:ListBucket"
-    ]
-    resources = [
-      "arn:aws:s3:::${local.aws_config_s3_name}"
-    ]
   }
 
   statement {
-    sid = "AllowConfigWriteAccess"
+    sid       = "AllowConfigWriteAccess"
+    actions   = ["s3:PutObject"]
+    resources = ["arn:aws:s3:::${local.aws_config_s3_name}/*"]
+
     principals {
       type        = "Service"
       identifiers = ["config.amazonaws.com"]
     }
-    actions = [
-      "s3:PutObject"
-    ]
-    resources = [
-      "arn:aws:s3:::${local.aws_config_s3_name}/*"
-    ]
 
     condition {
       test     = "StringEquals"
       variable = "s3:x-amz-acl"
-      values = [
-        "bucket-owner-full-control"
-      ]
+      values   = ["bucket-owner-full-control"]
     }
   }
 }
 
 module "aws_config_s3" {
+  #checkov:skip=CKV_AWS_19: False positive, KMS key is used by default https://github.com/bridgecrewio/checkov/issues/3847
+  #checkov:skip=CKV_AWS_145: False positive, KMS key is used by default https://github.com/bridgecrewio/checkov/issues/3847
   providers = { aws = aws.logging }
 
   source      = "github.com/schubergphilis/terraform-aws-mcaf-s3?ref=v0.7.0"

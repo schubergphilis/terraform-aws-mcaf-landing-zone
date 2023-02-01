@@ -370,7 +370,7 @@ module "landing_zone" {
 }
 ```
 
-<!--- BEGIN_TF_DOCS --->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -428,7 +428,7 @@ module "landing_zone" {
 | kms\_key\_logging\_id | ID of KMS key for logging account |
 | monitor\_iam\_activity\_sns\_topic\_arn | ARN of the SNS Topic in the Audit account for IAM activity monitoring notifications |
 
-<!--- END_TF_DOCS --->
+<!-- END_TF_DOCS -->
 
 ## License
 
