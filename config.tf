@@ -1,3 +1,27 @@
+locals {
+  aws_config_aggregators = flatten([
+    for account in toset(try(var.aws_config.aggregator_account_ids, [])) : [
+      for region in toset(try(var.aws_config.aggregator_regions, [])) : {
+        account_id = account
+        region     = region
+      }
+    ]
+  ])
+  aws_config_rules = setunion(
+    try(var.aws_config.rule_identifiers, []),
+    [
+      "CLOUD_TRAIL_ENABLED",
+      "ENCRYPTED_VOLUMES",
+      "ROOT_ACCOUNT_MFA_ENABLED",
+      "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
+    ]
+  )
+  aws_config_s3_name = coalesce(
+    var.aws_config.delivery_channel_s3_bucket_name,
+    "aws-config-configuration-history-${var.control_tower_account_ids.logging}-${data.aws_region.current.name}"
+  )
+}
+
 // AWS Config - Management account configuration
 resource "aws_config_aggregate_authorization" "master" {
   for_each = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator if aggregator.account_id != var.control_tower_account_ids.audit }
@@ -8,11 +32,26 @@ resource "aws_config_aggregate_authorization" "master" {
 }
 
 resource "aws_config_aggregate_authorization" "master_to_audit" {
-  for_each = toset(try(var.aws_config.aggregator_regions, ["eu-central-1", "eu-west-1"]))
+  for_each = toset(coalescelist(var.aws_config.aggregator_regions, [data.aws_region.current.name]))
 
   account_id = var.control_tower_account_ids.audit
   region     = each.value
   tags       = var.tags
+}
+
+resource "aws_iam_role" "config_recorder" {
+  name = "LandingZone-ConfigRecorderRole"
+  path = var.path
+  tags = var.tags
+
+  assume_role_policy = templatefile("${path.module}/files/iam/service_assume_role.json.tpl", {
+    service = "config.amazonaws.com"
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "config_recorder_config_role" {
+  role       = aws_iam_role.config_recorder.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
 }
 
 resource "aws_config_configuration_recorder" "default" {
@@ -33,10 +72,16 @@ resource "aws_config_configuration_recorder_status" "default" {
 
 resource "aws_config_delivery_channel" "default" {
   name           = "default"
-  s3_bucket_name = "aws-controltower-logs-${var.control_tower_account_ids.logging}-${data.aws_region.current.name}"
-  s3_key_prefix  = data.aws_organizations_organization.default.id
+  s3_bucket_name = module.aws_config_s3.name
+  s3_key_prefix  = var.aws_config.delivery_channel_s3_key_prefix
+  s3_kms_key_arn = module.kms_key_logging.arn
   sns_topic_arn  = data.aws_sns_topic.all_config_notifications.arn
-  depends_on     = [aws_config_configuration_recorder.default]
+
+  snapshot_delivery_properties {
+    delivery_frequency = var.aws_config.delivery_frequency
+  }
+
+  depends_on = [aws_config_configuration_recorder.default]
 }
 
 resource "aws_config_organization_managed_rule" "default" {
@@ -44,25 +89,6 @@ resource "aws_config_organization_managed_rule" "default" {
 
   name            = each.value
   rule_identifier = each.value
-}
-
-resource "aws_iam_role" "config_recorder" {
-  name = "LandingZone-ConfigRecorderRole"
-  tags = var.tags
-
-  assume_role_policy = templatefile("${path.module}/files/iam/service_assume_role.json.tpl", {
-    service = "config.amazonaws.com"
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "config_recorder_read_only" {
-  role       = aws_iam_role.config_recorder.name
-  policy_arn = "arn:aws:iam::aws:policy/ReadOnlyAccess"
-}
-
-resource "aws_iam_role_policy_attachment" "config_recorder_config_role" {
-  role       = aws_iam_role.config_recorder.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
 }
 
 // AWS Config - Audit account configuration
@@ -107,4 +133,87 @@ resource "aws_config_aggregate_authorization" "logging" {
   account_id = each.value.account_id
   region     = each.value.region
   tags       = var.tags
+}
+
+data "aws_iam_policy_document" "aws_config_s3" {
+  statement {
+    sid       = "AWSConfigBucketPermissionsCheck"
+    actions   = ["s3:GetBucketAcl"]
+    resources = ["arn:aws:s3:::${local.aws_config_s3_name}"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["config.amazonaws.com"]
+    }
+  }
+
+  statement {
+    sid       = "AWSConfigBucketExistenceCheck"
+    actions   = ["s3:ListBucket"]
+    resources = ["arn:aws:s3:::${local.aws_config_s3_name}"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["config.amazonaws.com"]
+    }
+  }
+
+  statement {
+    sid       = "AllowConfigWriteAccess"
+    actions   = ["s3:PutObject"]
+    resources = ["arn:aws:s3:::${local.aws_config_s3_name}/*"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["config.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "s3:x-amz-acl"
+      values   = ["bucket-owner-full-control"]
+    }
+  }
+}
+
+module "aws_config_s3" {
+  #checkov:skip=CKV_AWS_19: False positive, KMS key is used by default https://github.com/bridgecrewio/checkov/issues/3847
+  #checkov:skip=CKV_AWS_145: False positive, KMS key is used by default https://github.com/bridgecrewio/checkov/issues/3847
+  providers = { aws = aws.logging }
+
+  source      = "github.com/schubergphilis/terraform-aws-mcaf-s3?ref=v0.7.0"
+  name        = local.aws_config_s3_name
+  kms_key_arn = module.kms_key_logging.arn
+  policy      = data.aws_iam_policy_document.aws_config_s3.json
+  versioning  = true
+  tags        = var.tags
+
+  lifecycle_rule = [
+    {
+      id      = "retention"
+      enabled = true
+
+      abort_incomplete_multipart_upload = {
+        days_after_initiation = 7
+      }
+
+      expiration = {
+        days = 365
+      }
+
+      noncurrent_version_expiration = {
+        noncurrent_days = 365
+      }
+
+      noncurrent_version_transition = {
+        noncurrent_days = 90
+        storage_class   = "STANDARD_IA"
+      }
+
+      transition = {
+        days          = 90
+        storage_class = "STANDARD_IA"
+      }
+    }
+  ]
 }

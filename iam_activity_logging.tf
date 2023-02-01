@@ -41,6 +41,7 @@ resource "aws_iam_role" "sns_feedback" {
   provider = aws.audit
 
   name = "LandingZone-SNSFeedback"
+  path = var.path
   tags = var.tags
 
   assume_role_policy = templatefile("${path.module}/files/iam/service_assume_role.json.tpl", {

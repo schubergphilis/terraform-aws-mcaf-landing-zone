@@ -33,11 +33,27 @@ variable "aws_account_password_policy" {
 
 variable "aws_config" {
   type = object({
-    aggregator_account_ids = list(string)
-    aggregator_regions     = list(string)
+    aggregator_account_ids          = optional(list(string), [])
+    aggregator_regions              = optional(list(string), [])
+    delivery_channel_s3_bucket_name = optional(string, null)
+    delivery_channel_s3_key_prefix  = optional(string, null)
+    delivery_frequency              = optional(string, "TwentyFour_Hours")
+    rule_identifiers                = optional(list(string), [])
   })
-  default     = null
+  default = {
+    aggregator_account_ids          = []
+    aggregator_regions              = []
+    delivery_channel_s3_bucket_name = null
+    delivery_channel_s3_key_prefix  = null
+    delivery_frequency              = "TwentyFour_Hours"
+    rule_identifiers                = []
+  }
   description = "AWS Config settings"
+
+  validation {
+    condition     = contains(["One_Hour", "Three_Hours", "Six_Hours", "Twelve_Hours", "TwentyFour_Hours"], var.aws_config.delivery_frequency)
+    error_message = "The delivery frequency must be set to \"One_Hour\", \"Three_Hours\", \"Six_Hours\", \"Twelve_Hours\", or \"TwentyFour_Hours\"."
+  }
 }
 
 variable "aws_config_sns_subscription" {
@@ -199,6 +215,12 @@ variable "monitor_iam_activity_sns_subscription" {
   }))
   default     = {}
   description = "Subscription options for the LandingZone-IAMActivity SNS topic"
+}
+
+variable "path" {
+  type        = string
+  default     = "/"
+  description = "Optional path for all IAM users, user groups, roles, and customer managed policies created by this module"
 }
 
 variable "ses_root_accounts_mail_forward" {

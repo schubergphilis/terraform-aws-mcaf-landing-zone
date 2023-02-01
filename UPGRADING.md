@@ -1,3 +1,11 @@
+# Upgrading to 0.23.x
+
+Version `0.23.x` introduces a change in behaviour of AWS Config:
+
+- By default the `aggregator_regions` were set to eu-west-1 and eu-central-1, this has been changed to only enable the current region. Provide a list of regions to `var.aws_config.aggregator_regions` if you want to enable AWS Config in multiple regions.
+- Previously the `aws-controltower-logs` bucket was used to store CloudTrail and AWS Config logs, this version introduces a separate bucket for AWS Config. You are able to override the bucket name by setting `var.aws_config.delivery_channel_s3_bucket_name`.
+
+
 # Upgrading to 0.21.x
 
 Version `0.21.x` introduces exceptions for IAM entities on the `DenyDisablingSecurityHub` and `DenyLeavingOrg` SCP. The following variables have been merged into a new variable `aws_service_control_policies`:
