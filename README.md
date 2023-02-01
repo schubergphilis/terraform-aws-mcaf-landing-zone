@@ -375,59 +375,146 @@ module "landing_zone" {
 
 | Name | Version |
 |------|---------|
-| terraform | >= 1.3 |
-| aws | >= 4.40.0 |
-| mcaf | >= 0.4.2 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.40.0 |
+| <a name="requirement_mcaf"></a> [mcaf](#requirement\_mcaf) | >= 0.4.2 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 4.40.0 |
-| aws.audit | >= 4.40.0 |
-| aws.logging | >= 4.40.0 |
-| mcaf | >= 0.4.2 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.40.0 |
+| <a name="provider_aws.audit"></a> [aws.audit](#provider\_aws.audit) | >= 4.40.0 |
+| <a name="provider_aws.logging"></a> [aws.logging](#provider\_aws.logging) | >= 4.40.0 |
+| <a name="provider_mcaf"></a> [mcaf](#provider\_mcaf) | >= 0.4.2 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_aws_config_s3"></a> [aws\_config\_s3](#module\_aws\_config\_s3) | github.com/schubergphilis/terraform-aws-mcaf-s3 | v0.7.0 |
+| <a name="module_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#module\_aws\_sso\_permission\_sets) | ./modules/permission-set | n/a |
+| <a name="module_datadog_audit"></a> [datadog\_audit](#module\_datadog\_audit) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.11 |
+| <a name="module_datadog_logging"></a> [datadog\_logging](#module\_datadog\_logging) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.11 |
+| <a name="module_datadog_master"></a> [datadog\_master](#module\_datadog\_master) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.11 |
+| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.2.0 |
+| <a name="module_kms_key_audit"></a> [kms\_key\_audit](#module\_kms\_key\_audit) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.2.0 |
+| <a name="module_kms_key_logging"></a> [kms\_key\_logging](#module\_kms\_key\_logging) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.2.0 |
+| <a name="module_ses-root-accounts-mail-alias"></a> [ses-root-accounts-mail-alias](#module\_ses-root-accounts-mail-alias) | github.com/schubergphilis/terraform-aws-mcaf-ses | v0.1.3 |
+| <a name="module_ses-root-accounts-mail-forward"></a> [ses-root-accounts-mail-forward](#module\_ses-root-accounts-mail-forward) | github.com/schubergphilis/terraform-aws-mcaf-ses-forwarder | v0.2.3 |
+| <a name="module_tag_policy_assignment"></a> [tag\_policy\_assignment](#module\_tag\_policy\_assignment) | ./modules/tag-policy-assignment | n/a |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_cloudtrail.additional_auditing_trail](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudtrail) | resource |
+| [aws_cloudwatch_event_rule.security_hub_findings](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
+| [aws_cloudwatch_event_target.security_hub_findings](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
+| [aws_cloudwatch_log_metric_filter.iam_activity_audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_metric_filter) | resource |
+| [aws_cloudwatch_log_metric_filter.iam_activity_logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_metric_filter) | resource |
+| [aws_cloudwatch_log_metric_filter.iam_activity_master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_metric_filter) | resource |
+| [aws_cloudwatch_metric_alarm.iam_activity_audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.iam_activity_logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.iam_activity_master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_config_aggregate_authorization.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_aggregate_authorization) | resource |
+| [aws_config_aggregate_authorization.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_aggregate_authorization) | resource |
+| [aws_config_aggregate_authorization.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_aggregate_authorization) | resource |
+| [aws_config_aggregate_authorization.master_to_audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_aggregate_authorization) | resource |
+| [aws_config_configuration_aggregator.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_configuration_aggregator) | resource |
+| [aws_config_configuration_recorder.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_configuration_recorder) | resource |
+| [aws_config_configuration_recorder_status.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_configuration_recorder_status) | resource |
+| [aws_config_delivery_channel.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_delivery_channel) | resource |
+| [aws_config_organization_managed_rule.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_organization_managed_rule) | resource |
+| [aws_ebs_encryption_by_default.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ebs_encryption_by_default) | resource |
+| [aws_ebs_encryption_by_default.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ebs_encryption_by_default) | resource |
+| [aws_ebs_encryption_by_default.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ebs_encryption_by_default) | resource |
+| [aws_guardduty_detector.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector) | resource |
+| [aws_guardduty_organization_admin_account.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_organization_admin_account) | resource |
+| [aws_guardduty_organization_configuration.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_organization_configuration) | resource |
+| [aws_iam_account_password_policy.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_account_password_policy) | resource |
+| [aws_iam_account_password_policy.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_account_password_policy) | resource |
+| [aws_iam_account_password_policy.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_account_password_policy) | resource |
+| [aws_iam_role.config_recorder](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role.sns_feedback](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role_policy.sns_feedback_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy_attachment.config_recorder_config_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_organizations_policy.deny_root_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy) | resource |
+| [aws_organizations_policy.lz_root_policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy) | resource |
+| [aws_organizations_policy_attachment.deny_root_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy_attachment) | resource |
+| [aws_organizations_policy_attachment.lz_root_policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy_attachment) | resource |
+| [aws_s3_account_public_access_block.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_account_public_access_block) | resource |
+| [aws_s3_account_public_access_block.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_account_public_access_block) | resource |
+| [aws_s3_account_public_access_block.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_account_public_access_block) | resource |
+| [aws_securityhub_account.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_account) | resource |
+| [aws_securityhub_organization_admin_account.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_organization_admin_account) | resource |
+| [aws_securityhub_organization_configuration.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_organization_configuration) | resource |
+| [aws_securityhub_product_subscription.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_product_subscription) | resource |
+| [aws_securityhub_standards_subscription.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_standards_subscription) | resource |
+| [aws_sns_topic.iam_activity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
+| [aws_sns_topic.security_hub_findings](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
+| [aws_sns_topic_policy.iam_activity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_policy) | resource |
+| [aws_sns_topic_policy.security_hub_findings](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_policy) | resource |
+| [aws_sns_topic_subscription.aws_config](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription) | resource |
+| [aws_sns_topic_subscription.iam_activity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription) | resource |
+| [aws_sns_topic_subscription.security_hub_findings](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription) | resource |
+| [aws_caller_identity.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_caller_identity.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_caller_identity.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_cloudwatch_log_group.cloudtrail_audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudwatch_log_group) | data source |
+| [aws_cloudwatch_log_group.cloudtrail_logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudwatch_log_group) | data source |
+| [aws_cloudwatch_log_group.cloudtrail_master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudwatch_log_group) | data source |
+| [aws_iam_policy_document.aws_config_s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.kms_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.kms_key_audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.kms_key_logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.sns_feedback](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_organizations_organization.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_organization) | data source |
+| [aws_organizations_organizational_units.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_organizational_units) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
+| [aws_sns_topic.all_config_notifications](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/sns_topic) | data source |
+| [mcaf_aws_all_organizational_units.default](https://registry.terraform.io/providers/schubergphilis/mcaf/latest/docs/data-sources/aws_all_organizational_units) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| control\_tower\_account\_ids | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
-| tags | Map of tags | `map(string)` | n/a | yes |
-| additional\_auditing\_trail | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name   = string<br>    bucket = string<br>  })</pre> | `null` | no |
-| aws\_account\_password\_policy | AWS account password policy parameters for the audit, logging and master account | <pre>object({<br>    allow_users_to_change        = bool<br>    max_age                      = number<br>    minimum_length               = number<br>    require_lowercase_characters = bool<br>    require_numbers              = bool<br>    require_symbols              = bool<br>    require_uppercase_characters = bool<br>    reuse_prevention_history     = number<br>  })</pre> | <pre>{<br>  "allow_users_to_change": true,<br>  "max_age": 90,<br>  "minimum_length": 14,<br>  "require_lowercase_characters": true,<br>  "require_numbers": true,<br>  "require_symbols": true,<br>  "require_uppercase_characters": true,<br>  "reuse_prevention_history": 24<br>}</pre> | no |
-| aws\_config | AWS Config settings | <pre>object({<br>    aggregator_account_ids = list(string)<br>    aggregator_regions     = list(string)<br>  })</pre> | `null` | no |
-| aws\_config\_sns\_subscription | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
-| aws\_ebs\_encryption\_by\_default | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
-| aws\_guardduty | AWS GuardDuty settings | <pre>object({<br>    enabled                      = optional(bool, true)<br>    finding_publishing_frequency = optional(string, "FIFTEEN_MINUTES")<br>    datasources = object({<br>      malware_protection = optional(bool, true)<br>      kubernetes         = optional(bool, true)<br>      s3_logs            = optional(bool, true)<br>    })<br>  })</pre> | <pre>{<br>  "datasources": {<br>    "kubernetes": true,<br>    "malware_protection": true,<br>    "s3_logs": true<br>  },<br>  "enabled": true,<br>  "finding_publishing_frequency": "FIFTEEN_MINUTES"<br>}</pre> | no |
-| aws\_required\_tags | AWS Required tags settings | <pre>map(list(object({<br>    name         = string<br>    values       = optional(list(string))<br>    enforced_for = optional(list(string))<br>  })))</pre> | `null` | no |
-| aws\_security\_hub\_product\_arns | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
-| aws\_security\_hub\_sns\_subscription | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
-| aws\_service\_control\_policies | AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction | <pre>object({<br>    allowed_regions                 = optional(list(string), [])<br>    aws_deny_disabling_security_hub = optional(bool, true)<br>    aws_deny_leaving_org            = optional(bool, true)<br>    aws_deny_root_user_ous          = optional(list(string), [])<br>    aws_require_imdsv2              = optional(bool, true)<br>    principal_exceptions            = optional(list(string), [])<br>  })</pre> | `{}` | no |
-| aws\_sso\_permission\_sets | Map of AWS IAM Identity Center permission sets with AWS accounts and group names that should be granted access to each account | <pre>map(object({<br>    assignments         = list(map(list(string)))<br>    inline_policy       = optional(string, null)<br>    managed_policy_arns = optional(list(string), [])<br>    session_duration    = optional(string, "PT4H")<br>  }))</pre> | `{}` | no |
-| datadog | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
-| datadog\_excluded\_regions | List of regions where metrics collection will be disabled. | `list(string)` | `[]` | no |
-| kms\_key\_policy | A list of valid KMS key policy JSON documents | `list(string)` | `[]` | no |
-| kms\_key\_policy\_audit | A list of valid KMS key policy JSON document for use with audit KMS key | `list(string)` | `[]` | no |
-| kms\_key\_policy\_logging | A list of valid KMS key policy JSON document for use with logging KMS key | `list(string)` | `[]` | no |
-| monitor\_iam\_activity | Whether IAM activity should be monitored | `bool` | `true` | no |
-| monitor\_iam\_activity\_sns\_subscription | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
-| security\_hub\_create\_cis\_metric\_filters | Enable the creation of metric filters related to the CIS AWS Foundation Security Hub Standard | `bool` | `true` | no |
-| security\_hub\_standards\_arns | A list of the ARNs of the standards you want to enable in Security Hub | `list(string)` | `null` | no |
-| ses\_root\_accounts\_mail\_forward | SES config to receive and forward root account emails | <pre>object({<br>    domain            = string<br>    from_email        = string<br>    recipient_mapping = map(any)<br><br>    dmarc = object({<br>      policy = optional(string)<br>      rua    = optional(string)<br>      ruf    = optional(string)<br>    })<br>  })</pre> | `null` | no |
+| <a name="input_control_tower_account_ids"></a> [control\_tower\_account\_ids](#input\_control\_tower\_account\_ids) | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | Map of tags | `map(string)` | n/a | yes |
+| <a name="input_additional_auditing_trail"></a> [additional\_auditing\_trail](#input\_additional\_auditing\_trail) | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name   = string<br>    bucket = string<br>  })</pre> | `null` | no |
+| <a name="input_aws_account_password_policy"></a> [aws\_account\_password\_policy](#input\_aws\_account\_password\_policy) | AWS account password policy parameters for the audit, logging and master account | <pre>object({<br>    allow_users_to_change        = bool<br>    max_age                      = number<br>    minimum_length               = number<br>    require_lowercase_characters = bool<br>    require_numbers              = bool<br>    require_symbols              = bool<br>    require_uppercase_characters = bool<br>    reuse_prevention_history     = number<br>  })</pre> | <pre>{<br>  "allow_users_to_change": true,<br>  "max_age": 90,<br>  "minimum_length": 14,<br>  "require_lowercase_characters": true,<br>  "require_numbers": true,<br>  "require_symbols": true,<br>  "require_uppercase_characters": true,<br>  "reuse_prevention_history": 24<br>}</pre> | no |
+| <a name="input_aws_config"></a> [aws\_config](#input\_aws\_config) | AWS Config settings | <pre>object({<br>    aggregator_account_ids          = optional(list(string), [])<br>    aggregator_regions              = optional(list(string), [])<br>    delivery_channel_s3_bucket_name = optional(string, null)<br>    delivery_channel_s3_key_prefix  = optional(string, null)<br>    delivery_frequency              = optional(string, "TwentyFour_Hours")<br>    rule_identifiers                = optional(list(string), [])<br>  })</pre> | <pre>{<br>  "aggregator_account_ids": [],<br>  "aggregator_regions": [],<br>  "delivery_channel_s3_bucket_name": null,<br>  "delivery_channel_s3_key_prefix": null,<br>  "delivery_frequency": "TwentyFour_Hours",<br>  "rule_identifiers": []<br>}</pre> | no |
+| <a name="input_aws_config_sns_subscription"></a> [aws\_config\_sns\_subscription](#input\_aws\_config\_sns\_subscription) | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
+| <a name="input_aws_ebs_encryption_by_default"></a> [aws\_ebs\_encryption\_by\_default](#input\_aws\_ebs\_encryption\_by\_default) | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
+| <a name="input_aws_guardduty"></a> [aws\_guardduty](#input\_aws\_guardduty) | AWS GuardDuty settings | <pre>object({<br>    enabled                      = optional(bool, true)<br>    finding_publishing_frequency = optional(string, "FIFTEEN_MINUTES")<br>    datasources = object({<br>      malware_protection = optional(bool, true)<br>      kubernetes         = optional(bool, true)<br>      s3_logs            = optional(bool, true)<br>    })<br>  })</pre> | <pre>{<br>  "datasources": {<br>    "kubernetes": true,<br>    "malware_protection": true,<br>    "s3_logs": true<br>  },<br>  "enabled": true,<br>  "finding_publishing_frequency": "FIFTEEN_MINUTES"<br>}</pre> | no |
+| <a name="input_aws_required_tags"></a> [aws\_required\_tags](#input\_aws\_required\_tags) | AWS Required tags settings | <pre>map(list(object({<br>    name         = string<br>    values       = optional(list(string))<br>    enforced_for = optional(list(string))<br>  })))</pre> | `null` | no |
+| <a name="input_aws_security_hub_product_arns"></a> [aws\_security\_hub\_product\_arns](#input\_aws\_security\_hub\_product\_arns) | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
+| <a name="input_aws_security_hub_sns_subscription"></a> [aws\_security\_hub\_sns\_subscription](#input\_aws\_security\_hub\_sns\_subscription) | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
+| <a name="input_aws_service_control_policies"></a> [aws\_service\_control\_policies](#input\_aws\_service\_control\_policies) | AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction | <pre>object({<br>    allowed_regions                 = optional(list(string), [])<br>    aws_deny_disabling_security_hub = optional(bool, true)<br>    aws_deny_leaving_org            = optional(bool, true)<br>    aws_deny_root_user_ous          = optional(list(string), [])<br>    aws_require_imdsv2              = optional(bool, true)<br>    principal_exceptions            = optional(list(string), [])<br>  })</pre> | `{}` | no |
+| <a name="input_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#input\_aws\_sso\_permission\_sets) | Map of AWS IAM Identity Center permission sets with AWS accounts and group names that should be granted access to each account | <pre>map(object({<br>    assignments         = list(map(list(string)))<br>    inline_policy       = optional(string, null)<br>    managed_policy_arns = optional(list(string), [])<br>    session_duration    = optional(string, "PT4H")<br>  }))</pre> | `{}` | no |
+| <a name="input_datadog"></a> [datadog](#input\_datadog) | Datadog integration options for the core accounts | <pre>object({<br>    api_key               = string<br>    enable_integration    = bool<br>    install_log_forwarder = bool<br>    site_url              = string<br>  })</pre> | `null` | no |
+| <a name="input_datadog_excluded_regions"></a> [datadog\_excluded\_regions](#input\_datadog\_excluded\_regions) | List of regions where metrics collection will be disabled. | `list(string)` | `[]` | no |
+| <a name="input_kms_key_policy"></a> [kms\_key\_policy](#input\_kms\_key\_policy) | A list of valid KMS key policy JSON documents | `list(string)` | `[]` | no |
+| <a name="input_kms_key_policy_audit"></a> [kms\_key\_policy\_audit](#input\_kms\_key\_policy\_audit) | A list of valid KMS key policy JSON document for use with audit KMS key | `list(string)` | `[]` | no |
+| <a name="input_kms_key_policy_logging"></a> [kms\_key\_policy\_logging](#input\_kms\_key\_policy\_logging) | A list of valid KMS key policy JSON document for use with logging KMS key | `list(string)` | `[]` | no |
+| <a name="input_monitor_iam_activity"></a> [monitor\_iam\_activity](#input\_monitor\_iam\_activity) | Whether IAM activity should be monitored | `bool` | `true` | no |
+| <a name="input_monitor_iam_activity_sns_subscription"></a> [monitor\_iam\_activity\_sns\_subscription](#input\_monitor\_iam\_activity\_sns\_subscription) | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
+| <a name="input_path"></a> [path](#input\_path) | Optional path for all IAM users, user groups, roles, and customer managed policies created by this module | `string` | `"/"` | no |
+| <a name="input_security_hub_create_cis_metric_filters"></a> [security\_hub\_create\_cis\_metric\_filters](#input\_security\_hub\_create\_cis\_metric\_filters) | Enable the creation of metric filters related to the CIS AWS Foundation Security Hub Standard | `bool` | `true` | no |
+| <a name="input_security_hub_standards_arns"></a> [security\_hub\_standards\_arns](#input\_security\_hub\_standards\_arns) | A list of the ARNs of the standards you want to enable in Security Hub | `list(string)` | `null` | no |
+| <a name="input_ses_root_accounts_mail_forward"></a> [ses\_root\_accounts\_mail\_forward](#input\_ses\_root\_accounts\_mail\_forward) | SES config to receive and forward root account emails | <pre>object({<br>    domain            = string<br>    from_email        = string<br>    recipient_mapping = map(any)<br><br>    dmarc = object({<br>      policy = optional(string)<br>      rua    = optional(string)<br>      ruf    = optional(string)<br>    })<br>  })</pre> | `null` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| kms\_key\_arn | ARN of KMS key for master account |
-| kms\_key\_audit\_arn | ARN of KMS key for audit account |
-| kms\_key\_audit\_id | ID of KMS key for audit account |
-| kms\_key\_id | ID of KMS key for master account |
-| kms\_key\_logging\_arn | ARN of KMS key for logging account |
-| kms\_key\_logging\_id | ID of KMS key for logging account |
-| monitor\_iam\_activity\_sns\_topic\_arn | ARN of the SNS Topic in the Audit account for IAM activity monitoring notifications |
-
+| <a name="output_kms_key_arn"></a> [kms\_key\_arn](#output\_kms\_key\_arn) | ARN of KMS key for master account |
+| <a name="output_kms_key_audit_arn"></a> [kms\_key\_audit\_arn](#output\_kms\_key\_audit\_arn) | ARN of KMS key for audit account |
+| <a name="output_kms_key_audit_id"></a> [kms\_key\_audit\_id](#output\_kms\_key\_audit\_id) | ID of KMS key for audit account |
+| <a name="output_kms_key_id"></a> [kms\_key\_id](#output\_kms\_key\_id) | ID of KMS key for master account |
+| <a name="output_kms_key_logging_arn"></a> [kms\_key\_logging\_arn](#output\_kms\_key\_logging\_arn) | ARN of KMS key for logging account |
+| <a name="output_kms_key_logging_id"></a> [kms\_key\_logging\_id](#output\_kms\_key\_logging\_id) | ID of KMS key for logging account |
+| <a name="output_monitor_iam_activity_sns_topic_arn"></a> [monitor\_iam\_activity\_sns\_topic\_arn](#output\_monitor\_iam\_activity\_sns\_topic\_arn) | ARN of the SNS Topic in the Audit account for IAM activity monitoring notifications |
 <!-- END_TF_DOCS -->
 
 ## License
