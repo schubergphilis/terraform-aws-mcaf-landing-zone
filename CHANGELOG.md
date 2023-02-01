@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.23.0 (2023-02-01)
+
+ENHANCEMENTS
+
+- Use a seperate bucket to store AWS Config Configuration History, enable KMS on the delivery channel objects, and add the option to set a optional path for all supported IAM resources. ([#164](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/164)).
+- Restructure module - create a file per provided functionality instead of per account ([#163](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/163)).
+
 ## 0.22.0 (2023-01-18)
 
 ENHANCEMENTS

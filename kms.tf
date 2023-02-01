@@ -257,4 +257,21 @@ data "aws_iam_policy_document" "kms_key_logging" {
       identifiers = ["logs.${data.aws_region.current.name}.amazonaws.com"]
     }
   }
+
+  statement {
+    sid = "AllowAWSConfigToEncryptDecryptLogs"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey*"
+    ]
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
+
+    principals {
+      type = "Service"
+      identifiers = [
+        "config.amazonaws.com"
+      ]
+    }
+  }
 }
