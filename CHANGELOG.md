@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.24.0 (2023-02-07)
+
+ENHANCEMENTS
+
+- Change nested provider to provider alias ([#165](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/165)).
+
 ## 0.23.0 (2023-02-01)
 
 ENHANCEMENTS

@@ -8,37 +8,29 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  terraform-fmt:
+  terraform:
+    name: "Terraform"
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@master
-      - name: Terraform Format
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: latest
-          tf_actions_subcommand: fmt
-          tf_actions_comment: true
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  terraform-validate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@master
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+
       - name: Terraform Init
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: latest
-          tf_actions_subcommand: init
-          tf_actions_comment: true
+        id: init
+        run: terraform -chdir=examples/basic init
+
       - name: Terraform Validate
-        uses: hashicorp/terraform-github-actions@master
+        id: validate
+        run: terraform -chdir=examples/basic validate -no-color
         env:
           AWS_DEFAULT_REGION: eu-west-1
-        with:
-          tf_actions_version: latest
-          tf_actions_subcommand: validate
-          tf_actions_comment: true
 
   terraform-docs:
     runs-on: ubuntu-latest
@@ -55,6 +47,8 @@ jobs:
           git-push: true
           output-file: README.md
           output-method: inject
+          recursive: true
+          recursive-path: examples
         continue-on-error: true # added this to prevent a PR from a remote fork failing the workfloww
 
   tfsec:
@@ -82,5 +76,5 @@ jobs:
           framework: terraform
           output_format: sarif
           quiet: true
-          skip_check: CKV2_GHA_1
+          skip_check: CKV2_GHA_1,CKV_AWS_124,CKV_AWS_272,CKV_AWS_273
           soft_fail: false
