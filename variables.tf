@@ -103,7 +103,7 @@ variable "aws_required_tags" {
   description = "AWS Required tags settings"
 
   validation {
-    condition     = alltrue([for taglist in var.aws_required_tags : length(taglist) <= 10])
+    condition     = var.aws_required_tags != null ? alltrue([for taglist in var.aws_required_tags : length(taglist) <= 10]) : true
     error_message = "A maximum of 10 tag keys can be supplied to stay within the maximum policy length."
   }
 }
