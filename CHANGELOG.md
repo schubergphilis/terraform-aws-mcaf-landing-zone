@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.24.1 (2023-02-10)
+
+ENHANCEMENTS
+
+- Encrypt the CloudWatch log group of the `ses-root-accounts-mail-forward` lambda ([#166](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/166)).
+
 ## 0.24.0 (2023-02-07)
 
 ENHANCEMENTS
