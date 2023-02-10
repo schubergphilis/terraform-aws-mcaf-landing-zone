@@ -434,7 +434,7 @@ module "landing_zone" {
 | <a name="module_kms_key_audit"></a> [kms\_key\_audit](#module\_kms\_key\_audit) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.2.0 |
 | <a name="module_kms_key_logging"></a> [kms\_key\_logging](#module\_kms\_key\_logging) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.2.0 |
 | <a name="module_ses-root-accounts-mail-alias"></a> [ses-root-accounts-mail-alias](#module\_ses-root-accounts-mail-alias) | github.com/schubergphilis/terraform-aws-mcaf-ses | v0.1.3 |
-| <a name="module_ses-root-accounts-mail-forward"></a> [ses-root-accounts-mail-forward](#module\_ses-root-accounts-mail-forward) | github.com/schubergphilis/terraform-aws-mcaf-ses-forwarder | v0.2.3 |
+| <a name="module_ses-root-accounts-mail-forward"></a> [ses-root-accounts-mail-forward](#module\_ses-root-accounts-mail-forward) | github.com/schubergphilis/terraform-aws-mcaf-ses-forwarder | v0.2.4 |
 | <a name="module_tag_policy_assignment"></a> [tag\_policy\_assignment](#module\_tag\_policy\_assignment) | ./modules/tag-policy-assignment | n/a |
 
 ## Resources
