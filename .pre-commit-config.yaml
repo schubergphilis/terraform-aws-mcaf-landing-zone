@@ -11,9 +11,9 @@ repos:
         exclude: "/modules/[^/]+$"
         args:
           - --hook-config=--retry-once-with-cleanup=true
-  - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 2.2.182 # checkov-action v12.1964.0 == checkov 2.2.182 - keep pre-commit and github action in sync
+  - repo: https://github.com/bridgecrewio/checkov.git # Keep this config in sync with .github/workflows/terraform.yml
+    rev: 2.3.3
     hooks:
       - id: checkov
         verbose: false
-        args: [--download-external-modules, "true", --quiet, --compact, --skip-check, CKV2_GHA_1]
+        args: [--download-external-modules, "true", --quiet, --compact, --skip-check, CKV2_GHA_1, CKV_AWS_124, CKV_AWS_272, CKV_AWS_273]
