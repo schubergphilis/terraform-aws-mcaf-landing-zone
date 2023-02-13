@@ -45,6 +45,39 @@ data "aws_iam_policy_document" "kms_key" {
       }
     }
   }
+
+  dynamic "statement" {
+    for_each = var.ses_root_accounts_mail_forward != null ? ["allow_cw_loggroup_email_forwarder"] : []
+    content {
+      sid       = "Allow EmailForwarder CloudWatch Log Group"
+      effect    = "Allow"
+      resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.master.account_id}:key/*"]
+
+      actions = [
+        "kms:Decrypt",
+        "kms:Describe*",
+        "kms:Encrypt",
+        "kms:GenerateDataKey*",
+        "kms:ReEncrypt*"
+      ]
+
+      condition {
+        test     = "ArnLike"
+        variable = "kms:EncryptionContext:aws:logs:arn"
+
+        values = [
+          "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.master.account_id}:log-group:/aws/lambda/EmailForwarder"
+        ]
+      }
+
+      principals {
+        type = "Service"
+        identifiers = [
+          "logs.${data.aws_region.current.name}.amazonaws.com"
+        ]
+      }
+    }
+  }
 }
 
 # Audit Account

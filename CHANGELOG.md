@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ENHANCEMENTS
 
+- Add KMS permissions to the KMS key to allow encryption/decryption by the cloudWatch log group of the `ses-root-accounts-mail-forward` lambda ([#167](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/167)).
 - Encrypt the CloudWatch log group of the `ses-root-accounts-mail-forward` lambda ([#166](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/166)).
 
 ## 0.24.0 (2023-02-07)
