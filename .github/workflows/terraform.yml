@@ -4,6 +4,10 @@ name: Terraform
 on:
   pull_request:
 
+permissions:
+  contents: read
+  pull-requests: write
+
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -54,13 +58,21 @@ jobs:
   tfsec:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@master
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Terraform security scan
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          github_token: ${{ github.token }}
+          soft_fail: false
+          tfsec_args: --concise-output --force-all-dirs
+
       - name: Terraform pr commenter
         uses: aquasecurity/tfsec-pr-commenter-action@v1.3.1
         with:
-          tfsec_args: --concise-output
           github_token: ${{ github.token }}
+          tfsec_args: --concise-output --force-all-dirs
 
   checkov:
     runs-on: ubuntu-latest
@@ -68,7 +80,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Run Checkov
-        uses: bridgecrewio/checkov-action@v12.2121.0 # Keep this config in sync with .pre-commit-config.yaml
+        uses: bridgecrewio/checkov-action@v12.2128.0 # checkov-action v12.2128.0 == checkov 2.3.10 - keep pre-commit and github action in sync
         with:
           container_user: 1000
           directory: "/"
@@ -76,5 +88,14 @@ jobs:
           framework: terraform
           output_format: sarif
           quiet: true
-          skip_check: CKV2_GHA_1,CKV_AWS_124,CKV_AWS_272,CKV_AWS_273
+          skip_check: CKV_AWS_124,CKV_AWS_272,CKV_AWS_273
           soft_fail: false
+
+  linelint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Linelint
+        uses: fernandrone/linelint@0.0.4

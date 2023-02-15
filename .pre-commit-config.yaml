@@ -1,8 +1,13 @@
 # .pre-commit-config.yaml
 default_stages: [commit]
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.77.0
+    rev: v1.77.1
     hooks:
       - id: terraform_fmt
       - id: terraform_tflint
@@ -11,9 +16,9 @@ repos:
         exclude: "/modules/[^/]+$"
         args:
           - --hook-config=--retry-once-with-cleanup=true
-  - repo: https://github.com/bridgecrewio/checkov.git # Keep this config in sync with .github/workflows/terraform.yml
-    rev: 2.3.3
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: 2.3.10 # checkov-action v12.2128.0 == checkov 2.3.10 - Keep this config in sync with .github/workflows/terraform.yml
     hooks:
       - id: checkov
         verbose: false
-        args: [--download-external-modules, "true", --quiet, --compact, --skip-check, CKV2_GHA_1, CKV_AWS_124, CKV_AWS_272, CKV_AWS_273]
+        args: [--download-external-modules, "true", --quiet, --compact, --skip-check, "CKV_AWS_124, CKV_AWS_272, CKV_AWS_273"]
