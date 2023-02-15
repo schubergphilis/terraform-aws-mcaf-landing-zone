@@ -80,7 +80,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Run Checkov
-        uses: bridgecrewio/checkov-action@v12.2128.0 # checkov-action v12.2128.0 == checkov 2.3.10 - keep pre-commit and github action in sync
+        uses: bridgecrewio/checkov-action@v12.2128.0 # checkov-action v12.2128.0 == checkov 2.3.10 - Keep this config in sync with .pre-commit-config.yaml
         with:
           container_user: 1000
           directory: "/"
