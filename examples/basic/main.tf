@@ -5,10 +5,13 @@ locals {
   }
 }
 
-provider "aws" {}
+provider "aws" {
+  region = "eu-west-1"
+}
 
 provider "aws" {
-  alias = "audit"
+  alias  = "audit"
+  region = "eu-west-1"
 
   assume_role {
     role_arn = "arn:aws:iam::${local.control_tower_account_ids.audit}:role/AWSControlTowerExecution"
@@ -16,7 +19,8 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias = "logging"
+  alias  = "logging"
+  region = "eu-west-1"
 
   assume_role {
     role_arn = "arn:aws:iam::${local.control_tower_account_ids.logging}:role/AWSControlTowerExecution"

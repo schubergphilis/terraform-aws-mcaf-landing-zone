@@ -5,7 +5,8 @@ terraform {
       version = ">= 4.40.0"
     }
     datadog = {
-      source = "datadog/datadog"
+      source  = "datadog/datadog"
+      version = "> 3.0.0"
     }
     mcaf = {
       source  = "schubergphilis/mcaf"

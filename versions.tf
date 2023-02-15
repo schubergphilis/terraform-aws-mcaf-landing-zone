@@ -6,7 +6,8 @@ terraform {
       configuration_aliases = [aws.audit, aws.logging]
     }
     datadog = {
-      source = "datadog/datadog"
+      source  = "datadog/datadog"
+      version = "> 3.0.0"
     }
     mcaf = {
       source  = "schubergphilis/mcaf"
