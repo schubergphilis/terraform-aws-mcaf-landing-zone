@@ -37,6 +37,9 @@ jobs:
           AWS_DEFAULT_REGION: eu-west-1
 
   terraform-docs:
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Check out code

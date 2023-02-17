@@ -9,6 +9,7 @@ Terraform module to test basic functionality of `terraform-aws-mcaf-landing-zone
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.40.0 |
+| <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | > 3.0.0 |
 | <a name="requirement_mcaf"></a> [mcaf](#requirement\_mcaf) | >= 0.4.2 |
 
 ## Providers
