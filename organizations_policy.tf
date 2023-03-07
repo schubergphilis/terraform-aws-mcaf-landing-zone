@@ -52,6 +52,11 @@ resource "aws_organizations_policy" "lz_root_policies" {
 resource "aws_organizations_policy_attachment" "lz_root_policies" {
   policy_id = aws_organizations_policy.lz_root_policies.id
   target_id = data.aws_organizations_organization.default.roots[0].id
+
+  depends_on  = [
+    aws_securityhub_organization_admin_account.default,
+    aws_guardduty_organization_configuration.default
+  ]
 }
 
 // https://summitroute.com/blog/2020/03/25/aws_scp_best_practices/#deny-ability-to-leave-organization
