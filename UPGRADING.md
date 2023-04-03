@@ -1,6 +1,6 @@
 # Upgrading to 0.25.x
 
-Version `0.25.x` for additional cloudtrail you need to encrypt this trail using KMS.
+Version `0.25.x` has added support for specifying a kms_key_id in the `var.additional_auditing_trail`. This variable is mandatory, if you already have additional cloudtrail configurations created using this variable encryption is now mandatory.
 ```hcl
 module "landing_zone"
 ...        
