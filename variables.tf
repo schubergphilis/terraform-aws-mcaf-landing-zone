@@ -160,8 +160,6 @@ variable "aws_sso_permission_sets" {
   description = "Map of AWS IAM Identity Center permission sets with AWS accounts and group names that should be granted access to each account"
 }
 
-variable "" {}
-
 variable "control_tower_account_ids" {
   type = object({
     audit   = string
