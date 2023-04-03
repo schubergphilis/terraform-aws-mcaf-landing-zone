@@ -1,0 +1,29 @@
+name: "release-drafter"
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths-ignore:
+      - .github/**
+      - .pre-commit-config.yaml
+      - CHANGELOG.md
+      - CONTRIBUTING.md
+      - LICENSE
+
+permissions:
+      # write permission is required to create a github release
+      contents: write
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: release-drafter/release-drafter@v5
+        with:
+          publish: false
+          prerelease: false
+          config-name: release-drafter-config.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

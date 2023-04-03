@@ -1,0 +1,150 @@
+name: "terraform"
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  fmt-lint-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Setup Terraform Linters
+        uses: terraform-linters/setup-tflint@v2
+        with:
+          github_token: ${{ github.token }}        
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        id: init
+        run: |
+          for d in examples/*/; do
+            terraform -chdir=$d init
+          done
+
+      - name: Terraform Validate
+        id: validate
+        run: |
+          for d in examples/*/; do
+            terraform -chdir=$d validate -no-color
+          done
+        env:
+          AWS_DEFAULT_REGION: eu-west-1
+
+      - name: Terraform Lint
+        id: lint
+        run: tflint --no-color --recursive --format compact
+
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request' || always()
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // 1. Retrieve existing bot comments for the PR
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+            const botComment = comments.find(comment => {
+              return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style')
+            })
+
+            // 2. Prepare format of the comment
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Lint 📖\`${{ steps.lint.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            <details><summary>Validation Output</summary>
+
+            \`\`\`\n
+            ${{ steps.validate.outputs.stdout }}
+            \`\`\`
+
+            </details>`;
+
+            // 3. If we have a comment, update it, otherwise create a new one
+            if (botComment) {
+              github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: output
+              })
+            } else {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: output
+              })
+            }
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Render terraform docs inside the README.md and push changes back to PR branch
+        uses: terraform-docs/gh-actions@v1.0.0
+        with:
+          args: --sort-by required
+          git-commit-message: 'docs(readme): update module usage'
+          git-push: true
+          output-file: README.md
+          output-method: inject
+          working-dir: .
+        continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
+
+  tfsec:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Terraform security scan
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          github_token: ${{ github.token }}
+          soft_fail: false
+          tfsec_args: --concise-output --force-all-dirs
+
+      - name: Terraform pr commenter
+        uses: aquasecurity/tfsec-pr-commenter-action@v1.3.1
+        with:
+          github_token: ${{ github.token }}
+          tfsec_args: --concise-output --force-all-dirs
+
+  checkov:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@v12.2150.0
+        with:
+          container_user: 1000
+          directory: "/"
+          download_external_modules: false
+          framework: terraform
+          output_format: sarif
+          quiet: true
+          soft_fail: false

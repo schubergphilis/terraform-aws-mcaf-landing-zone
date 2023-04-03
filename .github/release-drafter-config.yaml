@@ -1,0 +1,88 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+version-template: '$MAJOR.$MINOR.$PATCH'
+change-title-escapes: '\<*_&'
+
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'breaking'
+      - 'enhancement'
+      - 'feature'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'bug'
+      - 'fix'
+      - 'security'
+  - title: '📖 Documentation'
+    labels:
+      - 'documentation'
+  - title: '🧺 Miscellaneous'
+    labels:
+      - 'misc'
+
+version-resolver:
+  major:
+    labels:
+      - 'breaking'
+  minor:
+    labels:
+      - 'enhancement'
+      - 'feature'
+  patch:
+    labels:
+      - 'bug'
+      - 'documentation'
+      - 'fix'
+      - 'security'
+  default: 'minor'
+
+autolabeler:
+  - label: 'documentation'
+    body:
+      - '/documentation/'
+    branch:
+      - '/docs\/.+/'
+    files:
+      - '*.md'
+    title:
+      - '/documentation/i'
+      - '/docs/i'
+  - label: 'bug'
+    body:
+      - '/bug/'
+    branch:
+      - '/bug\/.+/'
+      - '/fix\/.+/'
+    title:
+      - '/bug/i'
+      - '/fix/i'
+  - label: 'feature'
+    branch:
+      - '/feature\/.+/'
+      - '/enhancement\/.+/'
+    title:
+      - '/feature/i'
+      - '/feat/i'
+      - '/enhancement/i'
+  - label: 'breaking'
+    body:
+      - '/breaking/'
+    branch:
+      - '/breaking\/.+/'
+    title:
+      - '/breaking/i'
+      - '/major/i'
+
+exclude-contributors:
+  - 'github-actions[bot]'
+
+exclude-labels:
+  - 'no-changelog'
+
+template: |
+  # What's Changed
+
+  $CHANGES
+
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
