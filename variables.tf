@@ -2,7 +2,7 @@ variable "additional_auditing_trail" {
   type = object({
     name       = string
     bucket     = string
-    kms_key_id = optional(string)
+    kms_key_id = string
   })
   default     = null
   description = "CloudTrail configuration for additional auditing trail"
