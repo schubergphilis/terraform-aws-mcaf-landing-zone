@@ -4,12 +4,6 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 0.25.0 (2023-02-11)
-
-ENHANCEMENTS
-
-- Add KMS to the CloudTrail trail `additional_auditing_trail` ([#171](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/171)).
-
 ## 0.24.1 (2023-02-10)
 
 ENHANCEMENTS
