@@ -1,0 +1,104 @@
+name: "pr-validation"
+
+on:
+  pull_request:
+
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  autolabeler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: release-drafter/release-drafter@v5
+        with:
+          config-name: release-drafter-config.yaml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  title-checker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        id: lint_pr_title
+        with:
+          types: |
+            breaking
+            bug
+            docs
+            documentation
+            enhancement
+            feat
+            feature
+            fix
+            misc
+            security
+          requireScope: false
+          ignoreLabels: |
+            skip-changelog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        # When the previous steps fails, the workflow would stop. By adding this
+        # condition you can continue the execution with the populated error message.
+        if: always() && (steps.lint_pr_title.outputs.error_message != null)
+        with:
+          header: pr-title-lint-error
+          message: |
+            Hey there and thank you for opening this pull request! 👋🏼
+
+            We require pull request titles to follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) and it looks like your proposed title needs to be adjusted.
+
+            Examples for valid PR titles:
+            feat(ui): Add button component.
+            fix: Correct typo.
+            _type(scope): subject._
+
+            Adding a scope is optional
+
+            Details:
+            ```
+            ${{ steps.lint_pr_title.outputs.error_message }}
+            ```
+
+      # Delete a previous comment when the issue has been resolved
+      - if: ${{ steps.lint_pr_title.outputs.error_message == null }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pr-title-lint-error
+          delete: true
+
+  label-checker:
+    needs: autolabeler
+    runs-on: ubuntu-latest
+    steps:
+      - uses: danielchabr/pr-labels-checker@v3.1
+        id: lint_pr_labels
+        with:
+          hasSome: breaking,bug,documentation,enhancement,feature,fix,misc,security
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        # When the previous steps fails, the workflow would stop. By adding this
+        # condition you can continue the execution with the populated error message.
+        if: always() && (steps.lint_pr_labels.outputs.passed == false)
+        with:
+          header: pr-labels-lint-error
+          message: |
+            Hey there and thank you for opening this pull request! 👋🏼
+
+            The PR needs to have at least one of the following labels: breaking, bug, documentation, enhancement, feature, fix, misc, security.
+
+      # Delete a previous comment when the issue has been resolved
+      - if: ${{ steps.lint_pr_labels.outputs.passed != false }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pr-labels-lint-error
+          delete: true
