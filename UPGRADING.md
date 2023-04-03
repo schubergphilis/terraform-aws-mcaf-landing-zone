@@ -1,3 +1,19 @@
+# Upgrading to 0.25.x
+
+Version `0.25.x` has added support for specifying a kms_key_id in the `var.additional_auditing_trail`. This variable is mandatory, if you already have additional cloudtrail configurations created using this variable encryption is now mandatory.
+
+```hcl
+module "landing_zone"
+...        
+  additional_auditing_trail = {
+    name       = "audit-trail-name"
+    bucket     = "audit-trail-s3-bucket-name"
+    kms_key_id = "arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab"   
+  }
+...
+}
+```
+
 # Upgrading to 0.24.x
 
 Version `0.24.x` changes the AWS nested providers to provider aliases. Define the providers outside the module and reference them when calling this module. For an example, see `examples/basic`.
