@@ -10,5 +10,6 @@ resource "aws_cloudtrail" "additional_auditing_trail" {
   is_multi_region_trail      = true
   is_organization_trail      = true
   s3_bucket_name             = var.additional_auditing_trail.bucket
+  cloudtrail_kms_key_id      = var.additional_auditing_trail.kms_key_id
   tags                       = var.tags
 }
