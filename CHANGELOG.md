@@ -5,6 +5,25 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.25.0 - 2023-04-03
+
+### What's Changed
+
+- Remove workflows (#172) @shoekstra
+- TF docs needs to write content (#170) @stimmerman
+- Be more explicit about which files to keep in sync (#169) @stefanwb
+- Bumps checkov in Actions (#168) @stefanwb
+
+#### 🚀 Features
+
+- enhancement: add kms encryption to the CloudTrail `additional_auditing_trail` (#171) @japm94
+
+#### 📖 Documentation
+
+- enhancement: add kms encryption to the CloudTrail `additional_auditing_trail` (#171) @japm94
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v0.24.1...v0.25.0
+
 ## v0.24.1 - 2023-02-10
 
 ENHANCEMENTS
