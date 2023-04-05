@@ -5,6 +5,17 @@ resource "aws_guardduty_organization_admin_account" "audit" {
   admin_account_id = var.control_tower_account_ids.audit
 }
 
+// AWS GuardDuty - Allow the delegated administrator to enable malware permissions until https://github.com/hashicorp/terraform-provider-aws/issues/30475 is done
+module "guardduty_malware_protection_permissions" {
+  count    = var.aws_guardduty.enabled == true ? 1 : 0
+  
+  source           = "digitickets/cli/aws"
+  version          = "5.0.4"
+  aws_cli_commands = ["organizations", "enable-aws-service-access", "--service-principal malware-protection.guardduty.amazonaws.com"]
+  
+  depends_on = [aws_guardduty_organization_admin_account.audit]
+}
+
 // AWS GuardDuty - Audit account configuration
 resource "aws_guardduty_organization_configuration" "default" {
   count    = var.aws_guardduty.enabled == true ? 1 : 0
