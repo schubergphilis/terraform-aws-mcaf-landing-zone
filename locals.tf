@@ -24,6 +24,6 @@ locals {
     "arn:aws:securityhub:${data.aws_region.current.name}::standards/pci-dss/v/3.2.1"
   ]
   security_hub_has_cis_aws_foundations_enabled = length(regexall(
-    "ruleset/cis-aws-foundations-benchmark/v", join(",", local.security_hub_standards_arns)
+    "standards/cis-aws-foundations-benchmark/v", join(",", local.security_hub_standards_arns)
   )) > 0 ? true : false
 }
