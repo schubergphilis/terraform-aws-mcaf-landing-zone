@@ -16,14 +16,11 @@ resource "aws_securityhub_organization_configuration" "default" {
   depends_on  = [aws_securityhub_organization_admin_account.default]
 }
 
-resource "aws_securityhub_member" "default" {
-  for_each = local.aws_account_emails
+resource "aws_securityhub_member" "logging" {
   provider = aws.audit
-
-  account_id = each.key
-  email      = each.value
-
-  depends_on = [aws_securityhub_organization_configuration.default]
+  
+  account_id = data.aws_caller_identity.logging.account_id
+  depends_on = [aws_securityhub_organization_configuration.default ]
 }
 
 resource "aws_securityhub_product_subscription" "default" {
