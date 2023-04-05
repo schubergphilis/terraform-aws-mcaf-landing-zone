@@ -6,6 +6,8 @@ resource "aws_guardduty_organization_admin_account" "audit" {
 }
 
 module "guardduty_malware_protection_permissions" {
+  count    = var.aws_guardduty.enabled == true ? 1 : 0
+  
   source           = "digitickets/cli/aws"
   version          = "5.0.4"
   aws_cli_commands = ["organizations", "enable-aws-service-access", "--service-principal malware-protection.guardduty.amazonaws.com"]
