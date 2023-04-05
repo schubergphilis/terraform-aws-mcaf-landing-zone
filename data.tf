@@ -6,7 +6,7 @@ data "aws_caller_identity" "logging" {
   provider = aws.logging
 }
 
-data "aws_caller_identity" "master" {}
+data "aws_caller_identity" "management" {}
 
 data "aws_cloudwatch_log_group" "cloudtrail_management" {
   count = var.monitor_iam_activity ? 1 : 0

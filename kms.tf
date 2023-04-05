@@ -15,12 +15,12 @@ data "aws_iam_policy_document" "kms_key" {
     sid       = "Base Permissions"
     actions   = ["kms:*"]
     effect    = "Allow"
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.master.account_id}:key/*"]
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.management.account_id}:key/*"]
 
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.master.account_id}:root"
+        "arn:aws:iam::${data.aws_caller_identity.management.account_id}:root"
       ]
     }
   }
@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "kms_key" {
     content {
       sid       = "Allow SES Decrypt"
       effect    = "Allow"
-      resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.master.account_id}:key/*"]
+      resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.management.account_id}:key/*"]
 
       actions = [
         "kms:Decrypt",
@@ -51,7 +51,7 @@ data "aws_iam_policy_document" "kms_key" {
     content {
       sid       = "Allow EmailForwarder CloudWatch Log Group"
       effect    = "Allow"
-      resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.master.account_id}:key/*"]
+      resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.management.account_id}:key/*"]
 
       actions = [
         "kms:Decrypt",
@@ -66,7 +66,7 @@ data "aws_iam_policy_document" "kms_key" {
         variable = "kms:EncryptionContext:aws:logs:arn"
 
         values = [
-          "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.master.account_id}:log-group:/aws/lambda/EmailForwarder"
+          "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.management.account_id}:log-group:/aws/lambda/EmailForwarder"
         ]
       }
 
