@@ -1,9 +1,9 @@
-resource "aws_cloudwatch_log_metric_filter" "iam_activity_master" {
+resource "aws_cloudwatch_log_metric_filter" "cloudtrail_management" {
   for_each = var.monitor_iam_activity ? merge(local.iam_activity, local.cloudtrail_activity_cis_aws_foundations) : {}
 
   name           = "LandingZone-IAMActivity-${each.key}"
   pattern        = each.value
-  log_group_name = data.aws_cloudwatch_log_group.cloudtrail_master[0].name
+  log_group_name = data.aws_cloudwatch_log_group.cloudtrail_management[0].name
 
   metric_transformation {
     name      = "LandingZone-IAMActivity-${each.key}"
@@ -12,8 +12,8 @@ resource "aws_cloudwatch_log_metric_filter" "iam_activity_master" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "iam_activity_master" {
-  for_each = aws_cloudwatch_log_metric_filter.iam_activity_master
+resource "aws_cloudwatch_metric_alarm" "cloudtrail_management" {
+  for_each = aws_cloudwatch_log_metric_filter.cloudtrail_management
 
   alarm_name                = each.value.name
   comparison_operator       = "GreaterThanOrEqualToThreshold"

@@ -8,21 +8,7 @@ data "aws_caller_identity" "logging" {
 
 data "aws_caller_identity" "master" {}
 
-data "aws_cloudwatch_log_group" "cloudtrail_audit" {
-  count    = var.monitor_iam_activity ? 1 : 0
-  provider = aws.audit
-
-  name = "aws-controltower/CloudTrailLogs"
-}
-
-data "aws_cloudwatch_log_group" "cloudtrail_logging" {
-  count    = var.monitor_iam_activity ? 1 : 0
-  provider = aws.logging
-
-  name = "aws-controltower/CloudTrailLogs"
-}
-
-data "aws_cloudwatch_log_group" "cloudtrail_master" {
+data "aws_cloudwatch_log_group" "cloudtrail_management" {
   count = var.monitor_iam_activity ? 1 : 0
 
   name = "aws-controltower/CloudTrailLogs"
