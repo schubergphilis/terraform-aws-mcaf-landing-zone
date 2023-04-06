@@ -32,18 +32,23 @@ resource "aws_securityhub_account" "management" {
   depends_on = [aws_securityhub_organization_configuration.default]
 }
 
-# resource "aws_securityhub_member" "management" {
-#   provider = aws.audit
+resource "aws_securityhub_member" "management" {
+  provider = aws.audit
 
-#   account_id = data.aws_caller_identity.logging.account_id
-#   invite = true
-  
-#   lifecycle {
-#     ignore_changes = [invite]
-#   }
+  account_id = data.aws_caller_identity.logging.account_id
+  invite     = true
 
-#   depends_on = [aws_securityhub_account.management]
-# }
+  lifecycle {
+    ignore_changes = [invite]
+  }
+
+  depends_on = [aws_securityhub_account.management]
+}
+
+resource "aws_securityhub_invite_accepter" "management" {
+  master_id  = aws_securityhub_account.default.id
+  depends_on = [aws_securityhub_member.management]
+}
 
 resource "aws_securityhub_product_subscription" "default" {
   for_each = toset(var.aws_security_hub_product_arns)
