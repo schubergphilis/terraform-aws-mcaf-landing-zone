@@ -33,7 +33,9 @@ resource "aws_securityhub_account" "management" {
 }
 
 resource "aws_securityhub_member" "management" {
-  account_id = data.aws_caller_identity.logging.account_id
+  provider = aws.audit
+
+  account_id = data.aws_caller_identity.management.account_id
 
   lifecycle {
     ignore_changes = [invite]
