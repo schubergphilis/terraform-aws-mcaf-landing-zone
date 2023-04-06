@@ -20,10 +20,10 @@ locals {
   } : {}
   security_hub_standards_arns = var.security_hub_standards_arns != null ? var.security_hub_standards_arns : [
     "arn:aws:securityhub:${data.aws_region.current.name}::standards/aws-foundational-security-best-practices/v/1.0.0",
-    "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.2.0",
+    "arn:aws:securityhub:${data.aws_region.current.name}::standards/cis-aws-foundations-benchmark/v/1.4.0",
     "arn:aws:securityhub:${data.aws_region.current.name}::standards/pci-dss/v/3.2.1"
   ]
   security_hub_has_cis_aws_foundations_enabled = length(regexall(
-    "ruleset/cis-aws-foundations-benchmark/v", join(",", local.security_hub_standards_arns)
+    "standards/cis-aws-foundations-benchmark/v", join(",", local.security_hub_standards_arns)
   )) > 0 ? true : false
 }
