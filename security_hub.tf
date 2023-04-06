@@ -33,8 +33,6 @@ resource "aws_securityhub_account" "management" {
 }
 
 resource "aws_securityhub_member" "management" {
-  provider = aws.audit
-
   account_id = data.aws_caller_identity.logging.account_id
 
   lifecycle {
@@ -42,10 +40,6 @@ resource "aws_securityhub_member" "management" {
   }
 
   depends_on = [aws_securityhub_account.management]
-}
-
-resource "aws_securityhub_invite_accepter" "management" {
-  master_id  = aws_securityhub_account.default.id
 }
 
 resource "aws_securityhub_product_subscription" "default" {
