@@ -37,6 +37,7 @@ resource "aws_securityhub_member" "management" {
 
   account_id = data.aws_caller_identity.logging.account_id
   invite     = true
+  email      = "stimmerman+ep-lab-2@schubergphilis.com"
 
   lifecycle {
     ignore_changes = [invite]
