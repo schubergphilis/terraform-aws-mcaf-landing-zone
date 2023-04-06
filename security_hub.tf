@@ -32,7 +32,6 @@ resource "aws_securityhub_member" "management" {
   provider = aws.audit
 
   account_id = data.aws_caller_identity.management.account_id
-  invite     = true
   depends_on = [aws_securityhub_account.management]
 }
 
