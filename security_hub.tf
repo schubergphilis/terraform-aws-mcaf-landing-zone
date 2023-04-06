@@ -20,6 +20,11 @@ resource "aws_securityhub_member" "logging" {
   provider = aws.audit
 
   account_id = data.aws_caller_identity.logging.account_id
+
+  lifecycle {
+    ignore_changes = [invite]
+  }
+  
   depends_on = [aws_securityhub_organization_configuration.default]
 }
 
@@ -31,6 +36,11 @@ resource "aws_securityhub_member" "management" {
   provider = aws.audit
 
   account_id = data.aws_caller_identity.logging.account_id
+  
+  lifecycle {
+    ignore_changes = [invite]
+  }
+
   depends_on = [aws_securityhub_account.management]
 }
 
