@@ -36,8 +36,6 @@ resource "aws_securityhub_member" "management" {
   provider = aws.audit
 
   account_id = data.aws_caller_identity.logging.account_id
-  invite     = true
-  email      = "stimmerman+ep-lab-2@schubergphilis.com"
 
   lifecycle {
     ignore_changes = [invite]
@@ -48,7 +46,6 @@ resource "aws_securityhub_member" "management" {
 
 resource "aws_securityhub_invite_accepter" "management" {
   master_id  = aws_securityhub_account.default.id
-  depends_on = [aws_securityhub_member.management]
 }
 
 resource "aws_securityhub_product_subscription" "default" {
