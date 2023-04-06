@@ -16,6 +16,36 @@ resource "aws_securityhub_organization_configuration" "default" {
   depends_on  = [aws_securityhub_organization_admin_account.default]
 }
 
+// AWS Security Hub - Management account enrollment
+resource "aws_securityhub_account" "management" {
+  depends_on = [aws_securityhub_organization_configuration.default]
+}
+
+resource "aws_securityhub_member" "management" {
+  provider = aws.audit
+
+  account_id = data.aws_caller_identity.management.account_id
+
+  lifecycle {
+    ignore_changes = [invite]
+  }
+
+  depends_on = [aws_securityhub_account.management]
+}
+
+// AWS Security Hub - Logging account enrollment
+resource "aws_securityhub_member" "logging" {
+  provider = aws.audit
+
+  account_id = data.aws_caller_identity.logging.account_id
+
+  lifecycle {
+    ignore_changes = [invite]
+  }
+
+  depends_on = [aws_securityhub_organization_configuration.default]
+}
+
 resource "aws_securityhub_product_subscription" "default" {
   for_each = toset(var.aws_security_hub_product_arns)
   provider = aws.audit
