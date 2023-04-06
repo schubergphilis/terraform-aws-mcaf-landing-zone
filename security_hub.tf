@@ -20,12 +20,18 @@ resource "aws_securityhub_member" "logging" {
   provider = aws.audit
 
   account_id = data.aws_caller_identity.logging.account_id
-  invite     = true
   depends_on = [aws_securityhub_organization_configuration.default]
 }
 
 resource "aws_securityhub_account" "management" {
   depends_on = [aws_securityhub_organization_configuration.default]
+}
+
+resource "aws_securityhub_member" "management" {
+  provider = aws.audit
+
+  account_id = data.aws_caller_identity.logging.account_id
+  depends_on = [aws_securityhub_account.management]
 }
 
 resource "aws_securityhub_product_subscription" "default" {
