@@ -426,7 +426,7 @@ module "landing_zone" {
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aws_config_s3"></a> [aws\_config\_s3](#module\_aws\_config\_s3) | github.com/schubergphilis/terraform-aws-mcaf-s3 | v0.7.0 |
+| <a name="module_aws_config_s3"></a> [aws\_config\_s3](#module\_aws\_config\_s3) | github.com/schubergphilis/terraform-aws-mcaf-s3 | v0.8.0 |
 | <a name="module_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#module\_aws\_sso\_permission\_sets) | ./modules/permission-set | n/a |
 | <a name="module_datadog_audit"></a> [datadog\_audit](#module\_datadog\_audit) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.11 |
 | <a name="module_datadog_logging"></a> [datadog\_logging](#module\_datadog\_logging) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.11 |

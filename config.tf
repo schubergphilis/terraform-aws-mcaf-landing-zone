@@ -181,7 +181,7 @@ module "aws_config_s3" {
   #checkov:skip=CKV_AWS_145: False positive, KMS key is used by default https://github.com/bridgecrewio/checkov/issues/3847
   providers = { aws = aws.logging }
 
-  source      = "github.com/schubergphilis/terraform-aws-mcaf-s3?ref=v0.7.0"
+  source      = "github.com/schubergphilis/terraform-aws-mcaf-s3?ref=v0.8.0"
   name        = local.aws_config_s3_name
   kms_key_arn = module.kms_key_logging.arn
   policy      = data.aws_iam_policy_document.aws_config_s3.json
