@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.25.1 - 2023-05-26
+
+### What's Changed
+
+#### 🐛 Bug Fixes
+
+- bug: when creating the AWS Config bucket the ACL is not supported (#179) @marwinbaumannsbp
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v0.25.0...v0.25.1
+
 ## v0.25.0 - 2023-04-03
 
 ### What's Changed
@@ -237,7 +247,7 @@ BUG FIXES
 BUG FIXES
 
 - Conditionally merges DenyAllRegionsOutsideAllowedList, DenyDeletingCloudTrailLogStream, DenyDisablingSecurityHub, RequireAllEc2RolesToUseV2, RequireImdsV2, MaxImdsHopLimit, and DenyLeavingOrg policies into one `LandinZone-RootPolicies` policy to avoid exceeding SCP limit (5 policies per org) [Quotas for AWS Organizations](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_reference_limits.html).
-([#120](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/120))
+- ([#120](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/120))
 
 ## v0.12.0 - 2021-09-22
 
@@ -418,8 +428,9 @@ ENHANCEMENTS
 BUG FIXES
 
 - Add `endpoint_auto_confirms` variable to the AWS Config SNS topic ([#62](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/62)) ([#64](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/64))
-
+- 
 - Modify accountID of the AWS Config SNS topic ([#65](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/65))
+- 
 
 ## v0.4.4 - 2021-01-05
 
