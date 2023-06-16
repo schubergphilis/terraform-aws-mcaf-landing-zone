@@ -147,4 +147,10 @@ jobs:
           framework: terraform
           output_format: sarif
           quiet: true
+          skip-checks: "CKV_GIT_5"
           soft_fail: false
+
+### SKIP REASON ###
+# Check | Description | Reason
+
+# CKV_GIT_5 | Ensure GitHub pull requests have at least 2 approvals | We strive for at least 1 approval
