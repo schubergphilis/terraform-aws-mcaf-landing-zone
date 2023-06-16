@@ -8,12 +8,13 @@ on:
       - .github/labels.yaml
       - .github/workflows/label-sync.yaml
 
+permissions:
+  # write permission is required to edit issue labels
+  issues: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      # write permission is required to edit issue labels
-      issues: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

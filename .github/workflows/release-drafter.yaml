@@ -13,8 +13,8 @@ on:
       - LICENSE
 
 permissions:
-      # write permission is required to create a github release
-      contents: write
+  # write permission is required to create a github release
+  contents: write
 
 jobs:
   draft:

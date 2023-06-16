@@ -23,7 +23,7 @@ jobs:
       - name: Setup Terraform Linters
         uses: terraform-linters/setup-tflint@v2
         with:
-          github_token: ${{ github.token }}        
+          github_token: ${{ github.token }}
 
       - name: Terraform Format
         id: fmt
@@ -106,7 +106,7 @@ jobs:
         uses: terraform-docs/gh-actions@v1.0.0
         with:
           args: --sort-by required
-          git-commit-message: 'docs(readme): update module usage'
+          git-commit-message: "docs(readme): update module usage"
           git-push: true
           output-file: README.md
           output-method: inject
