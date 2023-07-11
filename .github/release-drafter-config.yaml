@@ -43,8 +43,6 @@ autolabeler:
       - '/documentation/'
     branch:
       - '/docs\/.+/'
-    files:
-      - '*.md'
     title:
       - '/documentation/i'
       - '/docs/i'
