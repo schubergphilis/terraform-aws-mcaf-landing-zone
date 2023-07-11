@@ -145,7 +145,7 @@ The module creates 3 AWS KMS keys, one for the master account, one for the audit
     principals {
       type = "AWS"
       identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.master.account_id}:root"
+        "arn:aws:iam::${data.aws_caller_identity.management.account_id}:root"
       ]
     }
   }
@@ -409,7 +409,7 @@ module "landing_zone" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.40.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.60.0 |
 | <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | > 3.0.0 |
 | <a name="requirement_mcaf"></a> [mcaf](#requirement\_mcaf) | >= 0.4.2 |
 
@@ -417,9 +417,9 @@ module "landing_zone" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.40.0 |
-| <a name="provider_aws.audit"></a> [aws.audit](#provider\_aws.audit) | >= 4.40.0 |
-| <a name="provider_aws.logging"></a> [aws.logging](#provider\_aws.logging) | >= 4.40.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.60.0 |
+| <a name="provider_aws.audit"></a> [aws.audit](#provider\_aws.audit) | >= 4.60.0 |
+| <a name="provider_aws.logging"></a> [aws.logging](#provider\_aws.logging) | >= 4.60.0 |
 | <a name="provider_mcaf"></a> [mcaf](#provider\_mcaf) | >= 0.4.2 |
 
 ## Modules
@@ -481,6 +481,9 @@ module "landing_zone" {
 | [aws_s3_account_public_access_block.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_account_public_access_block) | resource |
 | [aws_s3_account_public_access_block.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_account_public_access_block) | resource |
 | [aws_securityhub_account.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_account) | resource |
+| [aws_securityhub_account.management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_account) | resource |
+| [aws_securityhub_member.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_member) | resource |
+| [aws_securityhub_member.management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_member) | resource |
 | [aws_securityhub_organization_admin_account.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_organization_admin_account) | resource |
 | [aws_securityhub_organization_configuration.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_organization_configuration) | resource |
 | [aws_securityhub_product_subscription.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_product_subscription) | resource |
@@ -494,7 +497,7 @@ module "landing_zone" {
 | [aws_sns_topic_subscription.security_hub_findings](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription) | resource |
 | [aws_caller_identity.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_caller_identity.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
-| [aws_caller_identity.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_caller_identity.management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_cloudwatch_log_group.cloudtrail_audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudwatch_log_group) | data source |
 | [aws_cloudwatch_log_group.cloudtrail_logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudwatch_log_group) | data source |
 | [aws_cloudwatch_log_group.cloudtrail_master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudwatch_log_group) | data source |
