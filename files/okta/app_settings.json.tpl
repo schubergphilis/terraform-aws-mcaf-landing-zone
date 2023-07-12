@@ -1,4 +1,0 @@
-{
-    "acsURL": "${acsURL}",
-    "entityID": "${entityID}"
-}
