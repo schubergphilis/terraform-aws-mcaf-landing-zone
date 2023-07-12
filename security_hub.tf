@@ -20,6 +20,13 @@ resource "aws_securityhub_member" "management" {
   }
 }
 
+resource "aws_securityhub_standards_subscription" "management" {
+  for_each = toset(local.security_hub_standards_arns)
+
+  standards_arn = each.value
+  depends_on    = [aws_securityhub_account.default]
+}
+
 // AWS Security Hub - Audit account configuration and enrollment
 resource "aws_securityhub_account" "default" {
   provider = aws.audit
@@ -96,7 +103,7 @@ resource "aws_sns_topic_subscription" "security_hub_findings" {
   topic_arn              = aws_sns_topic.security_hub_findings.arn
 }
 
-// AWS Security Hub - Logging account enrollment
+// AWS Security Hub - Logging account configuration and enrollment
 resource "aws_securityhub_member" "logging" {
   provider = aws.audit
 
@@ -107,4 +114,12 @@ resource "aws_securityhub_member" "logging" {
   }
 
   depends_on = [aws_securityhub_organization_configuration.default]
+}
+
+resource "aws_securityhub_standards_subscription" "logging" {
+  for_each = toset(local.security_hub_standards_arns)
+  provider = aws.logging
+
+  standards_arn = each.value
+  depends_on    = [aws_securityhub_account.default]
 }
