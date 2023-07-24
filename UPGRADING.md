@@ -1,31 +1,55 @@
-# Upgrading to 0.25.x
+# Upgrading Notes
+
+This document captures breaking changes.
+
+## Upgrading to v1.0.0
+
+### Behaviour
+
+ Before v1.0.0 `auto-enable default standards` was enabled by default. This version modifies this behaviour to disabled by default (controlled via `var.aws_security_hub.auto_enable_default_standards`) since the default standards are not updated regularly enough. At time of writing only the `AWS Foundational Security Best Practices v1.0.0 standard` and the `CIS AWS Foundations Benchmark v1.2.0` are enabled by [by default](https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-enable-disable.html) while this module enables the following standards:
+
+- `AWS Foundational Security Best Practices v1.0.0`
+- `CIS AWS Foundations Benchmark v1.4.0`
+- `PCI DSS v3.2.1`
+
+The enabling of the standards in all member account is now controlled via [mcaf-account-baseline](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline).
+
+### Variables
+
+The following variables have been replaced by a new variable `aws_security_hub`:
+
+- `aws_security_hub_product_arns` -> `aws_security_hub.product_arns`
+- `security_hub_standards_arns` -> `aws_security_hub.standards_arns`
+- `security_hub_create_cis_metric_filters` -> `aws_security_hub.create_cis_metric_filters`
+
+## Upgrading to v0.25.x
 
 Version `0.25.x` has added support for specifying a kms_key_id in the `var.additional_auditing_trail`. This variable is mandatory, if you already have additional cloudtrail configurations created using this variable encryption is now mandatory.
 
 ```hcl
 module "landing_zone"
-...        
+...
   additional_auditing_trail = {
     name       = "audit-trail-name"
     bucket     = "audit-trail-s3-bucket-name"
-    kms_key_id = "arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab"   
+    kms_key_id = "arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab"
   }
 ...
 }
 ```
 
-# Upgrading to 0.24.x
+## Upgrading to v0.24.x
 
 Version `0.24.x` changes the AWS nested providers to provider aliases. Define the providers outside the module and reference them when calling this module. For an example, see `examples/basic`.
 
-# Upgrading to 0.23.x
+## Upgrading to v0.23.x
 
 Version `0.23.x` introduces a change in behaviour of AWS Config:
 
 - By default the `aggregator_regions` were set to eu-west-1 and eu-central-1, this has been changed to only enable the current region. Provide a list of regions to `var.aws_config.aggregator_regions` if you want to enable AWS Config in multiple regions.
 - Previously the `aws-controltower-logs` bucket was used to store CloudTrail and AWS Config logs, this version introduces a separate bucket for AWS Config. You are able to override the bucket name by setting `var.aws_config.delivery_channel_s3_bucket_name`.
 
-# Upgrading to 0.21.x
+## Upgrading to v0.21.x
 
 Version `0.21.x` introduces exceptions for IAM entities on the `DenyDisablingSecurityHub` and `DenyLeavingOrg` SCP. The following variables have been merged into a new variable `aws_service_control_policies`:
 
@@ -35,7 +59,7 @@ Version `0.21.x` introduces exceptions for IAM entities on the `DenyDisablingSec
 - `aws_region_restrictions`
 - `aws_require_imdsv2`
 
-# Upgrading to 0.20.x
+## Upgrading to v0.20.x
 
 Resources managing permission sets in AWS IAM Identity Center have been moved to a sub-module, meaning you will need to create `moved` blocks to update the state. The user interface remains unchanged.
 
@@ -89,11 +113,11 @@ Repeat adding these `moved` blocks until `terraform plan` doesn't report any pla
 
 This version requires Terraform 1.3 or newer.
 
-# Upgrading to 0.19.x
+## Upgrading to v0.19.x
 
 Be aware that all tag policies will be recreated since they are now created per tag policy instead of per OU.
 
-# Upgrading to 0.18.x
+## Upgrading to v0.18.x
 
 Version 0.18.x allows Tag Policies on nested Organizational units. Therefore the variable `aws_required_tags` needs the Organizational unit paths including 'Root', e.g.:
 
@@ -116,7 +140,7 @@ module "landing_zone" {
   }
 ```
 
-# Upgrading to 0.17.x
+## Upgrading to v0.17.x
 
 The following variables are now typed from string to list(string):
 
@@ -143,7 +167,7 @@ The following default key policy has been removed from the audit KMS key and a m
 
 If this new key policy is too restrictive for your deployment add extra key policies statements using the `kms_key_policy_audit` variable.
 
-# Upgrading to 0.16.x
+## Upgrading to v0.16.x
 
 Version `0.16` adds support for [AWS provider version 4](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/guides/version-4-upgrade)
 
@@ -164,19 +188,19 @@ terraform import 'module.landing_zone.module.ses-root-accounts-mail-forward[0].m
 
 ```
 
-# Upgrading to 0.15.x
+## Upgrading to v0.15.x
 
 Version `0.15` adds an optional mail forwarder using Amazon SES. Adding the `ses_root_accounts_mail_forward` variable creates the necessary resources to accept mail sent to a verified email address and forward it to an external recipient or recipients. Due to the usage of `configuration_aliases` in the provider configurations of some submodules, this module now requires to use Terraform version 1.0.0 or higher.
 
-# Upgrading to 0.14.x
+## Upgrading to v0.14.x
 
 Version `0.14.x` introduces an account level S3 public access policy that blocks public access to all S3 buckets in the landing zone core accounts. Please make sure you have no S3 buckets that require public access in any of the landing zone core accounts before upgrading.
 
-# Upgrading to 0.13.x
+## Upgrading to v0.13.x
 
 Version `0.13.x` adds support for managed policies. This required changing the variable `aws_sso_permission_sets` where each permission set now requires an additional field called `managed_policy_arns` which must be a list of strings or can be an empty list.
 
-# Upgrading to 0.12.x
+## Upgrading to v0.12.x
 
 Version `0.12.x` automatically sets the audit account as security hub administrator account for the organization and automatically enables Security Hub for new accounts in the organization. In case you already configured this manually please import these resources:
 
@@ -185,17 +209,17 @@ terraform import aws_securityhub_organization_admin_account.default <account id 
 terraform import aws_securityhub_organization_configuration.default <account id of the audit account>
 ```
 
-# Upgrading to 0.11.x
+## Upgrading to v0.11.x
 
 Version `0.11.x` adds additional IAM activity monitors, these will be created automatically if you have the cis-aws-foundations-benchmark standard enabled. To disable the creation of these monitors set the variable `security_hub_create_cis_metric_filters` to false.
 
-# Upgrading to 0.10.x
+## Upgrading to v0.10.x
 
 Version `0.10.x` adds the possibility of assigning the same SSO Permission Set to different groups of accounts and SSO Groups. For example, the permission set `Administrator` can be assigned to group A for account 123 and for group B for account 456.
 
 This required changing the variable `aws_sso_permission_sets` where the `accounts` attribute was renamed to `assignments` and changed to a list.
 
-# Upgrading to 0.9.x
+## Upgrading to v0.9.x
 
 Removal of the local AVM module. Modify the source to the new [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm).
 
@@ -233,19 +257,19 @@ terraform state mv -state-out=baseline-sandbox.tfstate 'module.sandbox.aws_iam_a
 terraform state mv -state-out=baseline-sandbox.tfstate 'module.sandbox.aws_ebs_encryption_by_default.default' 'module.account_baseline.aws_ebs_encryption_by_default.default'
 ```
 
-# Upgrading to 0.8.x
+## Upgrading to v0.8.x
 
 Version `0.8.x` introduces the possibility of managing AWS SSO resources using this module. To avoid a race condition between Okta pushing groups to AWS SSO and Terraform trying to read them using data sources, the `okta_app_saml` resource has been removed from the module.
 
 With this change, all Okta configuration can be managed in the way that best suits the user. It also makes it possible to use this module with any other identity provider that is able to create groups on AWS SSO.
 
-# Upgrading to 0.7.x
+## Upgrading to v0.7.x
 
 From version `0.7.0`, the monitoring of IAM entities has changed from Event Bridge Rules to CloudWatch Alarms. This means that passing a list of IAM identities to the variable `monitor_iam_access` is no longer supported.
 
 The name of the SNS Topic used for notifications has also changed from `LandingZone-MonitorIAMAccess` to `LandingZone-IAMActivity`. Since this is a new Topic, all pre-existing SNS Subscriptions should be configured again using the variable `sns_monitor_iam_activity_subscription`.
 
-# Upgrading to 0.5.x
+## Upgrading to v0.5.x
 
 Since the `create_workspace` variable was added to the AVM module, resources in the included [terraform-aws-mcaf-workspace](https://github.com/schubergphilis/terraform-aws-mcaf-workspace) module are now stored under `module.workspace[0]`, resulting in a plan wanting to destroy and recreate the existing Terraform Cloud workspace and IAM user used by the workspace which is undesirable.
 
@@ -255,20 +279,20 @@ To prevent this happening, simply move the resources in the state to their new l
 terraform state mv 'module.sandbox.module.workspace' 'module.sandbox.module.workspace[0]'
 ```
 
-# Upgrading from v0.1.x to v0.2.x
+## Upgrading from v0.1.x to v0.2.x
 
 This section describes changes to be aware of when upgrading from v0.1.x to v0.2.x.
 
-## Enhancements
+### Enhancements
 
-### AWS Config Aggregator Accounts
+#### AWS Config Aggregator Accounts
 
 Since version `0.2.x` supports multiple account IDs when configuring AWS Config Aggregator accounts, the identifier given to the multiple `aws_config_aggregate_authorization` resources had to change from `region_name` to `account_id-region_name`. This causes the authorizations created by version `0.1.x` to be destroyed and recreated with the new identifiers.
 
-### AWS GuardDuty
+#### AWS GuardDuty
 
 In order to enable GuardDuty for the entire organization, all existing accounts except for the `master` and `logging` accounts have to be add as members in the `audit` account like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts). If this step is not taken, only the core accounts will have GuardDuty enabled.
 
-### TFE Workspaces
+#### TFE Workspaces
 
 TFE Workspaces use version [0.3.0 of the terraform-aws-mcaf-workspace](https://github.com/schubergphilis/terraform-aws-mcaf-workspace/tree/v0.3.0) module which by default creates a Terraform backend file in the repository associated with the workspace.

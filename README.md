@@ -153,6 +153,20 @@ The module creates 3 AWS KMS keys, one for the master account, one for the audit
 
 Note that you have to add additional policies allowing for example access to the pipeline user or role. Only applying this policy will result in a `The new key policy will not allow you to update the key policy in the future` exception.
 
+### AWS Security Hub
+
+This module supports enabling Security Hub at the organization level which means that all new accounts that are created in, or added to, the organization are added as member accounts to the `audit` account Security Hub delegated administrator.
+
+The feature can be controlled via the `aws_security_hub` variable and is enabled by default.
+
+Note: by default `auto-enable default standards` has been turned off since the default standards are not updated regularly enough. At time of writing only the `AWS Foundational Security Best Practices v1.0.0 standard` and the `CIS AWS Foundations Benchmark v1.2.0 standard` are enabled by [by default](https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-enable-disable.html) while this module enables the following standards:
+
+- `AWS Foundational Security Best Practices v1.0.0`
+- `CIS AWS Foundations Benchmark v1.4.0`
+- `PCI DSS v3.2.1`
+
+The enabling of the standards in all member account is controlled via [mcaf-account-baseline](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline).
+
 ### AWS SSO
 
 This module supports managing AWS SSO resources to control user access to all accounts belonging to the AWS Organization.

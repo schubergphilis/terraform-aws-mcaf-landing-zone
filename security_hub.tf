@@ -1,10 +1,15 @@
 // AWS Security Hub - Management account configuration and enrollment
 resource "aws_securityhub_organization_admin_account" "default" {
   admin_account_id = data.aws_caller_identity.audit.account_id
-  depends_on       = [aws_securityhub_account.default]
+
+  depends_on = [aws_securityhub_account.default]
 }
 
 resource "aws_securityhub_account" "management" {
+  auto_enable_controls      = var.aws_security_hub.auto_enable_controls
+  control_finding_generator = var.aws_security_hub.control_finding_generator
+  enable_default_standards  = var.aws_security_hub.auto_enable_default_standards
+
   depends_on = [aws_securityhub_organization_configuration.default]
 }
 
@@ -20,24 +25,39 @@ resource "aws_securityhub_member" "management" {
   }
 }
 
+resource "aws_securityhub_standards_subscription" "management" {
+  for_each = toset(local.security_hub_standards_arns)
+
+  standards_arn = each.value
+
+  depends_on = [aws_securityhub_account.default]
+}
+
 // AWS Security Hub - Audit account configuration and enrollment
 resource "aws_securityhub_account" "default" {
   provider = aws.audit
+
+  auto_enable_controls      = var.aws_security_hub.auto_enable_controls
+  control_finding_generator = var.aws_security_hub.control_finding_generator
+  enable_default_standards  = var.aws_security_hub.auto_enable_default_standards
 }
 
 resource "aws_securityhub_organization_configuration" "default" {
   provider = aws.audit
 
-  auto_enable = true
-  depends_on  = [aws_securityhub_organization_admin_account.default]
+  auto_enable           = true
+  auto_enable_standards = var.aws_security_hub.auto_enable_default_standards ? "DEFAULT" : "NONE"
+
+  depends_on = [aws_securityhub_organization_admin_account.default]
 }
 
 resource "aws_securityhub_product_subscription" "default" {
-  for_each = toset(var.aws_security_hub_product_arns)
+  for_each = toset(var.aws_security_hub.product_arns)
   provider = aws.audit
 
   product_arn = each.value
-  depends_on  = [aws_securityhub_account.default]
+
+  depends_on = [aws_securityhub_account.default]
 }
 
 resource "aws_securityhub_standards_subscription" "default" {
@@ -45,7 +65,8 @@ resource "aws_securityhub_standards_subscription" "default" {
   provider = aws.audit
 
   standards_arn = each.value
-  depends_on    = [aws_securityhub_account.default]
+
+  depends_on = [aws_securityhub_account.default]
 }
 
 resource "aws_cloudwatch_event_rule" "security_hub_findings" {
@@ -107,4 +128,12 @@ resource "aws_securityhub_member" "logging" {
   }
 
   depends_on = [aws_securityhub_organization_configuration.default]
+}
+
+resource "aws_securityhub_standards_subscription" "logging" {
+  for_each = toset(local.security_hub_standards_arns)
+  provider = aws.logging
+
+  standards_arn = each.value
+  depends_on    = [aws_securityhub_account.default]
 }
