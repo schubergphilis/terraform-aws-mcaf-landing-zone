@@ -6,9 +6,7 @@ resource "aws_securityhub_organization_admin_account" "default" {
 }
 
 resource "aws_securityhub_account" "management" {
-  auto_enable_controls      = var.aws_security_hub.auto_enable_controls
   control_finding_generator = var.aws_security_hub.control_finding_generator
-  enable_default_standards  = var.aws_security_hub.auto_enable_default_standards
 
   depends_on = [aws_securityhub_organization_configuration.default]
 }
@@ -37,9 +35,7 @@ resource "aws_securityhub_standards_subscription" "management" {
 resource "aws_securityhub_account" "default" {
   provider = aws.audit
 
-  auto_enable_controls      = var.aws_security_hub.auto_enable_controls
   control_finding_generator = var.aws_security_hub.control_finding_generator
-  enable_default_standards  = var.aws_security_hub.auto_enable_default_standards
 }
 
 resource "aws_securityhub_organization_configuration" "default" {
