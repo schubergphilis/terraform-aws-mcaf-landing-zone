@@ -153,6 +153,20 @@ The module creates 3 AWS KMS keys, one for the master account, one for the audit
 
 Note that you have to add additional policies allowing for example access to the pipeline user or role. Only applying this policy will result in a `The new key policy will not allow you to update the key policy in the future` exception.
 
+### AWS Security Hub
+
+This module supports enabling Security Hub at an organization level, meaning all accounts that are created in or enrolled to the organization will be added as member accounts to the `audit` account Security Hub delegated administrator.
+
+The feature can be controlled via the `aws_security_hub` variable and is enabled by default.
+
+Note: by default `auto-enable default standards` has been turned off since the default standards are not updated regularly enough. At time of writing only the `AWS Foundational Security Best Practices v1.0.0 standard` and the `CIS AWS Foundations Benchmark v1.2.0 standard` are enabled by [by default](https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-enable-disable.html) while this module enables the following standards:
+
+- `AWS Foundational Security Best Practices v1.0.0`
+- `CIS AWS Foundations Benchmark v1.4.0`
+- `PCI DSS v3.2.1`
+
+The enabling of the standards in all member account is controlled via [mcaf-account-baseline](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline).
+
 ### AWS SSO
 
 This module supports managing AWS SSO resources to control user access to all accounts belonging to the AWS Organization.
@@ -488,6 +502,8 @@ module "landing_zone" {
 | [aws_securityhub_organization_configuration.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_organization_configuration) | resource |
 | [aws_securityhub_product_subscription.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_product_subscription) | resource |
 | [aws_securityhub_standards_subscription.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_standards_subscription) | resource |
+| [aws_securityhub_standards_subscription.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_standards_subscription) | resource |
+| [aws_securityhub_standards_subscription.management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_standards_subscription) | resource |
 | [aws_sns_topic.iam_activity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
 | [aws_sns_topic.security_hub_findings](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
 | [aws_sns_topic_policy.iam_activity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_policy) | resource |
@@ -525,7 +541,7 @@ module "landing_zone" {
 | <a name="input_aws_ebs_encryption_by_default"></a> [aws\_ebs\_encryption\_by\_default](#input\_aws\_ebs\_encryption\_by\_default) | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
 | <a name="input_aws_guardduty"></a> [aws\_guardduty](#input\_aws\_guardduty) | AWS GuardDuty settings | <pre>object({<br>    enabled                      = optional(bool, true)<br>    finding_publishing_frequency = optional(string, "FIFTEEN_MINUTES")<br>    datasources = object({<br>      malware_protection = optional(bool, true)<br>      kubernetes         = optional(bool, true)<br>      s3_logs            = optional(bool, true)<br>    })<br>  })</pre> | <pre>{<br>  "datasources": {<br>    "kubernetes": true,<br>    "malware_protection": true,<br>    "s3_logs": true<br>  },<br>  "enabled": true,<br>  "finding_publishing_frequency": "FIFTEEN_MINUTES"<br>}</pre> | no |
 | <a name="input_aws_required_tags"></a> [aws\_required\_tags](#input\_aws\_required\_tags) | AWS Required tags settings | <pre>map(list(object({<br>    name         = string<br>    values       = optional(list(string))<br>    enforced_for = optional(list(string))<br>  })))</pre> | `null` | no |
-| <a name="input_aws_security_hub_product_arns"></a> [aws\_security\_hub\_product\_arns](#input\_aws\_security\_hub\_product\_arns) | A list of the ARNs of the products you want to import into Security Hub | `list(string)` | `[]` | no |
+| <a name="input_aws_security_hub"></a> [aws\_security\_hub](#input\_aws\_security\_hub) | AWS Security Hub settings | <pre>object({<br>    enabled                       = optional(bool, true)<br>    auto_enable_controls          = optional(bool, true)<br>    auto_enable_default_standards = optional(bool, false)<br>    control_finding_generator     = optional(string, "SECURITY_CONTROL")<br>    create_cis_metric_filters     = optional(bool, true)<br>    product_arns                  = optional(list(string), [])<br>    standards_arns                = optional(list(string), null)<br>  })</pre> | <pre>{<br>  "auto_enable_controls": true,<br>  "auto_enable_default_standards": false,<br>  "control_finding_generator": "SECURITY_CONTROL",<br>  "create_cis_metric_filters": true,<br>  "enabled": true,<br>  "product_arns": [],<br>  "standards_arns": null<br>}</pre> | no |
 | <a name="input_aws_security_hub_sns_subscription"></a> [aws\_security\_hub\_sns\_subscription](#input\_aws\_security\_hub\_sns\_subscription) | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | <a name="input_aws_service_control_policies"></a> [aws\_service\_control\_policies](#input\_aws\_service\_control\_policies) | AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction | <pre>object({<br>    allowed_regions                 = optional(list(string), [])<br>    aws_deny_disabling_security_hub = optional(bool, true)<br>    aws_deny_leaving_org            = optional(bool, true)<br>    aws_deny_root_user_ous          = optional(list(string), [])<br>    aws_require_imdsv2              = optional(bool, true)<br>    principal_exceptions            = optional(list(string), [])<br>  })</pre> | `{}` | no |
 | <a name="input_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#input\_aws\_sso\_permission\_sets) | Map of AWS IAM Identity Center permission sets with AWS accounts and group names that should be granted access to each account | <pre>map(object({<br>    assignments         = list(map(list(string)))<br>    inline_policy       = optional(string, null)<br>    managed_policy_arns = optional(list(string), [])<br>    session_duration    = optional(string, "PT4H")<br>  }))</pre> | `{}` | no |
@@ -537,8 +553,6 @@ module "landing_zone" {
 | <a name="input_monitor_iam_activity"></a> [monitor\_iam\_activity](#input\_monitor\_iam\_activity) | Whether IAM activity should be monitored | `bool` | `true` | no |
 | <a name="input_monitor_iam_activity_sns_subscription"></a> [monitor\_iam\_activity\_sns\_subscription](#input\_monitor\_iam\_activity\_sns\_subscription) | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | <a name="input_path"></a> [path](#input\_path) | Optional path for all IAM users, user groups, roles, and customer managed policies created by this module | `string` | `"/"` | no |
-| <a name="input_security_hub_create_cis_metric_filters"></a> [security\_hub\_create\_cis\_metric\_filters](#input\_security\_hub\_create\_cis\_metric\_filters) | Enable the creation of metric filters related to the CIS AWS Foundation Security Hub Standard | `bool` | `true` | no |
-| <a name="input_security_hub_standards_arns"></a> [security\_hub\_standards\_arns](#input\_security\_hub\_standards\_arns) | A list of the ARNs of the standards you want to enable in Security Hub | `list(string)` | `null` | no |
 | <a name="input_ses_root_accounts_mail_forward"></a> [ses\_root\_accounts\_mail\_forward](#input\_ses\_root\_accounts\_mail\_forward) | SES config to receive and forward root account emails | <pre>object({<br>    domain            = string<br>    from_email        = string<br>    recipient_mapping = map(any)<br><br>    dmarc = object({<br>      policy = optional(string)<br>      rua    = optional(string)<br>      ruf    = optional(string)<br>    })<br>  })</pre> | `null` | no |
 
 ## Outputs

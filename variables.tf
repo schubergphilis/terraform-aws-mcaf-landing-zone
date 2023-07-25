@@ -109,10 +109,31 @@ variable "aws_required_tags" {
   }
 }
 
-variable "aws_security_hub_product_arns" {
-  type        = list(string)
-  default     = []
-  description = "A list of the ARNs of the products you want to import into Security Hub"
+variable "aws_security_hub" {
+  type = object({
+    enabled                       = optional(bool, true)
+    auto_enable_controls          = optional(bool, true)
+    auto_enable_default_standards = optional(bool, false)
+    control_finding_generator     = optional(string, "SECURITY_CONTROL")
+    create_cis_metric_filters     = optional(bool, true)
+    product_arns                  = optional(list(string), [])
+    standards_arns                = optional(list(string), null)
+  })
+  default = {
+    enabled                       = true
+    auto_enable_controls          = true
+    auto_enable_default_standards = false
+    control_finding_generator     = "SECURITY_CONTROL"
+    create_cis_metric_filters     = true
+    product_arns                  = []
+    standards_arns                = null
+  }
+  description = "AWS Security Hub settings"
+
+  validation {
+    condition     = contains(["SECURITY_CONTROL", "STANDARD_CONTROL"], var.aws_security_hub.control_finding_generator)
+    error_message = "The \"control_finding_generator\" variable must be set to either \"SECURITY_CONTROL\" or \"STANDARD_CONTROL\"."
+  }
 }
 
 variable "aws_security_hub_sns_subscription" {
@@ -122,18 +143,6 @@ variable "aws_security_hub_sns_subscription" {
   }))
   default     = {}
   description = "Subscription options for the LandingZone-SecurityHubFindings SNS topic"
-}
-
-variable "security_hub_standards_arns" {
-  type        = list(string)
-  default     = null
-  description = "A list of the ARNs of the standards you want to enable in Security Hub"
-}
-
-variable "security_hub_create_cis_metric_filters" {
-  type        = bool
-  default     = true
-  description = "Enable the creation of metric filters related to the CIS AWS Foundation Security Hub Standard"
 }
 
 variable "aws_service_control_policies" {
