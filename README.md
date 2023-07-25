@@ -155,7 +155,7 @@ Note that you have to add additional policies allowing for example access to the
 
 ### AWS Security Hub
 
-This module supports enabling Security Hub at the organization level which means that all new accounts that are created in, or added to, the organization are added as member accounts to the `audit` account Security Hub delegated administrator.
+This module supports enabling Security Hub at an organization level, meaning all accounts that are created in or enrolled to the organization will be added as member accounts to the `audit` account Security Hub delegated administrator.
 
 The feature can be controlled via the `aws_security_hub` variable and is enabled by default.
 

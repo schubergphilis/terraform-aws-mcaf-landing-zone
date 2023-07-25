@@ -1,12 +1,14 @@
 # Upgrading Notes
 
-This document captures breaking changes.
+This document captures required refactoring on your part when upgrading to a module version that contains breaking changes.
 
 ## Upgrading to v1.0.0
 
 ### Behaviour
 
- Before v1.0.0 `auto-enable default standards` was enabled by default. This version modifies this behaviour to disabled by default (controlled via `var.aws_security_hub.auto_enable_default_standards`) since the default standards are not updated regularly enough. At time of writing only the `AWS Foundational Security Best Practices v1.0.0 standard` and the `CIS AWS Foundations Benchmark v1.2.0` are enabled by [by default](https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-enable-disable.html) while this module enables the following standards:
+In previous versions of this module, `auto-enable default standards` was enabled by default. From v1.0.0 this behaviour has been changed to disabled by default (controlled via `var.aws_security_hub.auto_enable_default_standards`) since the default standards are not updated regularly enough.
+
+At time of writing only the `AWS Foundational Security Best Practices v1.0.0 standard` and the `CIS AWS Foundations Benchmark v1.2.0` are enabled by [by default](https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-enable-disable.html) while this module enables the following standards:
 
 - `AWS Foundational Security Best Practices v1.0.0`
 - `CIS AWS Foundations Benchmark v1.4.0`
