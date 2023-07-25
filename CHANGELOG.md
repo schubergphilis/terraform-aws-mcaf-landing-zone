@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.0 - 2023-07-25
+
+### What's Changed
+
+#### 🚀 Features
+
+- feature: Refactor AWS Security Hub configuration (#185) @marwinbaumannsbp
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v0.28.1...v1.0.0
+
 ## v0.28.1 - 2023-07-12
 
 ### What's Changed
@@ -483,9 +493,9 @@ ENHANCEMENTS
 BUG FIXES
 
 - Add `endpoint_auto_confirms` variable to the AWS Config SNS topic ([#62](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/62)) ([#64](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/64))
--
+- 
 - Modify accountID of the AWS Config SNS topic ([#65](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/65))
--
+- 
 
 ## v0.4.4 - 2021-01-05
 
