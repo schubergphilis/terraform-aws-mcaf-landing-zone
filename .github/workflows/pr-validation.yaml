@@ -79,7 +79,7 @@ jobs:
     needs: autolabeler
     runs-on: ubuntu-latest
     steps:
-      - uses: danielchabr/pr-labels-checker@v3.1
+      - uses: danielchabr/pr-labels-checker@v3.3
         id: lint_pr_labels
         with:
           hasSome: breaking,bug,documentation,enhancement,feature,fix,misc,security
