@@ -21,7 +21,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
 
       - name: Setup Terraform Linters
-        uses: terraform-linters/setup-tflint@v2
+        uses: terraform-linters/setup-tflint@v3
         with:
           github_token: ${{ github.token }}
 
