@@ -442,9 +442,9 @@ module "landing_zone" {
 |------|--------|---------|
 | <a name="module_aws_config_s3"></a> [aws\_config\_s3](#module\_aws\_config\_s3) | github.com/schubergphilis/terraform-aws-mcaf-s3 | v0.8.0 |
 | <a name="module_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#module\_aws\_sso\_permission\_sets) | ./modules/permission-set | n/a |
-| <a name="module_datadog_audit"></a> [datadog\_audit](#module\_datadog\_audit) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.11 |
-| <a name="module_datadog_logging"></a> [datadog\_logging](#module\_datadog\_logging) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.11 |
-| <a name="module_datadog_master"></a> [datadog\_master](#module\_datadog\_master) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.11 |
+| <a name="module_datadog_audit"></a> [datadog\_audit](#module\_datadog\_audit) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.12 |
+| <a name="module_datadog_logging"></a> [datadog\_logging](#module\_datadog\_logging) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.12 |
+| <a name="module_datadog_master"></a> [datadog\_master](#module\_datadog\_master) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.12 |
 | <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.2.0 |
 | <a name="module_kms_key_audit"></a> [kms\_key\_audit](#module\_kms\_key\_audit) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.2.0 |
 | <a name="module_kms_key_logging"></a> [kms\_key\_logging](#module\_kms\_key\_logging) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.2.0 |
