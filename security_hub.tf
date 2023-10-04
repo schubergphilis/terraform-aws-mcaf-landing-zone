@@ -7,6 +7,7 @@ resource "aws_securityhub_organization_admin_account" "default" {
 
 resource "aws_securityhub_account" "management" {
   control_finding_generator = var.aws_security_hub.control_finding_generator
+  enable_default_standards  = var.aws_security_hub.enable_default_standards_on_core
 
   depends_on = [aws_securityhub_organization_configuration.default]
 }
@@ -28,7 +29,7 @@ resource "aws_securityhub_standards_subscription" "management" {
 
   standards_arn = each.value
 
-  depends_on = [aws_securityhub_account.default]
+  depends_on = [aws_securityhub_account.management]
 }
 
 // AWS Security Hub - Audit account configuration and enrollment
@@ -36,6 +37,7 @@ resource "aws_securityhub_account" "default" {
   provider = aws.audit
 
   control_finding_generator = var.aws_security_hub.control_finding_generator
+  enable_default_standards  = var.aws_security_hub.enable_default_standards_on_core
 }
 
 resource "aws_securityhub_organization_configuration" "default" {
@@ -114,6 +116,15 @@ resource "aws_sns_topic_subscription" "security_hub_findings" {
 }
 
 // AWS Security Hub - Logging account enrollment
+resource "aws_securityhub_account" "logging" {
+  provider = aws.audit
+
+  control_finding_generator = var.aws_security_hub.control_finding_generator
+  enable_default_standards  = var.aws_security_hub.enable_default_standards_on_core
+
+  depends_on = [aws_securityhub_organization_configuration.default]
+}
+
 resource "aws_securityhub_member" "logging" {
   provider = aws.audit
 
@@ -123,7 +134,7 @@ resource "aws_securityhub_member" "logging" {
     ignore_changes = [invite]
   }
 
-  depends_on = [aws_securityhub_organization_configuration.default]
+  depends_on = [aws_securityhub_account.logging]
 }
 
 resource "aws_securityhub_standards_subscription" "logging" {
@@ -131,5 +142,5 @@ resource "aws_securityhub_standards_subscription" "logging" {
   provider = aws.logging
 
   standards_arn = each.value
-  depends_on    = [aws_securityhub_account.default]
+  depends_on    = [aws_securityhub_account.logging]
 }

@@ -111,22 +111,20 @@ variable "aws_required_tags" {
 
 variable "aws_security_hub" {
   type = object({
-    enabled                       = optional(bool, true)
-    auto_enable_controls          = optional(bool, true)
-    auto_enable_default_standards = optional(bool, false)
-    control_finding_generator     = optional(string, "SECURITY_CONTROL")
-    create_cis_metric_filters     = optional(bool, true)
-    product_arns                  = optional(list(string), [])
-    standards_arns                = optional(list(string), null)
+    enable_default_standards_on_core = optional(bool, true)
+    auto_enable_default_standards    = optional(bool, false)
+    control_finding_generator        = optional(string, "SECURITY_CONTROL")
+    create_cis_metric_filters        = optional(bool, true)
+    product_arns                     = optional(list(string), [])
+    standards_arns                   = optional(list(string), null)
   })
   default = {
-    enabled                       = true
-    auto_enable_controls          = true
-    auto_enable_default_standards = false
-    control_finding_generator     = "SECURITY_CONTROL"
-    create_cis_metric_filters     = true
-    product_arns                  = []
-    standards_arns                = null
+    enable_default_standards_on_core = true
+    auto_enable_default_standards    = false
+    control_finding_generator        = "SECURITY_CONTROL"
+    create_cis_metric_filters        = true
+    product_arns                     = []
+    standards_arns                   = null
   }
   description = "AWS Security Hub settings"
 
