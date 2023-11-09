@@ -32,9 +32,7 @@ provider "datadog" {
 }
 
 provider "mcaf" {
-  aws {
-    region = "eu-west-1"
-  }
+  aws {}
 }
 
 module "landing_zone" {

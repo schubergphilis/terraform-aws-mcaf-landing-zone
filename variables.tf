@@ -3,6 +3,7 @@ variable "additional_auditing_trail" {
     name       = string
     bucket     = string
     kms_key_id = string
+
     event_selector = optional(object({
       data_resource = optional(object({
         type   = string
@@ -13,6 +14,7 @@ variable "additional_auditing_trail" {
       read_write_type                  = optional(string, "All")
     }))
   })
+  default     = null
   description = "CloudTrail configuration for additional auditing trail"
 }
 

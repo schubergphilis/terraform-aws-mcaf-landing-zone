@@ -12,19 +12,22 @@ resource "aws_cloudtrail" "additional_auditing_trail" {
   kms_key_id                 = var.additional_auditing_trail.kms_key_id
   tags                       = var.tags
 
-  event_selector {
-    dynamic "data_resource" {
-      for_each = var.additional_auditing_trail.event_selector.data_resource != null ? { create = true } : {}
+  dynamic "event_selector" {
+    for_each = var.additional_auditing_trail.event_selector != null ? { create = true } : {}
 
-      content {
-        type   = var.additional_auditing_trail.event_selector.data_resource.type
-        values = var.additional_auditing_trail.event_selector.data_resource.values
+    content {
+      dynamic "data_resource" {
+        for_each = var.additional_auditing_trail.event_selector.data_resource != null ? { create = true } : {}
+
+        content {
+          type   = var.additional_auditing_trail.event_selector.data_resource.type
+          values = var.additional_auditing_trail.event_selector.data_resource.values
+        }
       }
 
+      include_management_events        = var.additional_auditing_trail.event_selector.include_management_events
+      exclude_management_event_sources = var.additional_auditing_trail.event_selector.exclude_management_event_sources
+      read_write_type                  = var.additional_auditing_trail.event_selector.read_write_type
     }
-
-    include_management_events        = var.additional_auditing_trail.event_selector.include_management_events
-    exclude_management_event_sources = var.additional_auditing_trail.event_selector.exclude_management_event_sources
-    read_write_type                  = var.additional_auditing_trail.event_selector.read_write_type
   }
 }
