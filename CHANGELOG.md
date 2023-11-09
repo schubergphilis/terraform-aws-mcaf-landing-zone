@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.4.0 - 2023-11-09
+
+### What's Changed
+
+#### 🚀 Features
+
+- feat: Add option to provide event_selector for CloudTrail (#193) @sbkg0002
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v1.3.0...v1.4.0
+
 ## v1.3.0 - 2023-10-02
 
 ### What's Changed
