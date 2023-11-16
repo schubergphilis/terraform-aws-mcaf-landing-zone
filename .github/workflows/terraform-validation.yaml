@@ -139,7 +139,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Checkov
-        uses: bridgecrewio/checkov-action@v12.2467.0
+        uses: bridgecrewio/checkov-action@v12.2577.0
         with:
           container_user: 1000
           directory: "/"
