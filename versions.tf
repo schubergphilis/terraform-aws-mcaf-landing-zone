@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source                = "hashicorp/aws"
-      version               = ">= 4.60.0"
+      version               = ">= 5.20.0"
       configuration_aliases = [aws.audit, aws.logging]
     }
     datadog = {
