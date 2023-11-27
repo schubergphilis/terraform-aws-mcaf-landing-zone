@@ -86,24 +86,24 @@ variable "aws_guardduty" {
   type = object({
     enabled                       = optional(bool, true)
     finding_publishing_frequency  = optional(string, "FIFTEEN_MINUTES")
-    ebs_malware_protection_status = optional(string, "ENABLED")
-    eks_addon_management_status   = optional(string, "ENABLED")
-    eks_audit_logs_status         = optional(string, "ENABLED")
-    eks_runtime_monitoring_status = optional(string, "ENABLED")
-    lambda_network_logs_status    = optional(string, "ENABLED")
-    rds_login_events_status       = optional(string, "ENABLED")
-    s3_data_events_status         = optional(string, "ENABLED")
+    ebs_malware_protection_status = optional(bool, true)
+    eks_addon_management_status   = optional(bool, true)
+    eks_audit_logs_status         = optional(bool, true)
+    eks_runtime_monitoring_status = optional(bool, true)
+    lambda_network_logs_status    = optional(bool, true)
+    rds_login_events_status       = optional(bool, true)
+    s3_data_events_status         = optional(bool, true)
   })
   default = {
     enabled                       = true
     finding_publishing_frequency  = "FIFTEEN_MINUTES"
-    ebs_malware_protection_status = "ENABLED"
-    eks_addon_management_status   = "ENABLED"
-    eks_audit_logs_status         = "ENABLED"
-    eks_runtime_monitoring_status = "ENABLED"
-    lambda_network_logs_status    = "ENABLED"
-    rds_login_events_status       = "ENABLED"
-    s3_data_events_status         = "ENABLED"
+    ebs_malware_protection_status = true
+    eks_addon_management_status   = true
+    eks_audit_logs_status         = true
+    eks_runtime_monitoring_status = true
+    lambda_network_logs_status    = true
+    rds_login_events_status       = true
+    s3_data_events_status         = true
   }
   description = "AWS GuardDuty settings"
 }
