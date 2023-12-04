@@ -84,22 +84,26 @@ variable "aws_ebs_encryption_by_default" {
 
 variable "aws_guardduty" {
   type = object({
-    enabled                      = optional(bool, true)
-    finding_publishing_frequency = optional(string, "FIFTEEN_MINUTES")
-    datasources = object({
-      malware_protection = optional(bool, true)
-      kubernetes         = optional(bool, true)
-      s3_logs            = optional(bool, true)
-    })
+    enabled                       = optional(bool, true)
+    finding_publishing_frequency  = optional(string, "FIFTEEN_MINUTES")
+    ebs_malware_protection_status = optional(bool, true)
+    eks_addon_management_status   = optional(bool, true)
+    eks_audit_logs_status         = optional(bool, true)
+    eks_runtime_monitoring_status = optional(bool, true)
+    lambda_network_logs_status    = optional(bool, true)
+    rds_login_events_status       = optional(bool, true)
+    s3_data_events_status         = optional(bool, true)
   })
   default = {
-    enabled                      = true
-    finding_publishing_frequency = "FIFTEEN_MINUTES"
-    datasources = {
-      malware_protection = true
-      kubernetes         = true
-      s3_logs            = true
-    }
+    enabled                       = true
+    finding_publishing_frequency  = "FIFTEEN_MINUTES"
+    ebs_malware_protection_status = true
+    eks_addon_management_status   = true
+    eks_audit_logs_status         = true
+    eks_runtime_monitoring_status = true
+    lambda_network_logs_status    = true
+    rds_login_events_status       = true
+    s3_data_events_status         = true
   }
   description = "AWS GuardDuty settings"
 }
