@@ -28,18 +28,21 @@ resource "aws_guardduty_organization_configuration_feature" "ebs_malware_protect
   detector_id = aws_guardduty_detector.audit.id
   name        = "EBS_MALWARE_PROTECTION"
   auto_enable = var.aws_guardduty.ebs_malware_protection_status == true ? "ALL" : "NONE"
+  provider    = aws.audit
 }
 
 resource "aws_guardduty_organization_configuration_feature" "eks_audit_logs" {
   detector_id = aws_guardduty_detector.audit.id
   name        = "EKS_AUDIT_LOGS"
   auto_enable = var.aws_guardduty.eks_audit_logs_status == true ? "ALL" : "NONE"
+  provider    = aws.audit
 }
 
 resource "aws_guardduty_organization_configuration_feature" "eks_runtime_monitoring" {
   detector_id = aws_guardduty_detector.audit.id
   name        = "EKS_RUNTIME_MONITORING"
   auto_enable = var.aws_guardduty.eks_runtime_monitoring_status == true ? "ALL" : "NONE"
+  provider    = aws.audit
 
 
   additional_configuration {
@@ -52,16 +55,19 @@ resource "aws_guardduty_organization_configuration_feature" "lambda_network_logs
   detector_id = aws_guardduty_detector.audit.id
   name        = "LAMBDA_NETWORK_LOGS"
   auto_enable = var.aws_guardduty.lambda_network_logs_status == true ? "ALL" : "NONE"
+  provider    = aws.audit
 }
 
 resource "aws_guardduty_organization_configuration_feature" "rds_login_events" {
   detector_id = aws_guardduty_detector.audit.id
   name        = "RDS_LOGIN_EVENTS"
   auto_enable = var.aws_guardduty.rds_login_events_status == true ? "ALL" : "NONE"
+  provider    = aws.audit
 }
 
 resource "aws_guardduty_organization_configuration_feature" "s3_data_events" {
   detector_id = aws_guardduty_detector.audit.id
   name        = "S3_DATA_EVENTS"
   auto_enable = var.aws_guardduty.s3_data_events_status == true ? "ALL" : "NONE"
+  provider    = aws.audit
 }
