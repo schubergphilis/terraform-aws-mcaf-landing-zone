@@ -1,6 +1,6 @@
 # Management Account
 module "kms_key" {
-  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.2.0"
+  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.3.0"
   name                = "inception"
   description         = "KMS key used in the master account"
   enable_key_rotation = true
@@ -84,7 +84,7 @@ data "aws_iam_policy_document" "kms_key" {
 module "kms_key_audit" {
   providers = { aws = aws.audit }
 
-  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.2.0"
+  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.3.0"
   name                = "audit"
   description         = "KMS key used for encrypting audit-related data"
   enable_key_rotation = true
@@ -203,7 +203,7 @@ data "aws_iam_policy_document" "kms_key_audit" {
 module "kms_key_logging" {
   providers = { aws = aws.logging }
 
-  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.2.0"
+  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.3.0"
   name                = "logging"
   description         = "KMS key to use with logging account"
   enable_key_rotation = true
