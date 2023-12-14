@@ -42,6 +42,12 @@ variable "aws_account_password_policy" {
   description = "AWS account password policy parameters for the audit, logging and master account"
 }
 
+variable "aws_auditmanager_by_default" {
+  type        = bool
+  default     = true
+  description = "Set to true to enable AWS Audit Manager by default"
+}
+
 variable "aws_config" {
   type = object({
     aggregator_account_ids          = optional(list(string), [])
