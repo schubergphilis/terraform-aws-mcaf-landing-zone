@@ -197,6 +197,37 @@ data "aws_iam_policy_document" "kms_key_audit" {
       ]
     }
   }
+
+  dynamic "statement" {
+    for_each = var.aws_auditmanager.enabled ? ["allow_audit_manager"] : []
+
+    content {
+      sid       = "Allow Audit Manager from management to describe and grant"
+      effect    = "Allow"
+      resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
+
+      actions = [
+        "kms:CreateGrant",
+        "kms:DescribeKey"
+      ]
+
+      principals {
+        type = "AWS"
+        identifiers = [
+          "arn:aws:iam::${data.aws_caller_identity.management.account_id}:root"
+        ]
+      }
+
+      condition {
+        test     = "Bool"
+        variable = "kms:ViaService"
+
+        values = [
+          "auditmanager.amazonaws.com"
+        ]
+      }
+    }
+  }
 }
 
 # Logging Account

@@ -42,6 +42,18 @@ variable "aws_account_password_policy" {
   description = "AWS account password policy parameters for the audit, logging and master account"
 }
 
+variable "aws_auditmanager" {
+  type = object({
+    enabled               = bool
+    reports_bucket_prefix = string
+  })
+  default = {
+    enabled               = true
+    reports_bucket_prefix = "audit-manager-reports"
+  }
+  description = "AWS Audit Manager config settings"
+}
+
 variable "aws_config" {
   type = object({
     aggregator_account_ids          = optional(list(string), [])
