@@ -3,5 +3,5 @@ resource "aws_auditmanager_account_registration" "default" {
 
   delegated_admin_account = data.aws_caller_identity.audit.account_id
   deregister_on_destroy   = true
-  kms_key                 = module.kms_key.arn
+  kms_key                 = module.kms_key_audit.arn
 }
