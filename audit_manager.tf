@@ -7,6 +7,8 @@ resource "aws_auditmanager_account_registration" "default" {
 }
 
 module "audit-manager-reports" {
+  providers = { aws = aws.audit }
+
   source  = "schubergphilis/mcaf-s3/aws"
   version = "0.12.1"
 
