@@ -5,3 +5,31 @@ resource "aws_auditmanager_account_registration" "default" {
   deregister_on_destroy   = true
   kms_key                 = module.kms_key_audit.arn
 }
+
+module "audit-manager-reports" {
+  source  = "schubergphilis/mcaf-s3/aws"
+  version = "0.12.1"
+
+  name_prefix = "audit-manager-reports"
+  versioning  = true
+
+  lifecycle_rule = [
+    {
+      id      = "retention"
+      enabled = true
+
+      abort_incomplete_multipart_upload = {
+        days_after_initiation = 7
+      }
+
+      noncurrent_version_expiration = {
+        noncurrent_days = 90
+      }
+
+      noncurrent_version_transition = {
+        noncurrent_days = 30
+        storage_class   = "ONEZONE_IA"
+      }
+    }
+  ]
+}
