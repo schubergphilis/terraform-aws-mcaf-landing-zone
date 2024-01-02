@@ -66,7 +66,7 @@ data "aws_iam_policy_document" "sns_feedback" {
 
     condition {
       test     = "StringEquals"
-      variable = "AWS:SourceOwner"
+      variable = "AWS:SourceAccount"
       values   = [data.aws_caller_identity.audit.account_id]
     }
   }
