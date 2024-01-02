@@ -16,7 +16,8 @@ resource "aws_sns_topic_policy" "iam_activity" {
   arn = aws_sns_topic.iam_activity[0].arn
 
   policy = templatefile("${path.module}/files/sns/iam_activity_topic_policy.json.tpl", {
-    account_id               = data.aws_caller_identity.audit.account_id
+    audit_account_id         = data.aws_caller_identity.audit.account_id
+    mgmt_account_id          = data.aws_caller_identity.management.account_id
     services_allowed_publish = jsonencode("cloudwatch.amazonaws.com")
     sns_topic                = aws_sns_topic.iam_activity[0].arn
 
@@ -65,7 +66,7 @@ data "aws_iam_policy_document" "sns_feedback" {
 
     condition {
       test     = "StringEquals"
-      variable = "AWS:SourceOwner"
+      variable = "AWS:SourceAccount"
       values   = [data.aws_caller_identity.audit.account_id]
     }
   }

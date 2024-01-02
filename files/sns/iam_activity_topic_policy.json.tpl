@@ -21,17 +21,31 @@
       "Resource": "${sns_topic}",
       "Condition": {
         "StringEquals": {
-          "AWS:SourceOwner": "${account_id}"
+          "AWS:SourceAccount": "${audit_account_id}"
         }
       }
     },
     {
-      "Sid": "__services_allowed_publish",
+      "Sid": "AllowServicesToPublishFromMgmtAccount",
       "Effect": "Allow",
       "Principal": {
         "Service": ${services_allowed_publish}
       },
       "Action": "sns:Publish",
+      "Resource": "${sns_topic}",
+      "Condition": {
+        "StringEquals": {
+          "AWS:SourceAccount": "${mgmt_account_id}"
+        }
+      }
+    },
+    {
+      "Sid": "AllowMgmtMasterToListSubcriptions",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::${mgmt_account_id}:root"
+      },
+      "Action": "sns:ListSubscriptionsByTopic",
       "Resource": "${sns_topic}"
     }
     %{ if length(security_hub_roles) > 0 ~}
