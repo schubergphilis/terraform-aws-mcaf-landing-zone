@@ -21,7 +21,7 @@
       "Resource": "${sns_topic}",
       "Condition": {
         "StringEquals": {
-          "AWS:SourceOwner": "${account_id}"
+          "AWS:SourceAccount": "${account_id}"
         }
       }
     },
