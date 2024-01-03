@@ -4,9 +4,13 @@ resource "aws_auditmanager_account_registration" "default" {
   delegated_admin_account = data.aws_caller_identity.audit.account_id
   deregister_on_destroy   = true
   kms_key                 = module.kms_key_audit.arn
+
+  depends_on = [
+    module.kms_key_audit
+  ]
 }
 
-module "audit-manager-reports" {
+module "audit_manager_reports" {
   count = var.aws_auditmanager_config.enabled == true ? 1 : 0
 
   providers = { aws = aws.audit }
