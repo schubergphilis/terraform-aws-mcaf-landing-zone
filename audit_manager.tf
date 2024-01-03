@@ -1,5 +1,5 @@
 resource "aws_auditmanager_account_registration" "default" {
-  count = var.aws_auditmanager_by_default == true ? 1 : 0
+  count = var.aws_auditmanager_config.enabled == true ? 1 : 0
 
   delegated_admin_account = data.aws_caller_identity.audit.account_id
   deregister_on_destroy   = true
@@ -7,13 +7,15 @@ resource "aws_auditmanager_account_registration" "default" {
 }
 
 module "audit-manager-reports" {
+  count = var.aws_auditmanager_config.enabled == true ? 1 : 0
+
   providers = { aws = aws.audit }
 
   source  = "schubergphilis/mcaf-s3/aws"
   version = "0.12.1"
 
-  name_prefix = "audit-manager-reports"
-  versioning  = true
+  name       = var.aws_auditmanager_config.reports_bucket_name
+  versioning = true
 
   lifecycle_rule = [
     {

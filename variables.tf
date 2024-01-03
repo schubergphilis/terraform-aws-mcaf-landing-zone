@@ -42,9 +42,15 @@ variable "aws_account_password_policy" {
   description = "AWS account password policy parameters for the audit, logging and master account"
 }
 
-variable "aws_auditmanager_by_default" {
-  type        = bool
-  default     = true
+variable "aws_auditmanager_config" {
+  type = object({
+    enabled             = bool
+    reports_bucket_name = string
+  })
+  default = {
+    enabled             = true
+    reports_bucket_name = "audit-manager-reports"
+  }
   description = "Set to true to enable AWS Audit Manager by default"
 }
 
