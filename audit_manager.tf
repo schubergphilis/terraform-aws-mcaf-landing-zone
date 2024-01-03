@@ -14,8 +14,8 @@ module "audit-manager-reports" {
   source  = "schubergphilis/mcaf-s3/aws"
   version = "0.12.1"
 
-  name       = var.aws_auditmanager_config.reports_bucket_name
-  versioning = true
+  name_prefix = var.aws_auditmanager_config.reports_bucket_name
+  versioning  = true
 
   lifecycle_rule = [
     {
