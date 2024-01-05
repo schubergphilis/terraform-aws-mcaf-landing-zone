@@ -440,14 +440,15 @@ module "landing_zone" {
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_audit_manager_reports"></a> [audit\_manager\_reports](#module\_audit\_manager\_reports) | schubergphilis/mcaf-s3/aws | 0.12.1 |
 | <a name="module_aws_config_s3"></a> [aws\_config\_s3](#module\_aws\_config\_s3) | github.com/schubergphilis/terraform-aws-mcaf-s3 | v0.8.0 |
 | <a name="module_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#module\_aws\_sso\_permission\_sets) | ./modules/permission-set | n/a |
 | <a name="module_datadog_audit"></a> [datadog\_audit](#module\_datadog\_audit) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.12 |
 | <a name="module_datadog_logging"></a> [datadog\_logging](#module\_datadog\_logging) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.12 |
 | <a name="module_datadog_master"></a> [datadog\_master](#module\_datadog\_master) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.3.12 |
-| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.2.0 |
-| <a name="module_kms_key_audit"></a> [kms\_key\_audit](#module\_kms\_key\_audit) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.2.0 |
-| <a name="module_kms_key_logging"></a> [kms\_key\_logging](#module\_kms\_key\_logging) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.2.0 |
+| <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.3.0 |
+| <a name="module_kms_key_audit"></a> [kms\_key\_audit](#module\_kms\_key\_audit) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.3.0 |
+| <a name="module_kms_key_logging"></a> [kms\_key\_logging](#module\_kms\_key\_logging) | github.com/schubergphilis/terraform-aws-mcaf-kms | v0.3.0 |
 | <a name="module_ses-root-accounts-mail-alias"></a> [ses-root-accounts-mail-alias](#module\_ses-root-accounts-mail-alias) | github.com/schubergphilis/terraform-aws-mcaf-ses | v0.1.3 |
 | <a name="module_ses-root-accounts-mail-forward"></a> [ses-root-accounts-mail-forward](#module\_ses-root-accounts-mail-forward) | github.com/schubergphilis/terraform-aws-mcaf-ses-forwarder | v0.2.5 |
 | <a name="module_tag_policy_assignment"></a> [tag\_policy\_assignment](#module\_tag\_policy\_assignment) | ./modules/tag-policy-assignment | n/a |
@@ -456,6 +457,7 @@ module "landing_zone" {
 
 | Name | Type |
 |------|------|
+| [aws_auditmanager_account_registration.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/auditmanager_account_registration) | resource |
 | [aws_cloudtrail.additional_auditing_trail](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudtrail) | resource |
 | [aws_cloudwatch_event_rule.security_hub_findings](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_target.security_hub_findings](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
@@ -536,6 +538,7 @@ module "landing_zone" {
 | <a name="input_tags"></a> [tags](#input\_tags) | Map of tags | `map(string)` | n/a | yes |
 | <a name="input_additional_auditing_trail"></a> [additional\_auditing\_trail](#input\_additional\_auditing\_trail) | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name       = string<br>    bucket     = string<br>    kms_key_id = string<br><br>    event_selector = optional(object({<br>      data_resource = optional(object({<br>        type   = string<br>        values = list(string)<br>      }))<br>      exclude_management_event_sources = optional(set(string), null)<br>      include_management_events        = optional(bool, true)<br>      read_write_type                  = optional(string, "All")<br>    }))<br>  })</pre> | `null` | no |
 | <a name="input_aws_account_password_policy"></a> [aws\_account\_password\_policy](#input\_aws\_account\_password\_policy) | AWS account password policy parameters for the audit, logging and master account | <pre>object({<br>    allow_users_to_change        = bool<br>    max_age                      = number<br>    minimum_length               = number<br>    require_lowercase_characters = bool<br>    require_numbers              = bool<br>    require_symbols              = bool<br>    require_uppercase_characters = bool<br>    reuse_prevention_history     = number<br>  })</pre> | <pre>{<br>  "allow_users_to_change": true,<br>  "max_age": 90,<br>  "minimum_length": 14,<br>  "require_lowercase_characters": true,<br>  "require_numbers": true,<br>  "require_symbols": true,<br>  "require_uppercase_characters": true,<br>  "reuse_prevention_history": 24<br>}</pre> | no |
+| <a name="input_aws_auditmanager"></a> [aws\_auditmanager](#input\_aws\_auditmanager) | AWS Audit Manager config settings | <pre>object({<br>    enabled               = bool<br>    reports_bucket_prefix = string<br>  })</pre> | <pre>{<br>  "enabled": true,<br>  "reports_bucket_prefix": "audit-manager-reports"<br>}</pre> | no |
 | <a name="input_aws_config"></a> [aws\_config](#input\_aws\_config) | AWS Config settings | <pre>object({<br>    aggregator_account_ids          = optional(list(string), [])<br>    aggregator_regions              = optional(list(string), [])<br>    delivery_channel_s3_bucket_name = optional(string, null)<br>    delivery_channel_s3_key_prefix  = optional(string, null)<br>    delivery_frequency              = optional(string, "TwentyFour_Hours")<br>    rule_identifiers                = optional(list(string), [])<br>  })</pre> | <pre>{<br>  "aggregator_account_ids": [],<br>  "aggregator_regions": [],<br>  "delivery_channel_s3_bucket_name": null,<br>  "delivery_channel_s3_key_prefix": null,<br>  "delivery_frequency": "TwentyFour_Hours",<br>  "rule_identifiers": []<br>}</pre> | no |
 | <a name="input_aws_config_sns_subscription"></a> [aws\_config\_sns\_subscription](#input\_aws\_config\_sns\_subscription) | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | <a name="input_aws_ebs_encryption_by_default"></a> [aws\_ebs\_encryption\_by\_default](#input\_aws\_ebs\_encryption\_by\_default) | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
