@@ -120,6 +120,24 @@ variable "aws_guardduty" {
   description = "AWS GuardDuty settings"
 }
 
+variable "aws_inspector" {
+  type = object({
+    enabled                 = optional(bool, false)
+    auto_enable_ec2         = optional(bool, true)
+    auto_enable_ecr         = optional(bool, true)
+    auto_enable_lambda      = optional(bool, true)
+    auto_enable_lambda_code = optional(bool, true)
+  })
+  default = {
+    enabled                 = false
+    auto_enable_ec2         = true
+    auto_enable_ecr         = true
+    auto_enable_lambda      = true
+    auto_enable_lambda_code = true
+  }
+  description = "AWS Inspector settings"
+}
+
 variable "aws_required_tags" {
   type = map(list(object({
     name         = string
