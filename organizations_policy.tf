@@ -4,7 +4,7 @@ locals {
       enable = var.aws_service_control_policies.allowed_regions != null ? true : false
       policy = var.aws_service_control_policies.allowed_regions != null ? templatefile("${path.module}/files/organizations/allowed_regions.json.tpl", {
         allowed    = var.aws_service_control_policies.allowed_regions != null ? var.aws_service_control_policies.allowed_regions : []
-        exceptions = var.aws_service_control_policies.principal_exceptions != null ? var.aws_service_control_policies.principal_exceptions : []
+        exceptions = local.aws_service_control_policies_principal_exceptions
       }) : null
     }
     cloudtrail_log_stream = {
@@ -14,13 +14,13 @@ locals {
     deny_disabling_security_hub = {
       enable = var.aws_service_control_policies.aws_deny_disabling_security_hub
       policy = var.aws_service_control_policies.aws_deny_disabling_security_hub != false ? templatefile("${path.module}/files/organizations/deny_disabling_security_hub.json.tpl", {
-        exceptions = var.aws_service_control_policies.principal_exceptions != null ? var.aws_service_control_policies.principal_exceptions : []
+        exceptions = local.aws_service_control_policies_principal_exceptions
       }) : null
     }
     deny_leaving_org = {
       enable = var.aws_service_control_policies.aws_deny_leaving_org
       policy = var.aws_service_control_policies.aws_deny_leaving_org != false ? templatefile("${path.module}/files/organizations/deny_leaving_org.json.tpl", {
-        exceptions = var.aws_service_control_policies.principal_exceptions != null ? var.aws_service_control_policies.principal_exceptions : []
+        exceptions = local.aws_service_control_policies_principal_exceptions
       }) : null
     }
     // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ExamplePolicies_EC2.html#iam-example-instance-metadata-requireIMDSv2
