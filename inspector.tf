@@ -12,6 +12,7 @@ resource "aws_inspector2_delegated_admin_account" "default" {
 
 resource "aws_inspector2_member_association" "default" {
   for_each = toset(local.inspector_members)
+  provider = aws.audit
 
   account_id = each.value
 
