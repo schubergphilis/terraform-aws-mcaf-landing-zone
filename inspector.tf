@@ -1,5 +1,7 @@
 locals {
-  inspector_members = [for account in data.aws_organizations_organization.default.accounts : account.id if account.id != var.control_tower_account_ids.audit]
+  inspector_members = var.aws_inspector.enabled ? [
+    for account in data.aws_organizations_organization.default.accounts : account.id if account.id != var.control_tower_account_ids.audit
+  ] : []
 }
 
 resource "aws_inspector2_delegated_admin_account" "default" {
