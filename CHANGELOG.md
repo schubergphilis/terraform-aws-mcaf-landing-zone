@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v3.1.2 - 2024-02-21
+
+### What's Changed
+
+#### 🐛 Bug Fixes
+
+* fix: add default principal to region deny SCP (#199) @marwinbaumannsbp
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v3.1.1...v3.1.2
+
 ## v3.1.1 - 2024-01-17
 
 ### What's Changed
