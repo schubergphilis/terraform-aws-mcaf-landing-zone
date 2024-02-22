@@ -120,6 +120,24 @@ variable "aws_guardduty" {
   description = "AWS GuardDuty settings"
 }
 
+variable "aws_inspector" {
+  type = object({
+    enabled                 = optional(bool, false)
+    enable_scan_ec2         = optional(bool, true)
+    enable_scan_ecr         = optional(bool, true)
+    enable_scan_lambda      = optional(bool, true)
+    enable_scan_lambda_code = optional(bool, true)
+  })
+  default = {
+    enabled                 = false
+    enable_scan_ec2         = true
+    enable_scan_ecr         = true
+    enable_scan_lambda      = true
+    enable_scan_lambda_code = true
+  }
+  description = "AWS Inspector settings, at least one of the scan options must be enabled"
+}
+
 variable "aws_required_tags" {
   type = map(list(object({
     name         = string

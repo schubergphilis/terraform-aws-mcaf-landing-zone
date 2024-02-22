@@ -423,7 +423,7 @@ module "landing_zone" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.21.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.26.0 |
 | <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | > 3.0.0 |
 | <a name="requirement_mcaf"></a> [mcaf](#requirement\_mcaf) | >= 0.4.2 |
 
@@ -431,9 +431,9 @@ module "landing_zone" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.21.0 |
-| <a name="provider_aws.audit"></a> [aws.audit](#provider\_aws.audit) | >= 5.21.0 |
-| <a name="provider_aws.logging"></a> [aws.logging](#provider\_aws.logging) | >= 5.21.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.26.0 |
+| <a name="provider_aws.audit"></a> [aws.audit](#provider\_aws.audit) | >= 5.26.0 |
+| <a name="provider_aws.logging"></a> [aws.logging](#provider\_aws.logging) | >= 5.26.0 |
 | <a name="provider_mcaf"></a> [mcaf](#provider\_mcaf) | >= 0.4.2 |
 
 ## Modules
@@ -491,6 +491,11 @@ module "landing_zone" {
 | [aws_iam_role.sns_feedback](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.sns_feedback_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.config_recorder_config_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_inspector2_delegated_admin_account.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/inspector2_delegated_admin_account) | resource |
+| [aws_inspector2_enabler.audit_account](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/inspector2_enabler) | resource |
+| [aws_inspector2_enabler.member_accounts](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/inspector2_enabler) | resource |
+| [aws_inspector2_member_association.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/inspector2_member_association) | resource |
+| [aws_inspector2_organization_configuration.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/inspector2_organization_configuration) | resource |
 | [aws_organizations_policy.deny_root_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy) | resource |
 | [aws_organizations_policy.lz_root_policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy) | resource |
 | [aws_organizations_policy_attachment.deny_root_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy_attachment) | resource |
@@ -543,6 +548,7 @@ module "landing_zone" {
 | <a name="input_aws_config_sns_subscription"></a> [aws\_config\_sns\_subscription](#input\_aws\_config\_sns\_subscription) | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
 | <a name="input_aws_ebs_encryption_by_default"></a> [aws\_ebs\_encryption\_by\_default](#input\_aws\_ebs\_encryption\_by\_default) | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
 | <a name="input_aws_guardduty"></a> [aws\_guardduty](#input\_aws\_guardduty) | AWS GuardDuty settings | <pre>object({<br>    enabled                       = optional(bool, true)<br>    finding_publishing_frequency  = optional(string, "FIFTEEN_MINUTES")<br>    ebs_malware_protection_status = optional(bool, true)<br>    eks_addon_management_status   = optional(bool, true)<br>    eks_audit_logs_status         = optional(bool, true)<br>    eks_runtime_monitoring_status = optional(bool, true)<br>    lambda_network_logs_status    = optional(bool, true)<br>    rds_login_events_status       = optional(bool, true)<br>    s3_data_events_status         = optional(bool, true)<br>  })</pre> | <pre>{<br>  "ebs_malware_protection_status": true,<br>  "eks_addon_management_status": true,<br>  "eks_audit_logs_status": true,<br>  "eks_runtime_monitoring_status": true,<br>  "enabled": true,<br>  "finding_publishing_frequency": "FIFTEEN_MINUTES",<br>  "lambda_network_logs_status": true,<br>  "rds_login_events_status": true,<br>  "s3_data_events_status": true<br>}</pre> | no |
+| <a name="input_aws_inspector"></a> [aws\_inspector](#input\_aws\_inspector) | AWS Inspector settings, at least one of the scan options must be enabled | <pre>object({<br>    enabled                 = optional(bool, false)<br>    enable_scan_ec2         = optional(bool, true)<br>    enable_scan_ecr         = optional(bool, true)<br>    enable_scan_lambda      = optional(bool, true)<br>    enable_scan_lambda_code = optional(bool, true)<br>  })</pre> | <pre>{<br>  "enable_scan_ec2": true,<br>  "enable_scan_ecr": true,<br>  "enable_scan_lambda": true,<br>  "enable_scan_lambda_code": true,<br>  "enabled": false<br>}</pre> | no |
 | <a name="input_aws_required_tags"></a> [aws\_required\_tags](#input\_aws\_required\_tags) | AWS Required tags settings | <pre>map(list(object({<br>    name         = string<br>    values       = optional(list(string))<br>    enforced_for = optional(list(string))<br>  })))</pre> | `null` | no |
 | <a name="input_aws_security_hub"></a> [aws\_security\_hub](#input\_aws\_security\_hub) | AWS Security Hub settings | <pre>object({<br>    enabled                       = optional(bool, true)<br>    auto_enable_controls          = optional(bool, true)<br>    auto_enable_default_standards = optional(bool, false)<br>    control_finding_generator     = optional(string, "SECURITY_CONTROL")<br>    create_cis_metric_filters     = optional(bool, true)<br>    product_arns                  = optional(list(string), [])<br>    standards_arns                = optional(list(string), null)<br>  })</pre> | <pre>{<br>  "auto_enable_controls": true,<br>  "auto_enable_default_standards": false,<br>  "control_finding_generator": "SECURITY_CONTROL",<br>  "create_cis_metric_filters": true,<br>  "enabled": true,<br>  "product_arns": [],<br>  "standards_arns": null<br>}</pre> | no |
 | <a name="input_aws_security_hub_sns_subscription"></a> [aws\_security\_hub\_sns\_subscription](#input\_aws\_security\_hub\_sns\_subscription) | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
