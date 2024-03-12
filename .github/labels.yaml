@@ -1,25 +1,28 @@
 ---
 - name: breaking
-  color: 'b60205'
+  color: "b60205"
   description: This change is not backwards compatible
 - name: bug
-  color: 'd93f0b'
+  color: "d93f0b"
   description: Something isn't working
 - name: documentation
-  color: '0075ca'
+  color: "0075ca"
   description: Improvements or additions to documentation
 - name: enhancement
-  color: '0e8a16'
+  color: "0e8a16"
   description: New feature or request
 - name: feature
-  color: '0e8a16'
+  color: "0e8a16"
   description: New feature or request
 - name: fix
-  color: 'd93f0b'
+  color: "d93f0b"
   description: Something isn't working
+- name: misc
+  color: "#6B93D3"
+  description: Miscellaneous task not covered by something else
 - name: no-changelog
-  color: 'cccccc'
+  color: "cccccc"
   description: No entry should be added to the release notes and changelog
 - name: security
-  color: '5319e7'
+  color: "5319e7"
   description: Solving a security issue
