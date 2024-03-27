@@ -9,6 +9,7 @@ permissions:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  TF_IN_AUTOMATION: 1
 
 jobs:
   fmt-lint-validate:
@@ -29,25 +30,28 @@ jobs:
         id: fmt
         run: terraform fmt -check -recursive
 
-      - name: Terraform Init
-        id: init
+      - name: Terraform Lint
+        id: lint
         run: |
+          echo "Checking ."
+          tflint --format compact
+
           for d in examples/*/; do
-            terraform -chdir=$d init
+            echo "Checking ${d} ..."
+            tflint --chdir=$d --format compact
           done
 
       - name: Terraform Validate
         id: validate
+        if: ${{ !vars.SKIP_TERRAFORM_VALIDATE }}
         run: |
           for d in examples/*/; do
+            echo "Checking ${d} ..."
+            terraform -chdir=$d init
             terraform -chdir=$d validate -no-color
           done
         env:
           AWS_DEFAULT_REGION: eu-west-1
-
-      - name: Terraform Lint
-        id: lint
-        run: tflint --no-color --recursive --format compact
 
       - uses: actions/github-script@v6
         if: github.event_name == 'pull_request' || always()
