@@ -52,6 +52,7 @@
                 "kms:*",
                 "license-manager:ListReceivedLicenses",
                 "lightsail:Get*",
+                "logs:*",
                 "mobileanalytics:*",
                 "networkmanager:*",
                 "notifications-contacts:*",
