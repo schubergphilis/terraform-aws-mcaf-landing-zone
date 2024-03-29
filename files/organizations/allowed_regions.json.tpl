@@ -28,6 +28,7 @@
                 "cloudwatch:Describe*",
                 "cloudwatch:Get*",
                 "cloudwatch:List*",
+                "logs*",
                 "compute-optimizer:*",
                 "config:*",
                 "consoleapp:*",
