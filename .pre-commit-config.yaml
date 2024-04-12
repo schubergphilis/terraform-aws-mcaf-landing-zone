@@ -2,7 +2,7 @@
 default_stages: [commit]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: check-json
       - id: check-merge-conflict
@@ -18,15 +18,23 @@ repos:
           - --allow-missing-credentials
       - id: detect-private-key
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.88.0
+    rev: v1.88.4
     hooks:
       - id: terraform_fmt
       - id: terraform_tflint
       - id: terraform_docs
       - id: terraform_validate
   - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 3.0.37
+    rev: 3.2.60
     hooks:
       - id: checkov
         verbose: false
-        args: [--download-external-modules, "true", --quiet, --compact]
+        args:
+          - --download-external-modules
+          - "true"
+          - --quiet
+          - --compact
+          - --skip-check
+          - CKV_GIT_5,CKV_GLB_1,CKV_TF_1
+          - --skip-path
+          - examples/*

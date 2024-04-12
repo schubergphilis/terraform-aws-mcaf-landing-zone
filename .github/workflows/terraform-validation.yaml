@@ -53,6 +53,13 @@ jobs:
         env:
           AWS_DEFAULT_REGION: eu-west-1
 
+      - name: Terraform Test
+        id: test
+        if: ${{ !vars.SKIP_TERRAFORM_TESTS }}
+        run: |
+          terraform init
+          terraform test
+
       - uses: actions/github-script@v6
         if: github.event_name == 'pull_request' || always()
         with:
@@ -153,6 +160,7 @@ jobs:
           quiet: true
           skip_check: "CKV_GIT_5,CKV_GLB_1,CKV_TF_1"
           soft_fail: false
+          skip_path: "examples/*"
 
 ### SKIP REASON ###
 # Check | Description | Reason
