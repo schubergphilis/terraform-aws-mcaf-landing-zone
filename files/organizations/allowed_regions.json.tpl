@@ -61,6 +61,7 @@
                 "payments:*",
                 "pricing:*",
                 "quicksight:DescribeAccountSubscription",
+                "quicksight:DescribeTemplate",
                 "resource-explorer-2:*",
                 "route53-recovery-cluster:*",
                 "route53-recovery-control-config:*",
