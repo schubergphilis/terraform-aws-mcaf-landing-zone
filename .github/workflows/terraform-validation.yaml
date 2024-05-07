@@ -150,7 +150,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Checkov
-        uses: bridgecrewio/checkov-action@v12.2577.0
+        uses: bridgecrewio/checkov-action@v12
         with:
           container_user: 1000
           directory: "/"
@@ -160,7 +160,7 @@ jobs:
           quiet: true
           skip_check: "CKV_GIT_5,CKV_GLB_1,CKV_TF_1"
           soft_fail: false
-          skip_path: "examples/*"
+          skip_path: "examples/"
 
 ### SKIP REASON ###
 # Check | Description | Reason
