@@ -162,6 +162,10 @@ variable "aws_security_hub" {
     create_cis_metric_filters     = optional(bool, true)
     product_arns                  = optional(list(string), [])
     standards_arns                = optional(list(string), null)
+    disabled_standards_arns = optional(list(object({
+      standards_control_arn = string
+      disabled_reason       = string
+    })), null)
   })
   default = {
     enabled                       = true
@@ -171,6 +175,7 @@ variable "aws_security_hub" {
     create_cis_metric_filters     = true
     product_arns                  = []
     standards_arns                = null
+    disabled_standards_arns       = null
   }
   description = "AWS Security Hub settings"
 
