@@ -32,14 +32,24 @@ provider "datadog" {
 }
 
 provider "mcaf" {
-  aws {}
+  aws {
+    region = "eu-west-1"
+  }
 }
 
 module "landing_zone" {
   providers = { aws = aws, aws.audit = aws.audit, aws.logging = aws.logging }
 
   source = "../../"
-
+  aws_security_hub = {
+    disabled_standards_arns = [{
+      standards_control_arn = "bla"
+      disabled_reason       = "Daarom"
+      }, {
+      standards_control_arn = "bla"
+      disabled_reason       = "Daarom"
+    }]
+  }
   control_tower_account_ids = local.control_tower_account_ids
   tags                      = { Terraform = true }
 }
