@@ -88,6 +88,7 @@
                 "s3:PutBucketPolicy",
                 "s3:PutMultiRegionAccessPointPolicy",
                 "savingsplans:*",
+                "servicequotas:*",
                 "shield:*",
                 "sso:*",
                 "sts:*",
