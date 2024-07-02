@@ -39,24 +39,13 @@ resource "aws_config_aggregate_authorization" "master_to_audit" {
   tags       = var.tags
 }
 
-resource "aws_iam_role" "config_recorder" {
-  name = "LandingZone-ConfigRecorderRole"
-  path = var.path
-  tags = var.tags
-
-  assume_role_policy = templatefile("${path.module}/files/iam/service_assume_role.json.tpl", {
-    service = "config.amazonaws.com"
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "config_recorder_config_role" {
-  role       = aws_iam_role.config_recorder.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWS_ConfigRole"
+resource "aws_iam_service_linked_role" "config" {
+  aws_service_name = "config.amazonaws.com"
 }
 
 resource "aws_config_configuration_recorder" "default" {
   name     = "default"
-  role_arn = aws_iam_role.config_recorder.arn
+  role_arn = aws_iam_service_linked_role.config.arn
 
   recording_group {
     all_supported                 = true
