@@ -127,6 +127,7 @@ variable "aws_inspector" {
     enable_scan_ecr         = optional(bool, true)
     enable_scan_lambda      = optional(bool, true)
     enable_scan_lambda_code = optional(bool, true)
+    resource_create_timeout = optional(string, "15m")
   })
   default = {
     enabled                 = false
@@ -134,6 +135,7 @@ variable "aws_inspector" {
     enable_scan_ecr         = true
     enable_scan_lambda      = true
     enable_scan_lambda_code = true
+    resource_create_timeout = "15m"
   }
   description = "AWS Inspector settings, at least one of the scan options must be enabled"
 }
