@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v3.2.5 - 2024-08-01
+
+### What's Changed
+
+#### 🐛 Bug Fixes
+
+* fix: add create timeout config for aws_inspector2_enabler resource (#206) @skesarkar-schubergphilis
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v3.2.4...v3.2.5
+
 ## v3.2.4 - 2024-07-02
 
 ### What's Changed
