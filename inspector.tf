@@ -47,6 +47,10 @@ resource "aws_inspector2_enabler" "member_accounts" {
   account_ids    = toset(local.inspector_members_account_ids)
   resource_types = local.inspector_enabled_resource_types
 
+  timeouts {
+    create = var.aws_inspector.resource_create_timeout
+  }
+
   depends_on = [aws_inspector2_member_association.default]
 }
 
