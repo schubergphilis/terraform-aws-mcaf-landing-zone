@@ -225,11 +225,16 @@ variable "control_tower_account_ids" {
 
 variable "datadog" {
   type = object({
-    api_key                 = string
-    enable_integration      = bool
-    install_log_forwarder   = optional(bool, false)
-    log_collection_services = optional(list(string), [])
-    site_url                = string
+    api_key                              = string
+    cspm_resource_collection_enabled     = optional(bool, false)
+    enable_integration                   = bool
+    extended_resource_collection_enabled = optional(bool, false)
+    install_log_forwarder                = optional(bool, false)
+    log_collection_services              = optional(list(string), [])
+    log_forwarder_version                = optional(string)
+    metric_tag_filters                   = optional(map(string), {})
+    namespace_rules                      = optional(list(string), [])
+    site_url                             = string
   })
   default     = null
   description = "Datadog integration options for the core accounts"
