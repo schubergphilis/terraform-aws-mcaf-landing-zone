@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v3.4.0 - 2024-08-12
+
+### What's Changed
+
+#### 🐛 Bug Fixes
+
+* bug: encrypt the audit manager reports bucket using KMS (#208) @marwinbaumannsbp
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v3.3.0...v3.4.0
+
 ## v3.3.0 - 2024-08-08
 
 ### What's Changed
