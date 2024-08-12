@@ -1,6 +1,8 @@
 # Management Account
 module "kms_key" {
-  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.3.0"
+  source  = "schubergphilis/mcaf-kms/aws"
+  version = "~> 0.3.0"
+
   name                = "inception"
   description         = "KMS key used in the master account"
   enable_key_rotation = true
@@ -84,7 +86,9 @@ data "aws_iam_policy_document" "kms_key" {
 module "kms_key_audit" {
   providers = { aws = aws.audit }
 
-  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.3.0"
+  source  = "schubergphilis/mcaf-kms/aws"
+  version = "~> 0.3.0"
+
   name                = "audit"
   description         = "KMS key used for encrypting audit-related data"
   enable_key_rotation = true
@@ -228,13 +232,46 @@ data "aws_iam_policy_document" "kms_key_audit" {
       }
     }
   }
+
+  dynamic "statement" {
+    for_each = var.aws_auditmanager.enabled ? ["allow_audit_manager"] : []
+    content {
+      sid       = "Encrypt and Decrypt permissions for S3"
+      effect    = "Allow"
+      resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.management.account_id}:key/*"]
+
+      actions = [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*"
+      ]
+
+      principals {
+        type = "AWS"
+        identifiers = [
+          "arn:aws:iam::${data.aws_caller_identity.management.account_id}:root"
+        ]
+      }
+
+      condition {
+        test     = "StringLike"
+        variable = "kms:ViaService"
+        values = [
+          "s3.${data.aws_region.current.name}.amazonaws.com",
+        ]
+      }
+    }
+  }
 }
 
 # Logging Account
 module "kms_key_logging" {
   providers = { aws = aws.logging }
 
-  source              = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.3.0"
+  source  = "schubergphilis/mcaf-kms/aws"
+  version = "~> 0.3.0"
+
   name                = "logging"
   description         = "KMS key to use with logging account"
   enable_key_rotation = true

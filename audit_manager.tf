@@ -10,8 +10,10 @@ module "audit_manager_reports" {
   count     = var.aws_auditmanager.enabled == true ? 1 : 0
   providers = { aws = aws.audit }
 
-  source      = "schubergphilis/mcaf-s3/aws"
-  version     = "0.12.1"
+  source  = "schubergphilis/mcaf-s3/aws"
+  version = "~> 0.14.1"
+
+  kms_key_arn = module.kms_key_audit.arn
   name_prefix = var.aws_auditmanager.reports_bucket_prefix
   versioning  = true
 
