@@ -441,16 +441,16 @@ module "landing_zone" {
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_audit_manager_reports"></a> [audit\_manager\_reports](#module\_audit\_manager\_reports) | schubergphilis/mcaf-s3/aws | ~> 0.14.1 |
-| <a name="module_aws_config_s3"></a> [aws\_config\_s3](#module\_aws\_config\_s3) | github.com/schubergphilis/terraform-aws-mcaf-s3 | v0.8.0 |
+| <a name="module_aws_config_s3"></a> [aws\_config\_s3](#module\_aws\_config\_s3) | schubergphilis/mcaf-s3/aws | ~> 0.14.1 |
 | <a name="module_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#module\_aws\_sso\_permission\_sets) | ./modules/permission-set | n/a |
-| <a name="module_datadog_audit"></a> [datadog\_audit](#module\_datadog\_audit) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.7.0 |
-| <a name="module_datadog_logging"></a> [datadog\_logging](#module\_datadog\_logging) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.7.0 |
-| <a name="module_datadog_master"></a> [datadog\_master](#module\_datadog\_master) | github.com/schubergphilis/terraform-aws-mcaf-datadog | v0.7.0 |
+| <a name="module_datadog_audit"></a> [datadog\_audit](#module\_datadog\_audit) | schubergphilis/mcaf-datadog/aws | ~> 0.8.2 |
+| <a name="module_datadog_logging"></a> [datadog\_logging](#module\_datadog\_logging) | schubergphilis/mcaf-datadog/aws | ~> 0.8.2 |
+| <a name="module_datadog_master"></a> [datadog\_master](#module\_datadog\_master) | schubergphilis/mcaf-datadog/aws | ~> 0.8.2 |
 | <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | schubergphilis/mcaf-kms/aws | ~> 0.3.0 |
 | <a name="module_kms_key_audit"></a> [kms\_key\_audit](#module\_kms\_key\_audit) | schubergphilis/mcaf-kms/aws | ~> 0.3.0 |
 | <a name="module_kms_key_logging"></a> [kms\_key\_logging](#module\_kms\_key\_logging) | schubergphilis/mcaf-kms/aws | ~> 0.3.0 |
-| <a name="module_ses-root-accounts-mail-alias"></a> [ses-root-accounts-mail-alias](#module\_ses-root-accounts-mail-alias) | github.com/schubergphilis/terraform-aws-mcaf-ses | v0.1.3 |
-| <a name="module_ses-root-accounts-mail-forward"></a> [ses-root-accounts-mail-forward](#module\_ses-root-accounts-mail-forward) | github.com/schubergphilis/terraform-aws-mcaf-ses-forwarder | v0.2.5 |
+| <a name="module_ses-root-accounts-mail-alias"></a> [ses-root-accounts-mail-alias](#module\_ses-root-accounts-mail-alias) | schubergphilis/mcaf-ses/aws | ~> 0.1.4 |
+| <a name="module_ses-root-accounts-mail-forward"></a> [ses-root-accounts-mail-forward](#module\_ses-root-accounts-mail-forward) | schubergphilis/mcaf-ses-forwarder/aws | ~> 0.3.0 |
 | <a name="module_tag_policy_assignment"></a> [tag\_policy\_assignment](#module\_tag\_policy\_assignment) | ./modules/tag-policy-assignment | n/a |
 
 ## Resources
