@@ -3,7 +3,9 @@ module "datadog_audit" {
   count     = try(var.datadog.enable_integration, false) == true ? 1 : 0
   providers = { aws = aws.audit }
 
-  source                               = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.7.0"
+  source  = "schubergphilis/mcaf-datadog/aws"
+  version = "~> 0.8.2"
+
   api_key                              = try(var.datadog.api_key, null)
   cspm_resource_collection_enabled     = var.datadog.cspm_resource_collection_enabled
   excluded_regions                     = var.datadog_excluded_regions
@@ -21,7 +23,9 @@ module "datadog_master" {
   #checkov:skip=CKV_AWS_124: since this is managed by terraform, we reason that this already provides feedback and a seperate SNS topic is therefore not required
   count = try(var.datadog.enable_integration, false) == true ? 1 : 0
 
-  source                               = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.7.0"
+  source  = "schubergphilis/mcaf-datadog/aws"
+  version = "~> 0.8.2"
+
   api_key                              = try(var.datadog.api_key, null)
   cspm_resource_collection_enabled     = var.datadog.cspm_resource_collection_enabled
   excluded_regions                     = var.datadog_excluded_regions
@@ -40,7 +44,9 @@ module "datadog_logging" {
   count     = try(var.datadog.enable_integration, false) == true ? 1 : 0
   providers = { aws = aws.logging }
 
-  source                               = "github.com/schubergphilis/terraform-aws-mcaf-datadog?ref=v0.7.0"
+  source  = "schubergphilis/mcaf-datadog/aws"
+  version = "~> 0.8.2"
+
   api_key                              = try(var.datadog.api_key, null)
   cspm_resource_collection_enabled     = var.datadog.cspm_resource_collection_enabled
   excluded_regions                     = var.datadog_excluded_regions
