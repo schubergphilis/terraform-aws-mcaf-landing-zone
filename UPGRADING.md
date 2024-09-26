@@ -2,6 +2,51 @@
 
 This document captures required refactoring on your part when upgrading to a module version that contains breaking changes.
 
+## Upgrading to v4.0.0
+
+### Behaviour
+
+Using the default `aws_guardduty` values:
+* `EKS_RUNTIME_MONITORING` gets removed from the state (but not disabled)
+* `RUNTIME_MONITORING` is enabled including `ECS_FARGATE_AGENT_MANAGEMENT`, `EC2_AGENT_MANAGEMENT`, and `EKS_ADDON_MANAGEMENT`.
+
+* You need to disable `EKS_RUNTIME_MONITORING` yourself after upgrading. The commands to do so are described [in the PR](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/210).
+
+### Variables
+
+The following variables have been replaced:
+* `aws_guardduty.eks_runtime_monitoring_status` -> `aws_guardduty.runtime_monitoring_status.enabled`
+* `aws_guardduty.eks_addon_management_status` -> `aws_guardduty.runtime_monitoring_status.eks_addon_management_status`
+
+The following variables have been introduced:
+* `aws_guardduty.runtime_monitoring_status.ecs_fargate_agent_management_status`
+* `aws_guardduty.runtime_monitoring_status.ec2_agent_management_status`
+
+## Upgrading to v3.0.0
+
+### Behaviour
+
+This version add Control Tower 3.x support. Upgrade to Control Tower 3.x before upgrading to this version.
+
+## Upgrading to v2.0.0
+
+### Behaviour
+
+This version sets the minimum required aws provider version from v4 to v5.
+
+### Variables
+
+The following variables have been replaced:
+* `aws_guardduty.datasources.malware_protection` -> `aws_guardduty.ebs_malware_protection_status`
+* `aws_guardduty.datasources.kubernetes` -> `aws_guardduty.eks_audit_logs_status`
+* `aws_guardduty.datasources.s3_logs` -> `aws_guardduty.s3_data_events_status`
+
+The following variables have been introduced:
+* `aws_guardduty.eks_addon_management_status`
+* `aws_guardduty.eks_runtime_monitoring_status`
+* `aws_guardduty.lambda_network_logs_status`
+* `aws_guardduty.rds_login_events_status`
+
 ## Upgrading to v1.0.0
 
 ### Behaviour
