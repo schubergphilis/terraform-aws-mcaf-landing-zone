@@ -7,6 +7,8 @@ resource "aws_guardduty_organization_admin_account" "audit" {
 
 // AWS GuardDuty - Audit account configuration
 resource "aws_guardduty_detector" "audit" {
+  #checkov:skip=CKV_AWS_238: "Ensure that GuardDuty detector is enabled" - False positive, GuardDuty is enabled by default.
+  #checkov:skip=CKV2_AWS_3: "Ensure GuardDuty is enabled to specific org/region" - False positive, GuardDuty is enabled by default.
   provider = aws.audit
 
   enable                       = var.aws_guardduty.enabled
