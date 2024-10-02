@@ -4,7 +4,7 @@ module "datadog_audit" {
   providers = { aws = aws.audit }
 
   source  = "schubergphilis/mcaf-datadog/aws"
-  version = "~> 0.8.2"
+  version = "~> 0.8.5"
 
   api_key                              = try(var.datadog.api_key, null)
   cspm_resource_collection_enabled     = var.datadog.cspm_resource_collection_enabled
@@ -24,7 +24,7 @@ module "datadog_master" {
   count = try(var.datadog.enable_integration, false) == true ? 1 : 0
 
   source  = "schubergphilis/mcaf-datadog/aws"
-  version = "~> 0.8.2"
+  version = "~> 0.8.5"
 
   api_key                              = try(var.datadog.api_key, null)
   cspm_resource_collection_enabled     = var.datadog.cspm_resource_collection_enabled
@@ -45,7 +45,7 @@ module "datadog_logging" {
   providers = { aws = aws.logging }
 
   source  = "schubergphilis/mcaf-datadog/aws"
-  version = "~> 0.8.2"
+  version = "~> 0.8.5"
 
   api_key                              = try(var.datadog.api_key, null)
   cspm_resource_collection_enabled     = var.datadog.cspm_resource_collection_enabled
