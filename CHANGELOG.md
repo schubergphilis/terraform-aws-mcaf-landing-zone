@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v3.5.1 - 2024-10-02
+
+### What's Changed
+
+#### 🐛 Bug Fixes
+
+* fix: bump Datadog module to one with fixed dependencies (#211) @stefanwb
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v3.5.0...v3.5.1
+
 ## v3.5.0 - 2024-09-10
 
 ### What's Changed
