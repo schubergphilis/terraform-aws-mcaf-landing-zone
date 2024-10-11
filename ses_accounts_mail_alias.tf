@@ -1,5 +1,6 @@
 module "ses-root-accounts-mail-alias" {
-  #checkov:skip=CKV_AWS_273: IAM user is the only option for SMTP auth
+  # checkov:skip=CKV_AWS_273: IAM user is the only option for SMTP auth
+
   count     = var.ses_root_accounts_mail_forward != null ? 1 : 0
   providers = { aws = aws, aws.route53 = aws }
 
@@ -13,11 +14,11 @@ module "ses-root-accounts-mail-alias" {
 }
 
 module "ses-root-accounts-mail-forward" {
-  #checkov:skip=CKV_AWS_19: False positive: https://github.com/bridgecrewio/checkov/issues/3847. The S3 bucket created by this module is encrypted with KMS.
-  #checkov:skip=CKV_AWS_145: False positive: https://github.com/bridgecrewio/checkov/issues/3847. The S3 bucket created by this module is encrypted with KMS.
-  #checkov:skip=CKV_AWS_272: This module does not support lambda code signing at the moment
-  count     = var.ses_root_accounts_mail_forward != null ? 1 : 0
-  providers = { aws = aws, aws.lambda = aws }
+  # checkov:skip=CKV_AWS_19: False positive: https://github.com/bridgecrewio/checkov/issues/3847. The S3 bucket created by this module is encrypted with KMS.
+  # checkov:skip=CKV_AWS_145: False positive: https://github.com/bridgecrewio/checkov/issues/3847. The S3 bucket created by this module is encrypted with KMS.
+  # checkov:skip=CKV_AWS_272: This module does not support lambda code signing at the moment
+
+  count = var.ses_root_accounts_mail_forward != null ? 1 : 0
 
   source  = "schubergphilis/mcaf-ses-forwarder/aws"
   version = "~> 0.3.0"
