@@ -4,13 +4,14 @@ This document captures required refactoring on your part when upgrading to a mod
 
 ## Upgrading to v4.0.0
 
+> [!WARNING]
+> **Read the diagram in [PR 210](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/210) and the guide below! If you currently have EKS Runtime Monitoring enabled, you need to perform MANUAL steps after you have migrated to this version.** 
+
 ### Behaviour
 
 Using the default `aws_guardduty` values:
 * `EKS_RUNTIME_MONITORING` gets removed from the state (but not disabled)
 * `RUNTIME_MONITORING` is enabled including `ECS_FARGATE_AGENT_MANAGEMENT`, `EC2_AGENT_MANAGEMENT`, and `EKS_ADDON_MANAGEMENT`.
-
-* You need to disable `EKS_RUNTIME_MONITORING` yourself after upgrading. The commands to do so are described [in the PR](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/210).
 
 ### Variables
 
@@ -21,6 +22,115 @@ The following variables have been replaced:
 The following variables have been introduced:
 * `aws_guardduty.runtime_monitoring_status.ecs_fargate_agent_management_status`
 * `aws_guardduty.runtime_monitoring_status.ec2_agent_management_status`
+
+### EKS Runtime Monitoring to Runtime Monitoring migration
+
+#### The issue
+After you upgraded to this version. **RUNTIME_MONITORING is enabled. But  EKS_RUNTIME_MONITORING is not disabled** as is written in the [guardduty_detector_feature documentation](https://registry.terraform.io/providers/hashicorp/aws/5.68.0/docs/resources/guardduty_detector_feature): _Deleting this resource does not disable the detector feature, the resource in simply removed from state instead._
+
+To prevent duplicated costs please **disable** EKS_RUNTIME_MONITORING manually after upgrading.
+
+> [!IMPORTANT]
+> Run all the commands with valid credentials in the AWS account where guardduty is delegated administrator. By default this is the **control tower audit** account. 
+> It's not possible to execute these steps from the AWS Console as the EKS Runtime Monitoring protection plan has already been removed from the GUI. The only way to control this feature is via the CLI.
+
+#### Step 1: update the GuardDuty detector 
+
+_Replace 12abc34d567e8fa901bc2d34e56789f0 with your own regional detector-id. Execute these commands in the audit account:_
+
+```
+aws guardduty update-detector --detector-id 12abc34d567e8fa901bc2d34e56789f0 --features '[{"Name" : "EKS_RUNTIME_MONITORING", "Status" : "DISABLED"}]'
+```
+
+#### Step 2: update the GuardDuty organization settings
+
+Replace the `<<EXISTING_VALUE>>` with your current configuration for auto-enabling GuardDuty. By default this should be set to `ALL`.
+
+```
+aws guardduty update-organization-configuration --detector-id 12abc34d567e8fa901bc2d34e56789f0 --auto-enable-organization-members <<EXISTING_VALUE>>  --features '[{"Name" : "EKS_RUNTIME_MONITORING", "AutoEnable": "NONE"}]'
+```
+
+
+#### Step 3: update the GuardDuty member accounts
+
+Disable EKS Runtime Monitoring for **all** member accounts in your organization, for example:
+
+```
+aws guardduty update-member-detectors --detector-id 12abc34d567e8fa901bc2d34e56789f0 --account-ids 111122223333 --features '[{"Name" : "EKS_RUNTIME_MONITORING", "Status" : "DISABLED"}]'
+```
+
+#### Troubleshooting
+
+> An error occurred (BadRequestException) when calling the UpdateMemberDetectors operation: The request is rejected because a feature cannot be turned off for a member while organization has the feature flag set to 'All Accounts'.
+
+Change these options on the AWS console by following the steps below: 
+
+1. Go to the GuardDuty Console.
+2. On left navigation bar, under protection plans, select `Runtime Monitoring`.
+3. Under the `Configuration` tab, in `Runtime Monitoring configuration` click `Edit` and here you need to select the option `Configure accounts manually` for `Automated agent configuration - Amazon EKS`.
+
+Once complete, please allow a minute for the changes to update, you should now be able to execute the command from step 3. When you have executed this command for all AWS accounts, set this option back to `Enable for all accounts`.
+
+> Even after following all steps I still see the message `Your organization has auto-enable preferences set for EKS Runtime Monitoring. This feature has been removed from console experience and can now be managed as part of the Runtime Monitoring feature. Learn more`.
+
+We have checked in with AWS and this behaviour is expected, this is a static message that is displayed currently on the AWS Management Console. AWS could not confirm how to hide this message or how long it will be visible.
+
+#### Verification
+
+Review the GuardDuty organization settings:
+
+```
+aws guardduty describe-organization-configuration --detector-id 12abc34d567e8fa901bc2d34e56789f0
+```
+
+Should display:
+
+```
+...
+    "Features": [
+...
+        {
+            "Name": "EKS_RUNTIME_MONITORING",
+            "AutoEnable": "NONE",
+            "AdditionalConfiguration": [
+                {
+                    "Name": "EKS_ADDON_MANAGEMENT",
+                    "AutoEnable": "ALL"
+                }
+            ]
+        },
+...
+```
+
+Review the GuardDuty detector settings:
+
+```
+aws guardduty get-detector --detector-id 12abc34d567e8fa901bc2d34e56789f0
+```
+
+Should display:
+
+```
+...
+ "Features": [
+...
+        {
+            "Name": "EKS_RUNTIME_MONITORING",
+            "Status": "DISABLED",
+            "UpdatedAt": "2024-10-16T14:12:31+02:00",
+            "AdditionalConfiguration": [
+                {
+                    "Name": "EKS_ADDON_MANAGEMENT",
+                    "Status": "ENABLED",
+                    "UpdatedAt": "2024-10-16T14:24:43+02:00"
+                }
+            ]
+        },
+...
+```
+
+> [!NOTE]
+> If you want to be really sure all member accounts have the right settings you can run the `aws guardduty get-detector` for member accounts as well. Ensure you have valid credentials for the member account and replace the `detector-id` with the GuardDuty `detector-id` of the member account.
 
 ## Upgrading to v3.0.0
 
