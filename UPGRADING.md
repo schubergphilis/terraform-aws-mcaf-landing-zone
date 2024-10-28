@@ -12,6 +12,7 @@ This document captures required refactoring on your part when upgrading to a mod
 Using the default `aws_guardduty` values:
 * `EKS_RUNTIME_MONITORING` gets removed from the state (but not disabled)
 * `RUNTIME_MONITORING` is enabled including `ECS_FARGATE_AGENT_MANAGEMENT`, `EC2_AGENT_MANAGEMENT`, and `EKS_ADDON_MANAGEMENT`.
+* Minimum required AWS provider has been set to `v5.54.0`, and minimum required Terraform version has been set to `v1.6`.
 
 ### Variables
 
@@ -34,7 +35,26 @@ To prevent duplicated costs please **disable** EKS_RUNTIME_MONITORING manually a
 > Run all the commands with valid credentials in the AWS account where guardduty is delegated administrator. By default this is the **control tower audit** account. 
 > It's not possible to execute these steps from the AWS Console as the EKS Runtime Monitoring protection plan has already been removed from the GUI. The only way to control this feature is via the CLI.
 
-#### Step 1: update the GuardDuty detector 
+#### Step 1: get the GuardDuty detector id
+
+```
+aws guardduty list-detectors
+```
+
+Should display:
+
+```
+{
+    "DetectorIds": [
+        "12abc34d567e8fa901bc2d34e56789f0"
+    ]
+}
+```
+
+> [!IMPORTANT]
+> Ensure you run this command in the right region! If GuardDuty is enabled in multiple regions then execute all steps for all enabled regions. 
+
+#### Step 2: update the GuardDuty detector 
 
 _Replace 12abc34d567e8fa901bc2d34e56789f0 with your own regional detector-id. Execute these commands in the audit account:_
 
@@ -42,7 +62,7 @@ _Replace 12abc34d567e8fa901bc2d34e56789f0 with your own regional detector-id. Ex
 aws guardduty update-detector --detector-id 12abc34d567e8fa901bc2d34e56789f0 --features '[{"Name" : "EKS_RUNTIME_MONITORING", "Status" : "DISABLED"}]'
 ```
 
-#### Step 2: update the GuardDuty organization settings
+#### Step 3: update the GuardDuty organization settings
 
 Replace the `<<EXISTING_VALUE>>` with your current configuration for auto-enabling GuardDuty. By default this should be set to `ALL`.
 
@@ -51,7 +71,7 @@ aws guardduty update-organization-configuration --detector-id 12abc34d567e8fa901
 ```
 
 
-#### Step 3: update the GuardDuty member accounts
+#### Step 4: update the GuardDuty member accounts
 
 Disable EKS Runtime Monitoring for **all** member accounts in your organization, for example:
 
