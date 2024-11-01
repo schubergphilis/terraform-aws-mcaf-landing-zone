@@ -151,20 +151,18 @@ variable "aws_required_tags" {
 
 variable "aws_security_hub" {
   type = object({
-    enabled                       = optional(bool, true)
-    auto_enable                   = optional(bool, true)
     auto_enable_controls          = optional(bool, true)
     auto_enable_default_standards = optional(bool, false)
+    auto_enable_new_accounts      = optional(bool, true)
     control_finding_generator     = optional(string, "SECURITY_CONTROL")
     create_cis_metric_filters     = optional(bool, true)
     product_arns                  = optional(list(string), [])
     standards_arns                = optional(list(string), null)
   })
   default = {
-    enabled                       = true
-    auto_enable                   = true
     auto_enable_controls          = true
     auto_enable_default_standards = false
+    auto_enable_new_accounts      = true
     control_finding_generator     = "SECURITY_CONTROL"
     create_cis_metric_filters     = true
     product_arns                  = []
