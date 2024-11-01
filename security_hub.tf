@@ -41,7 +41,7 @@ resource "aws_securityhub_account" "default" {
 resource "aws_securityhub_organization_configuration" "default" {
   provider = aws.audit
 
-  auto_enable           = true
+  auto_enable           = var.aws_security_hub.auto_enable
   auto_enable_standards = var.aws_security_hub.auto_enable_default_standards ? "DEFAULT" : "NONE"
 
   depends_on = [aws_securityhub_organization_admin_account.default]

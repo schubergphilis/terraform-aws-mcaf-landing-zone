@@ -152,6 +152,7 @@ variable "aws_required_tags" {
 variable "aws_security_hub" {
   type = object({
     enabled                       = optional(bool, true)
+    auto_enable                   = optional(bool, true)
     auto_enable_controls          = optional(bool, true)
     auto_enable_default_standards = optional(bool, false)
     control_finding_generator     = optional(string, "SECURITY_CONTROL")
@@ -161,6 +162,7 @@ variable "aws_security_hub" {
   })
   default = {
     enabled                       = true
+    auto_enable                   = true
     auto_enable_controls          = true
     auto_enable_default_standards = false
     control_finding_generator     = "SECURITY_CONTROL"
