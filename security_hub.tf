@@ -65,6 +65,17 @@ resource "aws_securityhub_standards_subscription" "default" {
   depends_on = [aws_securityhub_account.default]
 }
 
+resource "aws_securityhub_standards_control" "default" {
+  for_each = { for standard in var.aws_security_hub.disabled_standards_arns : standard.standards_control_arn => standard }
+  provider = aws.audit
+
+  standards_control_arn = each.key
+  control_status        = "DISABLED"
+  disabled_reason       = each.value
+
+  depends_on = [aws_securityhub_account.default, aws_securityhub_standards_subscription.default]
+}
+
 resource "aws_cloudwatch_event_rule" "security_hub_findings" {
   provider = aws.audit
 
