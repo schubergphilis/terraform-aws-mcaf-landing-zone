@@ -18,7 +18,7 @@
   color: "d93f0b"
   description: Something isn't working
 - name: misc
-  color: "#6B93D3"
+  color: "6b93d3"
   description: Miscellaneous task not covered by something else
 - name: no-changelog
   color: "cccccc"
