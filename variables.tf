@@ -162,7 +162,6 @@ variable "aws_security_hub" {
     product_arns                    = optional(list(string), [])
     standards_arns                  = optional(list(string), null)
   })
-  default     = {}
   description = "AWS Security Hub settings"
 
   validation {
