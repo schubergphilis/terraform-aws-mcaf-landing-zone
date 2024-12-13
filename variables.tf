@@ -151,22 +151,28 @@ variable "aws_required_tags" {
 
 variable "aws_security_hub" {
   type = object({
-    auto_enable_controls          = optional(bool, true)
-    auto_enable_default_standards = optional(bool, false)
-    auto_enable_new_accounts      = optional(bool, true)
-    control_finding_generator     = optional(string, "SECURITY_CONTROL")
-    create_cis_metric_filters     = optional(bool, true)
-    product_arns                  = optional(list(string), [])
-    standards_arns                = optional(list(string), null)
+    aggregator_linking_mode         = optional(string, "ALL_REGIONS")
+    aggregator_specified_regions    = optional(list(string), [])
+    auto_enable_controls            = optional(bool, true)
+    auto_enable_default_standards   = optional(bool, false)
+    auto_enable_new_accounts        = optional(bool, true)
+    control_finding_generator       = optional(string, "SECURITY_CONTROL")
+    create_cis_metric_filters       = optional(bool, true)
+    organization_configuration_type = optional(string, "LOCAL")
+    product_arns                    = optional(list(string), [])
+    standards_arns                  = optional(list(string), null)
   })
   default = {
-    auto_enable_controls          = true
-    auto_enable_default_standards = false
-    auto_enable_new_accounts      = true
-    control_finding_generator     = "SECURITY_CONTROL"
-    create_cis_metric_filters     = true
-    product_arns                  = []
-    standards_arns                = null
+    aggregator_linking_mode         = "ALL_REGIONS"
+    aggregator_specified_regions    = null
+    auto_enable_controls            = true
+    auto_enable_default_standards   = false
+    auto_enable_new_accounts        = true
+    control_finding_generator       = "SECURITY_CONTROL"
+    create_cis_metric_filters       = true
+    organization_configuration_type = "LOCAL"
+    product_arns                    = []
+    standards_arns                  = null
   }
   description = "AWS Security Hub settings"
 

@@ -1,4 +1,10 @@
 // AWS Security Hub - Management account configuration and enrollment
+locals {
+  security_configuration_type = (
+    var.aws_security_hub.organization_configuration_type == "CENTRAL" ? "NONE" :
+    (var.aws_security_hub.auto_enable_default_standards ? "DEFAULT" : "NONE")
+  )
+}
 resource "aws_securityhub_organization_admin_account" "default" {
   admin_account_id = data.aws_caller_identity.audit.account_id
 
@@ -41,10 +47,14 @@ resource "aws_securityhub_account" "default" {
 resource "aws_securityhub_organization_configuration" "default" {
   provider = aws.audit
 
-  auto_enable           = var.aws_security_hub.auto_enable_new_accounts
-  auto_enable_standards = var.aws_security_hub.auto_enable_default_standards ? "DEFAULT" : "NONE"
+  auto_enable           = var.aws_security_hub.organization_configuration_type == "CENTRAL" ? false : var.aws_security_hub.auto_enable_new_accounts
+  auto_enable_standards = local.security_configuration_type
 
-  depends_on = [aws_securityhub_organization_admin_account.default]
+  organization_configuration {
+    configuration_type = var.aws_security_hub.organization_configuration_type
+  }
+
+  depends_on = [aws_securityhub_organization_admin_account.default, aws_securityhub_finding_aggregator.default]
 }
 
 resource "aws_securityhub_product_subscription" "default" {
@@ -132,4 +142,11 @@ resource "aws_securityhub_standards_subscription" "logging" {
 
   standards_arn = each.value
   depends_on    = [aws_securityhub_account.default]
+}
+
+resource "aws_securityhub_finding_aggregator" "default" {
+  linking_mode      = var.aws_security_hub.linking_mode
+  specified_regions = var.aws_security_hub.specified_regions
+
+  depends_on = [aws_securityhub_account.default]
 }
