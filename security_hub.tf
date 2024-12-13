@@ -145,8 +145,8 @@ resource "aws_securityhub_standards_subscription" "logging" {
 }
 
 resource "aws_securityhub_finding_aggregator" "default" {
-  linking_mode      = var.aws_security_hub.linking_mode
-  specified_regions = var.aws_security_hub.specified_regions
+  linking_mode      = var.aws_security_hub.aggregator_linking_mode
+  specified_regions = var.aws_security_hub.aggregator_specified_regions
 
   depends_on = [aws_securityhub_account.default]
 }
