@@ -152,7 +152,7 @@ variable "aws_required_tags" {
 variable "aws_security_hub" {
   type = object({
     aggregator_linking_mode         = optional(string, "ALL_REGIONS")
-    aggregator_specified_regions    = optional(list(string), [])
+    aggregator_specified_regions    = optional(list(string), null)
     auto_enable_controls            = optional(bool, true)
     auto_enable_default_standards   = optional(bool, false)
     auto_enable_new_accounts        = optional(bool, true)
