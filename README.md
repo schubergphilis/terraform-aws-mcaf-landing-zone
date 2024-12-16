@@ -88,16 +88,17 @@ By default, you have to create the email addresses for the accounts created usin
 
 By default, all CloudTrail logs will be stored in a S3 bucket in the `logging` account of your AWS Organization. However, this module also supports creating an additional CloudTrail configuration to publish logs to any S3 bucket chosen by you. This trail will be set at the Organization level, meaning that logs from all accounts will be published to the provided bucket.
 
-NOTE: Before enabling this feature, make sure that the [bucket policy authorizing CloudTrail to deliver logs](https://aws.amazon.com/premiumsupport/knowledge-center/change-cloudtrail-trail/) is in place and that you have enabled [trusted access between AWS Organizations and CloudTrail](https://docs.aws.amazon.com/organizations/latest/userguide/services-that-can-integrate-cloudtrail.html#integrate-enable-ta-cloudtrail). If these two steps are not in place, Terraform will fail to create the trail.
-
-Example:
-
-```hcl
-additional_auditing_trail = {
-  name   = "additional_auditing_trail"
-  bucket = "bucket_name"
-}
-```
+> [!IMPORTANT]
+> Before enabling this feature, make sure that the [bucket policy authorizing CloudTrail to deliver logs](https://aws.amazon.com/premiumsupport/knowledge-center/change-cloudtrail-trail/) is in place and that you have enabled [trusted access between AWS Organizations and CloudTrail](https://docs.aws.amazon.com/organizations/latest/userguide/services-that-can-integrate-cloudtrail.html#integrate-enable-ta-cloudtrail). If these two steps are not in place, Terraform will fail to create the trail.
+>
+> Example:
+>
+> ```hcl
+> additional_auditing_trail = {
+>   name   = "additional_auditing_trail"
+>   bucket = "bucket_name"
+> }
+> ```
 
 ### AWS Config Rules
 
@@ -105,25 +106,37 @@ This module provisions by default a set of basic AWS Config Rules. In order to a
 
 If you would like to authorize other accounts to aggregate AWS Config data, the account IDs and regions can also be passed via the variable `aws_config` using the attributes `aggregator_account_ids` and `aggregator_regions` respectively.
 
-NOTE: This module already authorizes the `audit` account to aggregate Config data from all other accounts in the organization, so there is no need to specify the `audit` account ID in the `aggregator_account_ids` list.
-
-Example:
-
-```hcl
-aws_config = {
-  aggregator_account_ids = ["123456789012"]
-  aggregator_regions     = ["eu-west-1"]
-  rule_identifiers       = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
-}
-```
+> [!NOTE]
+> This module already authorizes the `audit` account to aggregate Config data from all other accounts in the organization, so there is no need to specify the `audit` account ID in the `aggregator_account_ids` list.
+>
+> Example:
+>
+> ```hcl
+> aws_config = {
+>   aggregator_account_ids = ["123456789012"]
+>   aggregator_regions     = ["eu-west-1"]
+>   rule_identifiers       = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
+> }
+> ```
 
 ### AWS GuardDuty
 
 This module supports enabling GuardDuty at the organization level which means that all new accounts that are created in, or added to, the organization are added as member accounts to the `audit` account GuardDuty detector.
 
+> [!IMPORTANT]
+> Newer Control Tower versions are creating an organization-managed GuardDuty detector in the audit account which causes this module to error when run, due to the resource already existing. To fix this, log into the audit account, visit the GuardDuty settings page (e.g. <https://eu-central-1.console.aws.amazon.com/guardduty/home?region=eu-central-1#/settings>), copy the Detector ID and and the following `import` block to your code:
+>
+> ```hcl
+> import {
+>   to = module.landing_zone.aws_guardduty_detector.audit
+>   id = "<DETECTOR_ID>"
+> }
+> ```
+
 The feature can be controlled via the `aws_guardduty` variable and is enabled by default. The finding publishing frequency has been reduced from 6 hours to every 15 minutes, and the Malware Protection, Kubernetes and S3 Logs data sources are enabled out of the box.
 
-Note: In case you are migrating an existing AWS organization to this module, all existing accounts except for the `master` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
+> [!NOTE]
+> In case you are migrating an existing AWS organization to this module, all existing accounts except for the `master` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
 
 ## AWS KMS
 
@@ -159,13 +172,14 @@ This module supports enabling Security Hub at an organization level, meaning all
 
 The feature can be controlled via the `aws_security_hub` variable and is enabled by default.
 
-Note: by default `auto-enable default standards` has been turned off since the default standards are not updated regularly enough. At time of writing only the `AWS Foundational Security Best Practices v1.0.0 standard` and the `CIS AWS Foundations Benchmark v1.2.0 standard` are enabled by [by default](https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-enable-disable.html) while this module enables the following standards:
-
-- `AWS Foundational Security Best Practices v1.0.0`
-- `CIS AWS Foundations Benchmark v1.4.0`
-- `PCI DSS v3.2.1`
-
-The enabling of the standards in all member account is controlled via [mcaf-account-baseline](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline).
+> [!NOTE]
+> By default `auto-enable default standards` has been turned off since the default standards are not updated regularly enough. At time of writing only the `AWS Foundational Security Best Practices v1.0.0 standard` and the `CIS AWS Foundations Benchmark v1.2.0 standard` are enabled by [by default](https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-enable-disable.html) while this module enables the following standards:
+>
+> - `AWS Foundational Security Best Practices v1.0.0`
+> - `CIS AWS Foundations Benchmark v1.4.0`
+> - `PCI DSS v3.2.1`
+>
+> The enabling of the standards in all member account is controlled via [mcaf-account-baseline](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline).
 
 ### AWS SSO
 
