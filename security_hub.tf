@@ -1,10 +1,4 @@
 // AWS Security Hub - Management account configuration and enrollment
-locals {
-  security_configuration_type = (
-    var.aws_security_hub.organization_configuration_type == "CENTRAL" ? "NONE" :
-    (var.aws_security_hub.auto_enable_default_standards ? "DEFAULT" : "NONE")
-  )
-}
 resource "aws_securityhub_organization_admin_account" "default" {
   admin_account_id = data.aws_caller_identity.audit.account_id
 
@@ -145,6 +139,8 @@ resource "aws_securityhub_standards_subscription" "logging" {
 }
 
 resource "aws_securityhub_finding_aggregator" "default" {
+  provider = aws.audit
+
   linking_mode      = var.aws_security_hub.aggregator_linking_mode
   specified_regions = var.aws_security_hub.aggregator_specified_regions
 
