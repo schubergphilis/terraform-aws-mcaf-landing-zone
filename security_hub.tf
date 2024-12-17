@@ -42,7 +42,7 @@ resource "aws_securityhub_organization_configuration" "default" {
   provider = aws.audit
 
   auto_enable           = var.aws_security_hub.auto_enable_new_accounts
-  auto_enable_standards = var.aws_security_hub.auto_enable_default_standards
+  auto_enable_standards = var.aws_security_hub.auto_enable_default_standards ? "DEFAULT" : "NONE"
 
   organization_configuration {
     configuration_type = var.aws_security_hub.organization_configuration_type

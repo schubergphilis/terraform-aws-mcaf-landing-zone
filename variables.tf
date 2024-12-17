@@ -176,8 +176,8 @@ variable "aws_security_hub" {
   }
 
   validation {
-    condition     = var.aws_security_hub.organization_configuration_type == "LOCAL" || (var.aws_security_hub.auto_enable_new_accounts == false && var.aws_security_hub.auto_enable_default_standards == "NONE")
-    error_message = "If var.aws_security_hub.organization_configuration_type is \"CENTRAL\", var.aws_security_hub.auto_enable_new_accounts` must be \"False\" and var.aws_security_hub.auto_enable_default_standards must be \"NONE\"."
+    condition     = var.aws_security_hub.organization_configuration_type == "LOCAL" || (var.aws_security_hub.auto_enable_new_accounts == false && var.aws_security_hub.auto_enable_default_standards == false)
+    error_message = "If var.aws_security_hub.organization_configuration_type is \"CENTRAL\", var.aws_security_hub.auto_enable_new_accounts` must be \"False\" and var.aws_security_hub.auto_enable_default_standards must be \"False\"."
   }
 }
 
