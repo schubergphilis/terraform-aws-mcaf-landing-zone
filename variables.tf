@@ -18,6 +18,11 @@ variable "additional_auditing_trail" {
   description = "CloudTrail configuration for additional auditing trail"
 }
 
+variable "allowed_regions" {
+  type        = list(string)
+  description = "List of AWS regions where operations are allowed and for which central services like Security Hub and AWS Config are configured."
+}
+
 variable "aws_account_password_policy" {
   type = object({
     allow_users_to_change        = bool
@@ -57,7 +62,6 @@ variable "aws_auditmanager" {
 variable "aws_config" {
   type = object({
     aggregator_account_ids          = optional(list(string), [])
-    aggregator_regions              = optional(list(string), [])
     delivery_channel_s3_bucket_name = optional(string, null)
     delivery_channel_s3_key_prefix  = optional(string, null)
     delivery_frequency              = optional(string, "TwentyFour_Hours")
@@ -65,7 +69,6 @@ variable "aws_config" {
   })
   default = {
     aggregator_account_ids          = []
-    aggregator_regions              = []
     delivery_channel_s3_bucket_name = null
     delivery_channel_s3_key_prefix  = null
     delivery_frequency              = "TwentyFour_Hours"
@@ -151,13 +154,12 @@ variable "aws_required_tags" {
 
 variable "aws_security_hub" {
   type = object({
-    aggregator_linking_mode      = optional(string, "ALL_REGIONS")
-    aggregator_specified_regions = optional(list(string), null)
-    auto_enable_controls         = optional(bool, true)
-    control_finding_generator    = optional(string, "SECURITY_CONTROL")
-    create_cis_metric_filters    = optional(bool, true)
-    product_arns                 = optional(list(string), [])
-    standards_arns               = optional(list(string), null)
+    aggregator_linking_mode   = optional(string, "SPECIFIED_REGIONS")
+    auto_enable_controls      = optional(bool, true)
+    control_finding_generator = optional(string, "SECURITY_CONTROL")
+    create_cis_metric_filters = optional(bool, true)
+    product_arns              = optional(list(string), [])
+    standards_arns            = optional(list(string), null)
   })
   default     = {}
   description = "AWS Security Hub settings"
@@ -165,6 +167,11 @@ variable "aws_security_hub" {
   validation {
     condition     = contains(["SECURITY_CONTROL", "STANDARD_CONTROL"], var.aws_security_hub.control_finding_generator)
     error_message = "The \"control_finding_generator\" variable must be set to either \"SECURITY_CONTROL\" or \"STANDARD_CONTROL\"."
+  }
+
+  validation {
+    condition     = var.aws_security_hub.aggregator_linking_mode != "ALL_REGIONS"
+    error_message = "Security Hub Linking mode cannot be set to \"ALL_REGIONS\" since AWS Config needs to be configured in all regions individually."
   }
 }
 

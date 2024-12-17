@@ -1,9 +1,9 @@
 locals {
   enabled_root_policies = {
     allowed_regions = {
-      enable = var.aws_service_control_policies.allowed_regions != null ? true : false
-      policy = var.aws_service_control_policies.allowed_regions != null ? templatefile("${path.module}/files/organizations/allowed_regions.json.tpl", {
-        allowed    = var.aws_service_control_policies.allowed_regions != null ? var.aws_service_control_policies.allowed_regions : []
+      enable = var.allowed_regions != null ? true : false
+      policy = var.allowed_regions != null ? templatefile("${path.module}/files/organizations/allowed_regions.json.tpl", {
+        allowed    = var.allowed_regions != null ? var.allowed_regions : []
         exceptions = local.aws_service_control_policies_principal_exceptions
       }) : null
     }

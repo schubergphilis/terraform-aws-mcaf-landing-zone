@@ -1,7 +1,7 @@
 locals {
   aws_config_aggregators = flatten([
     for account in toset(try(var.aws_config.aggregator_account_ids, [])) : [
-      for region in toset(try(var.aws_config.aggregator_regions, [])) : {
+      for region in toset(try(var.allowed_regions, [])) : {
         account_id = account
         region     = region
       }
@@ -32,7 +32,7 @@ resource "aws_config_aggregate_authorization" "master" {
 }
 
 resource "aws_config_aggregate_authorization" "master_to_audit" {
-  for_each = toset(coalescelist(var.aws_config.aggregator_regions, [data.aws_region.current.name]))
+  for_each = toset(coalescelist(var.allowed_regions, [data.aws_region.current.name]))
 
   account_id = var.control_tower_account_ids.audit
   region     = each.value

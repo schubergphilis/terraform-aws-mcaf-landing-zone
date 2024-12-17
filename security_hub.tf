@@ -110,7 +110,7 @@ resource "aws_securityhub_finding_aggregator" "default" {
   provider = aws.audit
 
   linking_mode      = var.aws_security_hub.aggregator_linking_mode
-  specified_regions = var.aws_security_hub.aggregator_specified_regions
+  specified_regions = var.aws_security_hub.aggregator_linking_mode == "SPECIFIED_REGIONS" ? var.allowed_regions : null
 
   depends_on = [aws_securityhub_account.default]
 }
