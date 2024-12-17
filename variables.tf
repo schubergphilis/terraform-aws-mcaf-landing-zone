@@ -151,16 +151,13 @@ variable "aws_required_tags" {
 
 variable "aws_security_hub" {
   type = object({
-    aggregator_linking_mode         = optional(string, "ALL_REGIONS")
-    aggregator_specified_regions    = optional(list(string), null)
-    auto_enable_controls            = optional(bool, true)
-    auto_enable_default_standards   = optional(bool, false)
-    auto_enable_new_accounts        = optional(bool, true)
-    control_finding_generator       = optional(string, "SECURITY_CONTROL")
-    create_cis_metric_filters       = optional(bool, true)
-    organization_configuration_type = optional(string, "LOCAL")
-    product_arns                    = optional(list(string), [])
-    standards_arns                  = optional(list(string), null)
+    aggregator_linking_mode      = optional(string, "ALL_REGIONS")
+    aggregator_specified_regions = optional(list(string), null)
+    auto_enable_controls         = optional(bool, true)
+    control_finding_generator    = optional(string, "SECURITY_CONTROL")
+    create_cis_metric_filters    = optional(bool, true)
+    product_arns                 = optional(list(string), [])
+    standards_arns               = optional(list(string), null)
   })
   default     = {}
   description = "AWS Security Hub settings"
@@ -168,16 +165,6 @@ variable "aws_security_hub" {
   validation {
     condition     = contains(["SECURITY_CONTROL", "STANDARD_CONTROL"], var.aws_security_hub.control_finding_generator)
     error_message = "The \"control_finding_generator\" variable must be set to either \"SECURITY_CONTROL\" or \"STANDARD_CONTROL\"."
-  }
-
-  validation {
-    condition     = contains(["LOCAL", "CENTRAL"], var.aws_security_hub.organization_configuration_type)
-    error_message = "Invalid var.aws_security_hub.organization_configuration_type: Must be one of \"LOCAL\" or \"CENTRAL\"."
-  }
-
-  validation {
-    condition     = var.aws_security_hub.organization_configuration_type == "LOCAL" || (var.aws_security_hub.auto_enable_new_accounts == false && var.aws_security_hub.auto_enable_default_standards == false)
-    error_message = "If var.aws_security_hub.organization_configuration_type is \"CENTRAL\", var.aws_security_hub.auto_enable_new_accounts` must be \"False\" and var.aws_security_hub.auto_enable_default_standards must be \"False\"."
   }
 }
 
