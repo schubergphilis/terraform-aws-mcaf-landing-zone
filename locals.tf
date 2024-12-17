@@ -34,4 +34,8 @@ locals {
   security_hub_has_cis_aws_foundations_enabled = length(regexall(
     "cis-aws-foundations-benchmark/v", join(",", local.security_hub_standards_arns)
   )) > 0 ? true : false
+
+  allowed_regions                    = toset(distinct(concat(var.allowed_regions, [data.aws_region.current.name])))
+  allowed_regions_with_us_east       = toset(distinct(concat(var.allowed_regions, [data.aws_region.current.name], ["us-east-1"])))
+  allowed_regions_except_home_region = setsubtract(local.allowed_regions_with_us_east, [data.aws_region.current.name])
 }

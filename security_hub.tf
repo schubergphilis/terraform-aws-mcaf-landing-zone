@@ -1,7 +1,3 @@
-locals {
-  all_regions_except_home_region = setsubtract(var.allowed_regions, (data.aws_region.current.name))
-}
-
 // AWS Security Hub - Management account configuration and enrollment
 resource "aws_securityhub_organization_admin_account" "default" {
   admin_account_id = data.aws_caller_identity.audit.account_id
@@ -111,11 +107,11 @@ resource "aws_securityhub_member" "logging" {
 
 
 resource "aws_securityhub_finding_aggregator" "default" {
-  count    = length(local.all_regions_except_home_region) == 0 ? 0 : 1
+  count    = length(local.allowed_regions_except_home_region) == 0 ? 0 : 1
   provider = aws.audit
 
   linking_mode      = var.aws_security_hub.aggregator_linking_mode
-  specified_regions = var.aws_security_hub.aggregator_linking_mode == "SPECIFIED_REGIONS" ? local.all_regions_except_home_region : null
+  specified_regions = var.aws_security_hub.aggregator_linking_mode == "SPECIFIED_REGIONS" ? local.allowed_regions_except_home_region : null
 
   depends_on = [aws_securityhub_account.default]
 }
