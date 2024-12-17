@@ -171,13 +171,13 @@ variable "aws_security_hub" {
   }
 
   validation {
-    condition     = contains(["LOCAL", "CENTRAL"], var.security_hub.organization_configuration_type)
-    error_message = "Invalid var.security_hub.organization_configuration_type: Must be one of \"LOCAL\" or \"CENTRAL\"."
+    condition     = contains(["LOCAL", "CENTRAL"], var.aws_security_hub.organization_configuration_type)
+    error_message = "Invalid var.aws_security_hub.organization_configuration_type: Must be one of \"LOCAL\" or \"CENTRAL\"."
   }
 
   validation {
-    condition     = var.security_hub.organization_configuration_type == "LOCAL" || (var.security_hub.auto_enable_new_accounts == false && var.security_hub.auto_enable_default_standards == "NONE")
-    error_message = "If var.security_hub.organization_configuration_type is \"CENTRAL\", var.security_hub.auto_enable_new_accounts` must be \"False\" and var.security_hub.auto_enable_default_standards must be \"NONE\"."
+    condition     = var.aws_security_hub.organization_configuration_type == "LOCAL" || (var.aws_security_hub.auto_enable_new_accounts == false && var.aws_security_hub.auto_enable_default_standards == "NONE")
+    error_message = "If var.aws_security_hub.organization_configuration_type is \"CENTRAL\", var.aws_security_hub.auto_enable_new_accounts` must be \"False\" and var.aws_security_hub.auto_enable_default_standards must be \"NONE\"."
   }
 }
 
