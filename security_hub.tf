@@ -116,6 +116,8 @@ resource "aws_securityhub_finding_aggregator" "default" {
 }
 
 resource "aws_securityhub_configuration_policy" "default" {
+  provider = aws.audit
+
   name        = "mcaf-lz"
   description = "MCAF Landing Zone default configuration policy"
 
@@ -132,6 +134,8 @@ resource "aws_securityhub_configuration_policy" "default" {
 }
 
 resource "aws_securityhub_configuration_policy_association" "root" {
+  provider = aws.audit
+
   target_id = data.aws_organizations_organization.default.roots[0].id
   policy_id = aws_securityhub_configuration_policy.default.id
 }
