@@ -6,7 +6,8 @@ This document captures required refactoring on your part when upgrading to a mod
 
 ### Behaviour
 
-This version changes the detault [Security Hub configuration to Central](https://docs.aws.amazon.com/securityhub/latest/userguide/central-configuration-intro.html). You can change this behaviour by setting `var.aws_security_hub.organization_configuration_type` to `LOCAL`.
+> [!IMPORTANT]
+> **This version changes the [Security Hub configuration to Central](https://docs.aws.amazon.com/securityhub/latest/userguide/central-configuration-intro.html).**
 
 This version enables Security Hub Findings Aggregation for all regions. You can change this behauviour by setting `var.aws_security_hub.aggregator_linking_mode` to `ALL_REGIONS_EXCEPT_SPECIFIED` or `SPECIFIED_REGIONS` and providing the list of regions via `var.aws_security_hub.aggregator_specified_regions`
 

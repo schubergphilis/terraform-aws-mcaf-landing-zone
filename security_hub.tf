@@ -132,6 +132,6 @@ resource "aws_securityhub_configuration_policy" "default" {
 }
 
 resource "aws_securityhub_configuration_policy_association" "root" {
-  target_id = data.aws_organizations_organization.default.id
+  target_id = data.aws_organizations_organization.default.roots[0].id
   policy_id = aws_securityhub_configuration_policy.default.id
 }
