@@ -127,7 +127,7 @@ resource "aws_securityhub_configuration_policy" "default" {
     enabled_standard_arns = local.security_hub_standards_arns
 
     security_controls_configuration {
-      disabled_control_identifiers = []
+      disabled_control_identifiers = var.aws_security_hub.disabled_control_identifiers
     }
   }
 
