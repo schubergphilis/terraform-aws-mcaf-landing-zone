@@ -25,11 +25,6 @@ locals {
 provider "aws" {}
 
 provider "aws" {
-  alias  = "us-east-1"
-  region = "us-east-1"
-}
-
-provider "aws" {
   alias = "audit"
 
   assume_role {
@@ -54,7 +49,7 @@ provider "mcaf" {
 }
 
 module "landing_zone" {
-  providers = { aws = aws, aws.audit = aws.audit, aws.logging = aws.logging, aws.us-east-1 = aws.us-east-1 }
+  providers = { aws = aws, aws.audit = aws.audit, aws.logging = aws.logging }
 
   source = "github.com/schubergphilis/terraform-aws-mcaf-landing-zone?ref=VERSION"
 
