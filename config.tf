@@ -43,12 +43,6 @@ resource "aws_iam_service_linked_role" "config" {
   aws_service_name = "config.amazonaws.com"
 }
 
-resource "aws_iam_service_linked_role" "config_us" {
-  provider = aws.us-east-1
-
-  aws_service_name = "config.amazonaws.com"
-}
-
 resource "aws_config_configuration_recorder" "default" {
   name     = "default"
   role_arn = aws_iam_service_linked_role.config.arn

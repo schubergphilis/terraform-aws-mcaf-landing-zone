@@ -3,7 +3,7 @@ terraform {
     aws = {
       source                = "hashicorp/aws"
       version               = ">= 5.54.0"
-      configuration_aliases = [aws.audit, aws.logging, aws.us-east-1]
+      configuration_aliases = [aws.audit, aws.logging]
     }
     datadog = {
       source  = "datadog/datadog"
