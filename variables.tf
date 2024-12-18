@@ -158,9 +158,10 @@ variable "aws_security_hub" {
     auto_enable_controls         = optional(bool, true)
     control_finding_generator    = optional(string, "SECURITY_CONTROL")
     create_cis_metric_filters    = optional(bool, true)
+    disabled_control_identifiers = optional(list(string), null)
+    enabled_control_identifiers  = optional(list(string), null)
     product_arns                 = optional(list(string), [])
     standards_arns               = optional(list(string), null)
-    disabled_control_identifiers = optional(list(string), [])
   })
   default     = {}
   description = "AWS Security Hub settings"
@@ -171,8 +172,8 @@ variable "aws_security_hub" {
   }
 
   validation {
-    condition     = var.aws_security_hub.aggregator_linking_mode != "ALL_REGIONS"
-    error_message = "Security Hub Linking mode cannot be set to \"ALL_REGIONS\" since AWS Config needs to be configured in all regions individually."
+    condition     = length(var.aws_security_hub.enabled_control_identifiers) == 0 || length(var.aws_security_hub.disabled_control_identifiers) == 0
+    error_message = "Only one of \"enabled_control_identifiers\" or \"disabled_control_identifiers\" can be set."
   }
 }
 
@@ -187,7 +188,6 @@ variable "aws_security_hub_sns_subscription" {
 
 variable "aws_service_control_policies" {
   type = object({
-    allowed_regions                 = optional(list(string), [])
     aws_deny_disabling_security_hub = optional(bool, true)
     aws_deny_leaving_org            = optional(bool, true)
     aws_deny_root_user_ous          = optional(list(string), [])

@@ -10,6 +10,11 @@ provider "aws" {
 }
 
 provider "aws" {
+  alias  = "us-east-1"
+  region = "us-east-1"
+}
+
+provider "aws" {
   alias  = "audit"
   region = "eu-west-1"
 
@@ -36,10 +41,11 @@ provider "mcaf" {
 }
 
 module "landing_zone" {
-  providers = { aws = aws, aws.audit = aws.audit, aws.logging = aws.logging }
+  providers = { aws = aws, aws.audit = aws.audit, aws.logging = aws.logging, aws.us-east-1 = aws.us-east-1 }
 
   source = "../../"
 
   control_tower_account_ids = local.control_tower_account_ids
+  allowed_regions           = ["eu-central-1", "eu-west-1"]
   tags                      = { Terraform = true }
 }

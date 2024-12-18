@@ -11,6 +11,27 @@ This document captures required refactoring on your part when upgrading to a mod
 
 This version enables Security Hub Findings Aggregation for all regions specfied in `allowed_regions`. You can change this behauviour by setting `var.aws_security_hub.aggregator_linking_mode` to `ALL_REGIONS_EXCEPT_SPECIFIED` and providing the list of regions via `var.aws_security_hub.aggregator_specified_regions`.
 
+### Providers
+
+Since global AWS services have their origin in the `us-east-1` region, this version requires the following provider to be set and passed to the module:
+```hcl
+provider "aws" {
+  alias  = "us-east-1"
+  region = "us-east-1"
+}
+
+[...]
+
+module "landing_zone" {
+  providers = { aws = aws, aws.audit = aws.audit, aws.logging = aws.logging, aws.us-east-1 = aws.us-east-1 }
+
+  source = "github.com/schubergphilis/terraform-aws-mcaf-landing-zone?ref=VERSION"
+
+  control_tower_account_ids = local.control_tower_account_ids
+  allowed_regions           = ["eu-central-1", "eu-west-1"]
+  tags                      = { Terraform = true }
+}
+```
 
 ### Variables
 
@@ -20,6 +41,7 @@ The following variables have been replaced:
 
 The following variable is added:
 * `aws_security_hub.disabled_control_identifiers`. List of Security Hub control IDs that are disabled in the organisation.
+* `aws_security_hub.enabled_control_identifiers`. List of Security Hub control IDs that are enabled in the organisation.
 
 ## Upgrading to v4.0.0
 

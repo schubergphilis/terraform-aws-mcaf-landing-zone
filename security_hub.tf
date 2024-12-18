@@ -128,6 +128,7 @@ resource "aws_securityhub_configuration_policy" "default" {
 
     security_controls_configuration {
       disabled_control_identifiers = var.aws_security_hub.disabled_control_identifiers
+      enabled_control_identifiers  = var.aws_security_hub.enabled_control_identifiers
     }
   }
 
