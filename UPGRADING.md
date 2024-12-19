@@ -7,9 +7,30 @@ This document captures required refactoring on your part when upgrading to a mod
 ### Behaviour
 
 > [!IMPORTANT]
-> **This version changes the [Security Hub configuration to Central](https://docs.aws.amazon.com/securityhub/latest/userguide/central-configuration-intro.html) and always enabled Security Hub in the us-east-1 region.**
+> **This version changes the [Security Hub configuration to Central](https://docs.aws.amazon.com/securityhub/latest/userguide/central-configuration-intro.html).
 
 This version enables Security Hub Findings Aggregation for all regions specfied in `regions.home_region` and `regions.linked_regions`. You can change this behauviour by setting `var.aws_security_hub.aggregator_linking_mode` to `ALL_REGIONS_EXCEPT_SPECIFIED` and providing the list of regions via `var.aws_security_hub.aggregator_specified_regions`. More information on this in the [AWS Security Hub Documentation](https://docs.aws.amazon.com/securityhub/latest/userguide/central-configuration-intro.html).
+
+### Removing local Security Hub Standards in logging account
+
+Since the state of version < 5.0.0 contains an unknown number of instances of `aws_securityhub_standards_subscription` resources for the Logging account, Terraform wants to remove them. Since the configuration of this is moved to the central `aws_securityhub_configuration_policy` resource, we don't want to disable them, but just 'forget' about them.
+
+Since there is an unknown number of instances (a for_each on `local.security_hub_standards_arns`) and [Terraform does not support `for_each` on `removed` statements yet](https://github.com/hashicorp/terraform/issues/34439), we need to remove the resources manually from the state.
+
+The following shell snippet generates the removal statements:
+
+```shell
+terraform init
+for local_standard in $(terraform state list | grep "module.landing_zone.aws_securityhub_standards_subscription.logging"); do
+  echo "terraform state rm '$local_standard'"
+done
+```
+
+Evaluate the output and run the commands. The statements should look something like this:
+
+```shell
+terraform state rm 'module.landing_zone.aws_securityhub_standards_subscription.logging["arn:aws:securityhub:eu-central-1::standards/pci-dss/v/3.2.1"]'
+```
 
 ### Variables
 
