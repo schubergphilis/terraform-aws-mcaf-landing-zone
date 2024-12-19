@@ -18,6 +18,15 @@ variable "additional_auditing_trail" {
   description = "CloudTrail configuration for additional auditing trail"
 }
 
+variable "regions" {
+  type = object({
+    allowed_regions = list(string)
+    home_region     = string
+    linked_regions  = optional(list(string), ["us-east-1"])
+  })
+  description = "Regions for your AWS organisation. More information: https://docs.aws.amazon.com/securityhub/latest/userguide/central-configuration-intro.html"
+}
+
 variable "aws_account_password_policy" {
   type = object({
     allow_users_to_change        = bool
@@ -57,7 +66,6 @@ variable "aws_auditmanager" {
 variable "aws_config" {
   type = object({
     aggregator_account_ids          = optional(list(string), [])
-    aggregator_regions              = optional(list(string), [])
     delivery_channel_s3_bucket_name = optional(string, null)
     delivery_channel_s3_key_prefix  = optional(string, null)
     delivery_frequency              = optional(string, "TwentyFour_Hours")
@@ -65,7 +73,6 @@ variable "aws_config" {
   })
   default = {
     aggregator_account_ids          = []
-    aggregator_regions              = []
     delivery_channel_s3_bucket_name = null
     delivery_channel_s3_key_prefix  = null
     delivery_frequency              = "TwentyFour_Hours"
@@ -151,28 +158,26 @@ variable "aws_required_tags" {
 
 variable "aws_security_hub" {
   type = object({
-    auto_enable_controls          = optional(bool, true)
-    auto_enable_default_standards = optional(bool, false)
-    auto_enable_new_accounts      = optional(bool, true)
-    control_finding_generator     = optional(string, "SECURITY_CONTROL")
-    create_cis_metric_filters     = optional(bool, true)
-    product_arns                  = optional(list(string), [])
-    standards_arns                = optional(list(string), null)
+    aggregator_linking_mode      = optional(string, "SPECIFIED_REGIONS")
+    auto_enable_controls         = optional(bool, true)
+    control_finding_generator    = optional(string, "SECURITY_CONTROL")
+    create_cis_metric_filters    = optional(bool, true)
+    disabled_control_identifiers = optional(list(string), null)
+    enabled_control_identifiers  = optional(list(string), null)
+    product_arns                 = optional(list(string), [])
+    standards_arns               = optional(list(string), null)
   })
-  default = {
-    auto_enable_controls          = true
-    auto_enable_default_standards = false
-    auto_enable_new_accounts      = true
-    control_finding_generator     = "SECURITY_CONTROL"
-    create_cis_metric_filters     = true
-    product_arns                  = []
-    standards_arns                = null
-  }
+  default     = {}
   description = "AWS Security Hub settings"
 
   validation {
     condition     = contains(["SECURITY_CONTROL", "STANDARD_CONTROL"], var.aws_security_hub.control_finding_generator)
     error_message = "The \"control_finding_generator\" variable must be set to either \"SECURITY_CONTROL\" or \"STANDARD_CONTROL\"."
+  }
+
+  validation {
+    condition     = try(length(var.aws_security_hub.enabled_control_identifiers), 0) == 0 || try(length(var.aws_security_hub.disabled_control_identifiers), 0) == 0
+    error_message = "Only one of \"enabled_control_identifiers\" or \"disabled_control_identifiers\" can be set."
   }
 }
 
@@ -187,7 +192,6 @@ variable "aws_security_hub_sns_subscription" {
 
 variable "aws_service_control_policies" {
   type = object({
-    allowed_regions                 = optional(list(string), [])
     aws_deny_disabling_security_hub = optional(bool, true)
     aws_deny_leaving_org            = optional(bool, true)
     aws_deny_root_user_ous          = optional(list(string), [])
