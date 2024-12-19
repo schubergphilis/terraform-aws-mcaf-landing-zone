@@ -41,6 +41,10 @@ module "landing_zone" {
   source = "../../"
 
   control_tower_account_ids = local.control_tower_account_ids
-  allowed_regions           = ["eu-central-1", "eu-west-1"]
-  tags                      = { Terraform = true }
+  regions = {
+    allowed_regions = ["eu-central-1", "eu-west-1"]
+    home_region     = "eu-central-1"
+    linked_regions  = ["eu-west-1"]
+  }
+  tags = { Terraform = true }
 }
