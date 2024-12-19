@@ -18,9 +18,13 @@ variable "additional_auditing_trail" {
   description = "CloudTrail configuration for additional auditing trail"
 }
 
-variable "allowed_regions" {
-  type        = list(string)
-  description = "List of AWS regions where operations are allowed and for which central services like Security Hub and AWS Config are configured."
+variable "regions" {
+  type = object({
+    allowed_regions = list(string)
+    home_region     = string
+    linked_regions  = optional(list(string), ["us-east-1"])
+  })
+  description = "Regions for your AWS organisation. More information: https://docs.aws.amazon.com/securityhub/latest/userguide/central-configuration-intro.html"
 }
 
 variable "aws_account_password_policy" {
@@ -172,7 +176,7 @@ variable "aws_security_hub" {
   }
 
   validation {
-    condition     = length(var.aws_security_hub.enabled_control_identifiers) == 0 || length(var.aws_security_hub.disabled_control_identifiers) == 0
+    condition     = try(length(var.aws_security_hub.enabled_control_identifiers), 0) == 0 || try(length(var.aws_security_hub.disabled_control_identifiers), 0) == 0
     error_message = "Only one of \"enabled_control_identifiers\" or \"disabled_control_identifiers\" can be set."
   }
 }
