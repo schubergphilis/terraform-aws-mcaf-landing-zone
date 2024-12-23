@@ -7,6 +7,7 @@ locals {
       }
     ]
   ])
+
   aws_config_rules = setunion(
     try(var.aws_config.rule_identifiers, []),
     [
@@ -16,6 +17,7 @@ locals {
       "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
     ]
   )
+
   aws_config_s3_name = coalesce(
     var.aws_config.delivery_channel_s3_bucket_name,
     "aws-config-configuration-history-${var.control_tower_account_ids.logging}-${data.aws_region.current.name}"

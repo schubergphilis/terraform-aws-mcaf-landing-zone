@@ -8,56 +8,82 @@ Overview of Landing Zone tools & services:
 
 The SBP AWS Landing Zone consists of 3 repositories:
 
-- [MCAF Landing Zone module (current repository)](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone): the foundation of the Landing Zone and manages the 3 core accounts: audit, logging, master
+- [MCAF Landing Zone module (current repository)](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone): the foundation of the Landing Zone and manages the 3 core accounts: audit, logging, management
 - [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm): providing an AWS AVM. This module sets up an AWS account with one or more Terraform Cloud/Enterprise (TFE) workspace(s) backed by a VCS project
 - [MCAF Account Baseline module](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline): optional module providing baseline configuration for AWS accounts
 
+
+## Pre-Requisites
+
+> [!IMPORTANT]
+> Before deploying this module, ensure the following pre-requisites are met:
+> - AWS Control Tower is deployed in the `core-management` account.
+> - AWS Control Tower governed regions include at least `us-east-1` (and your designated home region).
+
 ## Basic configuration
 
+Refer to [examples/basic](examples/basic/main.tf) for an example of minimal setup.
+
+### Specifying the correct regions
+
+**Home Region**
+
+The mandatory `regions.home_region` variable specifies the AWS Control Tower home region. This must match the region defined in your AWS provider that deploys this module.
+
+To find your home region:  
+1. Log in to the **core-management account**.  
+2. Navigate to **AWS Control Tower** → **Landing Zone Settings**.  
+3. The home region is listed under **Home Region**.
+
+**Linked Regions**
+
+The optional `regions.linked_regions` variable defines the AWS Control Tower governed regions. This module ensures proper configuration of AWS Security Hub and AWS Config for all specified linked regions to collect data from them.
+
+To find your linked regions:  
+1. Log in to the **core-management account**.  
+2. Navigate to **AWS Control Tower** → **Landing Zone Settings**.  
+3. Linked regions are listed under **Landing Zone Regions**.
+
+*Note:* By default, `us-east-1` is included as a linked region to ensure data collection from global services. To restrict deployment of non-global resources in this region, use the `allowed_regions` functionality described in the section below.
+
+> [!IMPORTANT]
+> All specified linked regions need to be an AWS Control Tower governed region. This ensures that an AWS Config recorder is enabled by AWS Control Tower in all governed regions. AWS Security Hub will only function correctly if an AWS Config recorder exists in all linked regions. 
+
+**Allowed Regions**
+
+The optional `regions.allowed_regions` variable defines the allowed regions within your AWS Organization. This triggers the deployment of a [Service Control Policy (SCP)](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region), which is attached to the root of your AWS Organization.
+
+#### Configuration Scenarios
+
+**Scenario 1: Home region only (no deployment in other regions)**
+
+- **Home region:** `eu-central-1`  
+- **Requirement:** Prevent deployment in all other regions.
+
+You need to configure the `regions` variable as follows:
+
 ```hcl
-locals {
-  control_tower_account_ids = {
-    audit   = "012345678902"
-    logging = "012345678903"
-  }
+regions = {
+  allowed_regions = ["eu-central-1"]
+  home_region     = "eu-central-1"
 }
+```
 
-provider "aws" {}
+*Note:* Ensure that `us-east-1` is included as a governed region in AWS Control Tower since the `linked_region` variable defaults to this value.
 
-provider "aws" {
-  alias = "audit"
+**Scenario 2: Home region with additional governed regions**
 
-  assume_role {
-    role_arn = "arn:aws:iam::${local.control_tower_account_ids.audit}:role/AWSControlTowerExecution"
-  }
+- **Home region:** `eu-central-1` 
+- **Requirement:** Also allow deploying resources in `eu-west-1`.
+
+You need to configure the `regions` variable as follows:
+
+```hcl
+regions = {
+  allowed_regions = ["eu-central-1", "eu-west-1]
+  home_region     = "eu-central-1"
+  linked_regions = ["eu-west-1", "us-east-1"]
 }
-
-provider "aws" {
-  alias = "logging"
-
-  assume_role {
-    role_arn = "arn:aws:iam::${local.control_tower_account_ids.logging}:role/AWSControlTowerExecution"
-  }
-}
-
-provider "datadog" {
-  validate = false
-}
-
-provider "mcaf" {
-  aws {}
-}
-
-module "landing_zone" {
-  providers = { aws = aws, aws.audit = aws.audit, aws.logging = aws.logging }
-
-  source = "github.com/schubergphilis/terraform-aws-mcaf-landing-zone?ref=VERSION"
-
-  control_tower_account_ids = local.control_tower_account_ids
-  allowed_regions           = ["eu-central-1", "eu-west-1"]
-  tags                      = { Terraform = true }
-}
-
 ```
 
 ## Detailed configuration
@@ -102,9 +128,9 @@ additional_auditing_trail = {
 
 ### AWS Config Rules
 
-This module provisions by default a set of basic AWS Config Rules. In order to add extra rules, a list of [rule identifiers](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html) can be passed via the variable `aws_config` using the attribute `rule_identifiers`.
+This module provisions by default a set of basic AWS Config Rules. In order to add extra rules, a list of [rule identifiers](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html) can be passed via the variable `aws_config.rule_identifiers`.
 
-If you would like to authorize other accounts to aggregate AWS Config data, the account IDs and regions can also be passed via the variable `aws_config` using the attributes `aggregator_account_ids` and `aggregator_regions` respectively.
+If you would like to authorize other accounts to aggregate AWS Config data, the account IDs can also be passed via the variable `aws_config.aggregator_account_ids`.
 
 NOTE: This module already authorizes the `audit` account to aggregate Config data from all other accounts in the organization, so there is no need to specify the `audit` account ID in the `aggregator_account_ids` list.
 
@@ -113,7 +139,6 @@ Example:
 ```hcl
 aws_config = {
   aggregator_account_ids = ["123456789012"]
-  aggregator_regions     = ["eu-west-1"]
   rule_identifiers       = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
 }
 ```
@@ -122,13 +147,13 @@ aws_config = {
 
 This module supports enabling GuardDuty at the organization level which means that all new accounts that are created in, or added to, the organization are added as member accounts to the `audit` account GuardDuty detector.
 
-The feature can be controlled via the `aws_guardduty` variable and is enabled by default. The finding publishing frequency has been reduced from 6 hours to every 15 minutes, and the Malware Protection, Kubernetes and S3 Logs data sources are enabled out of the box.
+The feature can be controlled via the `aws_guardduty` variable and is enabled by default.
 
-Note: In case you are migrating an existing AWS organization to this module, all existing accounts except for the `master` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
+Note: In case you are migrating an existing AWS organization to this module, all existing accounts except for the `management` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
 
 ## AWS KMS
 
-The module creates 3 AWS KMS keys, one for the master account, one for the audit account, and one for the log archive account. We recommend to further scope down the AWS KMS key policy in the master account by providing a secure policy using `kms_key_policy`. The default policy "Base Permissions" can be overwritten and should be limited to the root account only, for example by using the statement below:
+The module creates 3 AWS KMS keys, one for the management account, one for the audit account, and one for the log archive account. We recommend to further scope down the AWS KMS key policy in the management account by providing a secure policy using `kms_key_policy`. The default policy "Base Permissions" can be overwritten and should be limited to the root account only, for example by using the statement below:
 
 ```hcl
   statement {
@@ -321,15 +346,7 @@ aws_service_control_policies = {
 
 #### SCP: Restricting AWS Regions
 
-If you would like to define which AWS Regions can be used in your AWS Organization, you can pass a list of region names to the variable `aws_service_control_policies` using the `allowed_regions` attribute. This will trigger this module to deploy a [Service Control Policy (SCP) designed by AWS](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region) and attach it to the root of your AWS Organization.
-
-Example:
-
-```hcl
-aws_service_control_policies = {
-  allowed_regions    = ["eu-west-1"]
-}
-```
+See the section `Specifying the correct regions`.
 
 #### SCP: Restricting Root User Access
 

@@ -30,11 +30,20 @@ resource "aws_securityhub_account" "default" {
   control_finding_generator = var.aws_security_hub.control_finding_generator
 }
 
+resource "aws_securityhub_finding_aggregator" "default" {
+  provider = aws.audit
+
+  linking_mode      = var.aws_security_hub.aggregator_linking_mode
+  specified_regions = var.aws_security_hub.aggregator_linking_mode == "SPECIFIED_REGIONS" ? var.regions.linked_regions : null
+
+  depends_on = [aws_securityhub_account.default]
+}
+
 resource "aws_securityhub_organization_configuration" "default" {
   provider = aws.audit
 
   auto_enable           = false
-  auto_enable_standards = "NONE"
+  auto_enable_standards = var.aws_security_hub.auto_enable_default_standards ? "DEFAULT" : "NONE"
 
   organization_configuration {
     configuration_type = "CENTRAL"
@@ -43,6 +52,31 @@ resource "aws_securityhub_organization_configuration" "default" {
   depends_on = [aws_securityhub_organization_admin_account.default, aws_securityhub_finding_aggregator.default]
 }
 
+resource "aws_securityhub_configuration_policy" "default" {
+  provider = aws.audit
+
+  name        = "mcaf-lz"
+  description = "MCAF Landing Zone default configuration policy"
+
+  configuration_policy {
+    service_enabled       = true
+    enabled_standard_arns = local.security_hub_standards_arns
+
+    security_controls_configuration {
+      disabled_control_identifiers = var.aws_security_hub.disabled_control_identifiers
+      enabled_control_identifiers  = var.aws_security_hub.enabled_control_identifiers
+    }
+  }
+
+  depends_on = [aws_securityhub_organization_configuration.default]
+}
+
+resource "aws_securityhub_configuration_policy_association" "root" {
+  provider = aws.audit
+
+  target_id = data.aws_organizations_organization.default.roots[0].id
+  policy_id = aws_securityhub_configuration_policy.default.id
+}
 
 resource "aws_cloudwatch_event_rule" "security_hub_findings" {
   provider = aws.audit
@@ -103,41 +137,4 @@ resource "aws_securityhub_member" "logging" {
   }
 
   depends_on = [aws_securityhub_organization_configuration.default]
-}
-
-
-resource "aws_securityhub_finding_aggregator" "default" {
-  count    = length(var.regions.linked_regions) == 0 ? 0 : 1
-  provider = aws.audit
-
-  linking_mode      = var.aws_security_hub.aggregator_linking_mode
-  specified_regions = var.aws_security_hub.aggregator_linking_mode == "SPECIFIED_REGIONS" ? var.regions.linked_regions : null
-
-  depends_on = [aws_securityhub_account.default]
-}
-
-resource "aws_securityhub_configuration_policy" "default" {
-  provider = aws.audit
-
-  name        = "mcaf-lz"
-  description = "MCAF Landing Zone default configuration policy"
-
-  configuration_policy {
-    service_enabled       = true
-    enabled_standard_arns = local.security_hub_standards_arns
-
-    security_controls_configuration {
-      disabled_control_identifiers = var.aws_security_hub.disabled_control_identifiers
-      enabled_control_identifiers  = var.aws_security_hub.enabled_control_identifiers
-    }
-  }
-
-  depends_on = [aws_securityhub_organization_configuration.default]
-}
-
-resource "aws_securityhub_configuration_policy_association" "root" {
-  provider = aws.audit
-
-  target_id = data.aws_organizations_organization.default.roots[0].id
-  policy_id = aws_securityhub_configuration_policy.default.id
 }

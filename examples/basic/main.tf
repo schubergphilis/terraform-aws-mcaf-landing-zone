@@ -6,12 +6,12 @@ locals {
 }
 
 provider "aws" {
-  region = "eu-west-1"
+  region = "eu-central-1"
 }
 
 provider "aws" {
   alias  = "audit"
-  region = "eu-west-1"
+  region = "eu-central-1"
 
   assume_role {
     role_arn = "arn:aws:iam::${local.control_tower_account_ids.audit}:role/AWSControlTowerExecution"
@@ -20,7 +20,7 @@ provider "aws" {
 
 provider "aws" {
   alias  = "logging"
-  region = "eu-west-1"
+  region = "eu-central-1"
 
   assume_role {
     role_arn = "arn:aws:iam::${local.control_tower_account_ids.logging}:role/AWSControlTowerExecution"
@@ -41,10 +41,9 @@ module "landing_zone" {
   source = "../../"
 
   control_tower_account_ids = local.control_tower_account_ids
+
   regions = {
-    allowed_regions = ["eu-central-1", "eu-west-1"]
+    allowed_regions = ["eu-central-1"]
     home_region     = "eu-central-1"
-    linked_regions  = ["eu-west-1"]
   }
-  tags = { Terraform = true }
 }

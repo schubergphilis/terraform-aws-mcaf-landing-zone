@@ -24,7 +24,12 @@ variable "regions" {
     home_region     = string
     linked_regions  = optional(list(string), ["us-east-1"])
   })
-  description = "Regions for your AWS organisation. More information: https://docs.aws.amazon.com/securityhub/latest/userguide/central-configuration-intro.html"
+  description = "Region configuration. See the README for more information on the configuration options."
+
+  validation {
+    condition     = length(var.regions.linked_regions) > 0
+    error_message = "The 'linked_regions' list must include at least one region. By default, 'us-east-1' is specified to ensure the tracking of global resources. Please specify at least one region if overriding the default."
+  }
 }
 
 variable "aws_account_password_policy" {
@@ -158,14 +163,15 @@ variable "aws_required_tags" {
 
 variable "aws_security_hub" {
   type = object({
-    aggregator_linking_mode      = optional(string, "SPECIFIED_REGIONS")
-    auto_enable_controls         = optional(bool, true)
-    control_finding_generator    = optional(string, "SECURITY_CONTROL")
-    create_cis_metric_filters    = optional(bool, true)
-    disabled_control_identifiers = optional(list(string), null)
-    enabled_control_identifiers  = optional(list(string), null)
-    product_arns                 = optional(list(string), [])
-    standards_arns               = optional(list(string), null)
+    aggregator_linking_mode       = optional(string, "SPECIFIED_REGIONS")
+    auto_enable_controls          = optional(bool, true)
+    auto_enable_default_standards = optional(bool, false)
+    control_finding_generator     = optional(string, "SECURITY_CONTROL")
+    create_cis_metric_filters     = optional(bool, true)
+    disabled_control_identifiers  = optional(list(string), null)
+    enabled_control_identifiers   = optional(list(string), null)
+    product_arns                  = optional(list(string), [])
+    standards_arns                = optional(list(string), null)
   })
   default     = {}
   description = "AWS Security Hub settings"
@@ -176,8 +182,13 @@ variable "aws_security_hub" {
   }
 
   validation {
+    condition     = contains(["SPECIFIED_REGIONS", "ALL_REGIONS"], var.aws_security_hub.aggregator_linking_mode)
+    error_message = "The \"aggregator_linking_mode\" variable must be set to either \"SPECIFIED_REGIONS\" or \"ALL_REGIONS\"."
+  }
+
+  validation {
     condition     = try(length(var.aws_security_hub.enabled_control_identifiers), 0) == 0 || try(length(var.aws_security_hub.disabled_control_identifiers), 0) == 0
-    error_message = "Only one of \"enabled_control_identifiers\" or \"disabled_control_identifiers\" can be set."
+    error_message = "Only one of \"enabled_control_identifiers\" or \"disabled_control_identifiers\" variable can be set."
   }
 }
 
@@ -301,5 +312,6 @@ variable "ses_root_accounts_mail_forward" {
 
 variable "tags" {
   type        = map(string)
+  default     = {}
   description = "Map of tags"
 }
