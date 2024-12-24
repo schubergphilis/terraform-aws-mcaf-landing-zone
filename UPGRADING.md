@@ -39,14 +39,14 @@ The following variables have been removed:
 
 1. Verify Control Tower Governed Regions.
 
-Ensure your AWS Control Tower Landing Zone regions includes `us-east-1`.  
+    Ensure your AWS Control Tower Landing Zone regions includes `us-east-1`.  
 
-To check:
-1. Log in to the **core-management account**.
-2. Navigate to **AWS Control Tower** → **Landing Zone Settings**.
-3. Confirm `us-east-1` is listed under **Landing Zone Regions**.
+    To check:
+    1. Log in to the **core-management account**.
+    2. Navigate to **AWS Control Tower** → **Landing Zone Settings**.
+    3. Confirm `us-east-1` is listed under **Landing Zone Regions**.
 
-If `us-east-1` is missing, update your AWS Control Tower settings **before upgrading**.
+    If `us-east-1` is missing, update your AWS Control Tower settings **before upgrading**.
 
 > [!NOTE]
 > For more details on the `regions` variable, refer to the [Specifying the correct regions section in the readme](README.md).
@@ -55,35 +55,35 @@ If `us-east-1` is missing, update your AWS Control Tower settings **before upgra
 
 3. Manually Removing Local Security Hub Standards
 
-Previous versions managed `aws_securityhub_standards_subscription` resources locally in core accounts. These are now centrally configured using `aws_securityhub_configuration_policy`. **Terraform will attempt to remove these resources from the state**. To prevent disabling them, the resources must be manually removed from the Terraform state.
+    Previous versions managed `aws_securityhub_standards_subscription` resources locally in core accounts. These are now centrally configured using `aws_securityhub_configuration_policy`. **Terraform will attempt to remove these resources from the state**. To prevent disabling them, the resources must be manually removed from the Terraform state.
 
-*Steps to Remove Resources:*
+    *Steps to Remove Resources:*
 
-a. Generate Removal Commands. Run the following shell snippet:
+    a. Generate Removal Commands. Run the following shell snippet:
 
-```shell
-terraform init
-for local_standard in $(terraform state list | grep "module.landing_zone.aws_securityhub_standards_subscription"); do
-  echo "terraform state rm '$local_standard'"
-done
-```
+    ```shell
+    terraform init
+    for local_standard in $(terraform state list | grep "module.landing_zone.aws_securityhub_standards_subscription"); do
+      echo "terraform state rm '$local_standard'"
+    done
+    ```
 
-b. Execute Commands: Evaluate and run the generated statements. They will look like:
+    b. Execute Commands: Evaluate and run the generated statements. They will look like:
 
-```shell
-terraform state rm 'module.landing_zone.aws_securityhub_standards_subscription.logging["arn:aws:securityhub:eu-central-1::standards/pci-dss/v/3.2.1"]'
-...
-```
+    ```shell
+    terraform state rm 'module.landing_zone.aws_securityhub_standards_subscription.logging["arn:aws:securityhub:eu-central-1::standards/pci-dss/v/3.2.1"]'
+    ...
+    ```
 
-*Why Manual Removal is Required*
+    *Why Manual Removal is Required*
 
-Terraform cannot handle `for_each` loops in `removed` statements ([HashiCorp Issue #34439](https://github.com/hashicorp/terraform/issues/34439)). Therefore the resources created with a `for_each` loop on `local.security_hub_standards_arns` must be manually removed from the Terraform state to prevent unintended deletions.
+    Terraform cannot handle `for_each` loops in `removed` statements ([HashiCorp Issue #34439](https://github.com/hashicorp/terraform/issues/34439)). Therefore the resources created with a `for_each` loop on `local.security_hub_standards_arns` must be manually removed from the Terraform state to prevent unintended deletions.
 
 4. Upgrade your mcaf-landing-zone module to v5.x.x. 
 
 ### Troubleshooting
 
-#### Issue: AWS Security Hub control `AWS Config should be enabled and use the service-linked role for resource recording` fails for multiple accounts after upgrade
+#### Issue: AWS Security Hub control "AWS Config should be enabled and use the service-linked role for resource recording" fails for multiple accounts after upgrade
 
 #### Resolution Steps
 
