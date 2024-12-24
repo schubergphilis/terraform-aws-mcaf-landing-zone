@@ -33,6 +33,7 @@ The following variables have been introduced:
 
 The following variables have been removed:
 * `aws_security_hub.auto_enable_new_accounts`. This variable is not configurable anymore using security hub central configuration.
+* `aws_security_hub.auto_enable_default_standards`. This variable is not configurable anymore using security hub central configuration.
 
 ### How to upgrade.
 

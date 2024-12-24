@@ -1,3 +1,8 @@
+output "aws_config_s3_bucket_arn" {
+  description = "ARN of the AWS Config S3 bucket"
+  value       = module.aws_config_s3.arn
+}
+
 output "kms_key_arn" {
   description = "ARN of KMS key for master account"
   value       = module.kms_key.arn

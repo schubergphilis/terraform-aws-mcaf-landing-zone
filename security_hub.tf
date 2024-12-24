@@ -43,7 +43,7 @@ resource "aws_securityhub_organization_configuration" "default" {
   provider = aws.audit
 
   auto_enable           = false
-  auto_enable_standards = var.aws_security_hub.auto_enable_default_standards ? "DEFAULT" : "NONE"
+  auto_enable_standards = "NONE"
 
   organization_configuration {
     configuration_type = "CENTRAL"
