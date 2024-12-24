@@ -23,14 +23,6 @@ resource "aws_securityhub_member" "management" {
   }
 }
 
-resource "aws_securityhub_standards_subscription" "management" {
-  for_each = toset(local.security_hub_standards_arns)
-
-  standards_arn = each.value
-
-  depends_on = [aws_securityhub_account.default]
-}
-
 // AWS Security Hub - Audit account configuration and enrollment
 resource "aws_securityhub_account" "default" {
   provider = aws.audit
@@ -38,31 +30,52 @@ resource "aws_securityhub_account" "default" {
   control_finding_generator = var.aws_security_hub.control_finding_generator
 }
 
+resource "aws_securityhub_finding_aggregator" "default" {
+  provider = aws.audit
+
+  linking_mode      = var.aws_security_hub.aggregator_linking_mode
+  specified_regions = var.aws_security_hub.aggregator_linking_mode == "SPECIFIED_REGIONS" ? var.regions.linked_regions : null
+
+  depends_on = [aws_securityhub_account.default]
+}
+
 resource "aws_securityhub_organization_configuration" "default" {
   provider = aws.audit
 
-  auto_enable           = var.aws_security_hub.auto_enable_new_accounts
-  auto_enable_standards = var.aws_security_hub.auto_enable_default_standards ? "DEFAULT" : "NONE"
+  auto_enable           = false
+  auto_enable_standards = "NONE"
 
-  depends_on = [aws_securityhub_organization_admin_account.default]
+  organization_configuration {
+    configuration_type = "CENTRAL"
+  }
+
+  depends_on = [aws_securityhub_organization_admin_account.default, aws_securityhub_finding_aggregator.default]
 }
 
-resource "aws_securityhub_product_subscription" "default" {
-  for_each = toset(var.aws_security_hub.product_arns)
+resource "aws_securityhub_configuration_policy" "default" {
   provider = aws.audit
 
-  product_arn = each.value
+  name        = "mcaf-lz"
+  description = "MCAF Landing Zone default configuration policy"
 
-  depends_on = [aws_securityhub_account.default]
+  configuration_policy {
+    service_enabled       = true
+    enabled_standard_arns = local.security_hub_standards_arns
+
+    security_controls_configuration {
+      disabled_control_identifiers = var.aws_security_hub.disabled_control_identifiers
+      enabled_control_identifiers  = var.aws_security_hub.enabled_control_identifiers
+    }
+  }
+
+  depends_on = [aws_securityhub_organization_configuration.default]
 }
 
-resource "aws_securityhub_standards_subscription" "default" {
-  for_each = toset(local.security_hub_standards_arns)
+resource "aws_securityhub_configuration_policy_association" "root" {
   provider = aws.audit
 
-  standards_arn = each.value
-
-  depends_on = [aws_securityhub_account.default]
+  target_id = data.aws_organizations_organization.default.roots[0].id
+  policy_id = aws_securityhub_configuration_policy.default.id
 }
 
 resource "aws_cloudwatch_event_rule" "security_hub_findings" {
@@ -124,12 +137,4 @@ resource "aws_securityhub_member" "logging" {
   }
 
   depends_on = [aws_securityhub_organization_configuration.default]
-}
-
-resource "aws_securityhub_standards_subscription" "logging" {
-  for_each = toset(local.security_hub_standards_arns)
-  provider = aws.logging
-
-  standards_arn = each.value
-  depends_on    = [aws_securityhub_account.default]
 }

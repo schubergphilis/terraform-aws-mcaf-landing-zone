@@ -1,12 +1,13 @@
 locals {
   aws_config_aggregators = flatten([
     for account in toset(try(var.aws_config.aggregator_account_ids, [])) : [
-      for region in toset(try(var.aws_config.aggregator_regions, [])) : {
+      for region in toset(try(local.all_organisation_regions, [])) : {
         account_id = account
         region     = region
       }
     ]
   ])
+
   aws_config_rules = setunion(
     try(var.aws_config.rule_identifiers, []),
     [
@@ -16,6 +17,7 @@ locals {
       "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
     ]
   )
+
   aws_config_s3_name = coalesce(
     var.aws_config.delivery_channel_s3_bucket_name,
     "aws-config-configuration-history-${var.control_tower_account_ids.logging}-${data.aws_region.current.name}"
@@ -32,7 +34,7 @@ resource "aws_config_aggregate_authorization" "master" {
 }
 
 resource "aws_config_aggregate_authorization" "master_to_audit" {
-  for_each = toset(coalescelist(var.aws_config.aggregator_regions, [data.aws_region.current.name]))
+  for_each = local.all_organisation_regions
 
   account_id = var.control_tower_account_ids.audit
   region     = each.value

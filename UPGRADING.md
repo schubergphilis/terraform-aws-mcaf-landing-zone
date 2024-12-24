@@ -2,6 +2,112 @@
 
 This document captures required refactoring on your part when upgrading to a module version that contains breaking changes.
 
+## Upgrading to v5.0.0
+
+### Key Changes
+
+#### Transition to Centralized Security Hub Configuration
+
+This version transitions Security Hub configuration from **Local** to **Central**. Learn more in the [AWS Security Hub Documentation](https://docs.aws.amazon.com/securityhub/latest/userguide/central-configuration-intro.html).
+
+**Default Behavior:**
+
+- Security Hub Findings Aggregation is enabled for regions defined in:
+  - `regions.home_region`
+  - `regions.linked_regions`. `us-east-1` is automatically included for global services.
+
+#### Dropping Support for Local Configuration
+
+**Local configurations are no longer supported.** Centralized configuration aligns with AWS best practices and reduces complexity.
+
+### Variables
+
+The following variables have been replaced:
+* `aws_service_control_policies.allowed_regions` → `regions.allowed_regions`
+* `aws_config.aggregator_regions` → the union of `regions.home_region` and `regions.linked_regions`
+
+The following variables have been introduced:
+* `aws_security_hub.aggregator_linking_mode`. Indicates whether to aggregate findings from all of the available Regions or from a specified list.
+* `aws_security_hub.disabled_control_identifiers`. List of Security Hub control IDs that are disabled in the organisation.
+* `aws_security_hub.enabled_control_identifiers`. List of Security Hub control IDs that are enabled in the organisation.
+
+The following variables have been removed:
+* `aws_security_hub.auto_enable_new_accounts`. This variable is not configurable anymore using security hub central configuration.
+* `aws_security_hub.auto_enable_default_standards`. This variable is not configurable anymore using security hub central configuration.
+
+### How to upgrade.
+
+1. Verify Control Tower Governed Regions.
+
+    Ensure your AWS Control Tower Landing Zone regions includes `us-east-1`.  
+
+    To check:
+    1. Log in to the **core-management account**.
+    2. Navigate to **AWS Control Tower** → **Landing Zone Settings**.
+    3. Confirm `us-east-1` is listed under **Landing Zone Regions**.
+
+    If `us-east-1` is missing, update your AWS Control Tower settings **before upgrading**.
+
+> [!NOTE]
+> For more details on the `regions` variable, refer to the [Specifying the correct regions section in the readme](README.md).
+
+2. Update the variables according to the variables section above. 
+
+3. Manually Removing Local Security Hub Standards
+
+    Previous versions managed `aws_securityhub_standards_subscription` resources locally in core accounts. These are now centrally configured using `aws_securityhub_configuration_policy`. **Terraform will attempt to remove these resources from the state**. To prevent disabling them, the resources must be manually removed from the Terraform state.
+
+    *Steps to Remove Resources:*
+
+    a. Generate Removal Commands. Run the following shell snippet:
+
+    ```shell
+    terraform init
+    for local_standard in $(terraform state list | grep "module.landing_zone.aws_securityhub_standards_subscription"); do
+      echo "terraform state rm '$local_standard'"
+    done
+    ```
+
+    b. Execute Commands: Evaluate and run the generated statements. They will look like:
+
+    ```shell
+    terraform state rm 'module.landing_zone.aws_securityhub_standards_subscription.logging["arn:aws:securityhub:eu-central-1::standards/pci-dss/v/3.2.1"]'
+    ...
+    ```
+
+    *Why Manual Removal is Required*
+
+    Terraform cannot handle `for_each` loops in `removed` statements ([HashiCorp Issue #34439](https://github.com/hashicorp/terraform/issues/34439)). Therefore the resources created with a `for_each` loop on `local.security_hub_standards_arns` must be manually removed from the Terraform state to prevent unintended deletions.
+
+4. Upgrade your mcaf-landing-zone module to v5.x.x. 
+
+### Troubleshooting
+
+#### Issue: AWS Security Hub control "AWS Config should be enabled and use the service-linked role for resource recording" fails for multiple accounts after upgrade
+
+#### Resolution Steps
+
+1. **Verify `regions.linked_regions`:**
+   - Ensure that `regions.linked_regions` matches the AWS Control Tower Landing Zone regions.
+   - For guidance, refer to the [Specifying the correct regions section in the README](README.md).
+
+2. **Check Organizational Units (OUs):**
+   - Log in to the **core-management account**.
+   - Navigate to **AWS Control Tower** → **Organization**.
+   - Confirm all OUs have the **Baseline state** set to `Succeeded`.
+
+3. **Check Account Baseline States:**
+   - In **AWS Control Tower** → **Organization**, verify that all accounts show a **Baseline state** of `Succeeded`.
+   - If any accounts display `Update available`:
+     - Select the account.
+     - Go to **Actions** → **Update**.
+
+4. **Allow Time for Changes to Propagate:**
+   - Wait up to **24 hours** for updates to propagate and resolve the Security Hub findings.
+
+If all steps are completed and the issue persists, review AWS Control Tower settings and logs for additional troubleshooting.
+
+
 ## Upgrading to v4.0.0
 
 > [!WARNING]
