@@ -107,6 +107,14 @@ The following variables have been removed:
 
 If all steps are completed and the issue persists, review AWS Control Tower settings and logs for additional troubleshooting.
 
+### Known Issues
+
+**Issue:** The AWS Security Hub control "AWS Config should be enabled and use the service-linked role for resource recording" fails for the core-management account after the upgrade.
+
+**Cause:** AWS Control Tower does not enable AWS Config in the core-management account. While this module enables AWS Config in the home region of the core-management account, it does not cover the linked regions.
+
+**Workaround:** Suppress these findings or enable AWS Config yourself in the linked regions for the core-management account.
+
 
 ## Upgrading to v4.0.0
 
