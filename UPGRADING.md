@@ -81,6 +81,8 @@ The following variables have been removed:
 
 4. Upgrade your mcaf-landing-zone module to v5.x.x. 
 
+5. Upgrade your [mcaf-account-baseline](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline) deployments to v2.0.0 or higher. 
+
 ### Troubleshooting
 
 #### Issue: AWS Security Hub control "AWS Config should be enabled and use the service-linked role for resource recording" fails for multiple accounts after upgrade
