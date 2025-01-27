@@ -5,6 +5,20 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v6.0.0 - 2025-01-27
+
+### What's Changed
+
+#### 📖 Documentation
+
+* Improve v5.x.x upgrade guide (#218) @marwinbaumannsbp
+
+#### 🧺 Miscellaneous
+
+* Replace account ID with account name in `aws_ssoadmin_account_assignment` (BREAKING CHANGE) (#219) @shoekstra
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v5.0.0...v6.0.0
+
 ## v5.0.0 - 2024-12-24
 
 ### What's Changed
