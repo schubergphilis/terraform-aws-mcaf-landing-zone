@@ -1,82 +1,89 @@
-name-template: 'v$RESOLVED_VERSION'
-tag-template: 'v$RESOLVED_VERSION'
-version-template: '$MAJOR.$MINOR.$PATCH'
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+version-template: "$MAJOR.$MINOR.$PATCH"
 change-title-escapes: '\<*_&'
 
 categories:
-  - title: '🚀 Features'
+  - title: "🚀 Features"
     labels:
-      - 'breaking'
-      - 'enhancement'
-      - 'feature'
-  - title: '🐛 Bug Fixes'
+      - "breaking"
+      - "enhancement"
+      - "feature"
+  - title: "🐛 Bug Fixes"
     labels:
-      - 'bug'
-      - 'fix'
-      - 'security'
-  - title: '📖 Documentation'
+      - "bug"
+      - "fix"
+      - "security"
+  - title: "📖 Documentation"
     labels:
-      - 'documentation'
-  - title: '🧺 Miscellaneous'
+      - "documentation"
+  - title: "🧺 Miscellaneous"
     labels:
-      - 'misc'
+      - "chore"
 
 version-resolver:
   major:
     labels:
-      - 'breaking'
+      - "breaking"
   minor:
     labels:
-      - 'enhancement'
-      - 'feature'
+      - "enhancement"
+      - "feature"
   patch:
     labels:
-      - 'bug'
-      - 'documentation'
-      - 'fix'
-      - 'security'
-  default: 'minor'
+      - "bug"
+      - "chore"
+      - "documentation"
+      - "fix"
+      - "security"
+  default: "minor"
 
 autolabeler:
-  - label: 'documentation'
+  - label: "documentation"
     body:
-      - '/documentation/'
+      - "/documentation/"
     branch:
       - '/docs\/.+/'
     title:
-      - '/documentation/i'
-      - '/docs/i'
-  - label: 'bug'
+      - "/documentation/i"
+      - "/docs/i"
+  - label: "bug"
     body:
-      - '/bug/'
+      - "/bug/"
     branch:
       - '/bug\/.+/'
       - '/fix\/.+/'
     title:
-      - '/bug/i'
-      - '/fix/i'
-  - label: 'feature'
+      - "/bug/i"
+      - "/fix/i"
+  - label: "feature"
     branch:
       - '/feature\/.+/'
       - '/enhancement\/.+/'
     title:
-      - '/feature/i'
-      - '/feat/i'
-      - '/enhancement/i'
-  - label: 'breaking'
+      - "/feature/i"
+      - "/feat/i"
+      - "/enhancement/i"
+  - label: "breaking"
     body:
-      - '/breaking/'
+      - "/breaking change/i"
     branch:
       - '/breaking\/.+/'
     title:
-      - '/breaking/i'
-      - '/major/i'
+      - "/!:/"
+      - "/breaking/i"
+      - "/major/i"
+  - label: "chore"
+    branch:
+      - '/chore\/.+/'
+    title:
+      - "/chore/i"
 
 exclude-contributors:
-  - 'github-actions[bot]'
+  - "github-actions[bot]"
 
 exclude-labels:
-  - 'no-changelog'
+  - "no-changelog"
 
 template: |
   # What's Changed

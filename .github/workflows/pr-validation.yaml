@@ -31,13 +31,13 @@ jobs:
           types: |
             breaking
             bug
+            chore
             docs
             documentation
             enhancement
             feat
             feature
             fix
-            misc
             security
           requireScope: false
           ignoreLabels: |
@@ -82,7 +82,7 @@ jobs:
       - uses: danielchabr/pr-labels-checker@v3.3
         id: lint_pr_labels
         with:
-          hasSome: breaking,bug,documentation,enhancement,feature,fix,misc,security
+          hasSome: breaking,bug,chore,documentation,enhancement,feature,fix,security
           githubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: marocchino/sticky-pull-request-comment@v2
@@ -94,7 +94,16 @@ jobs:
           message: |
             Hey there and thank you for opening this pull request! 👋🏼
 
-            The PR needs to have at least one of the following labels: breaking, bug, documentation, enhancement, feature, fix, misc, security.
+            The PR needs to have at least one of the following labels:
+
+            - breaking
+            - bug
+            - chore
+            - documentation
+            - enhancement
+            - feature
+            - fix
+            - security
 
       # Delete a previous comment when the issue has been resolved
       - if: ${{ steps.lint_pr_labels.outputs.passed != false }}
