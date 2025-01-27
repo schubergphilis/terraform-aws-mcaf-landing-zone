@@ -223,16 +223,14 @@ Example:
       ]
 
       assignments = [
-        {
-          for account in [
-            { id = "123456789012", name = "ProductionAccount" },
-            { id = "012456789012", name = "DevelopmentAccount" }
-          ] : account => {
-            account_id   = account.id
-            account_name = account.name
-            sso_groups   = [okta_group.aws["AWSPlatformAdmins"].name]
-          }
-        },
+        for account in [
+          { id = "123456789012", name = "ProductionAccount" },
+          { id = "012456789012", name = "DevelopmentAccount" }
+        ] : {
+          account_id   = account.id
+          account_name = account.name
+          sso_groups   = [okta_group.aws["AWSPlatformAdmins"].name]
+        }
       ]
     }
     PlatformUser = {
@@ -244,15 +242,13 @@ Example:
       ]
 
       assignments = [
-        {
-          for account in [
-            { id = "123456789012", name = "ProductionAccount" },
-            { id = "012456789012", name = "DevelopmentAccount" },
-          ] : account => {
-            account_id   = account.id
-            account_name = account.name
-            sso_groups   = [okta_group.aws["AWSPlatformAdmins"].name, okta_group.aws["AWSPlatformUsers"].name]
-          }
+        for account in [
+          { id = "123456789012", name = "ProductionAccount" },
+          { id = "012456789012", name = "DevelopmentAccount" },
+        ] : {
+          account_id   = account.id
+          account_name = account.name
+          sso_groups   = [okta_group.aws["AWSPlatformAdmins"].name, okta_group.aws["AWSPlatformUsers"].name]
         }
       ]
 
