@@ -18,7 +18,7 @@ repos:
           - --allow-missing-credentials
       - id: detect-private-key
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.96.1
+    rev: v1.97.0
     hooks:
       - id: terraform_fmt
       - id: terraform_tflint
