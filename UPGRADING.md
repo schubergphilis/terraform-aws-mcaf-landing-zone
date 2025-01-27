@@ -2,6 +2,53 @@
 
 This document captures required refactoring on your part when upgrading to a module version that contains breaking changes.
 
+## Upgrading to v6.0.0
+
+### Key Changes
+
+#### Refactored `permission-set` sub-module
+
+The previous version of this sub-module used the AWS account ID as a key in the `aws_ssoadmin_account_assignment.default` resource. This worked as expected when creating accounts in separate workspace, but when calling this sub-module directly in the same workspace that creates the account, the account ID is still to be computed which isn't allowed for key names.
+
+To fix this, the resource was refactored to use predictable values, so we swapped out the account ID for the account name: `aws_ssoadmin_account_assignment.default["${each.sso_group}:${each.aws_account_id}"]` becomes `aws_ssoadmin_account_assignment.default["${each.sso_group}:${each.aws_account_name}"]`
+
+Unfortunately this means that the state will be out of sync and the resources will be recreated as `moved` blocks do not yet support `for_each`.
+
+#### Variables
+
+- `aws_sso_permission_sets` in the root has had it's `assignments` field changed from a map to a list of objects. See the README for more detailed information. The same change has been implemented in the `assignments` variable of the `permission-set` sub-module.
+
+### How to upgrade
+
+Change the `aws_sso_permission_sets` variable format to use a list objects, e.g.
+
+```hcl
+       assignments = [
+         {
+           for account in [ 123456789012, 012456789012 ] : account => [
+             okta_group.aws["AWSPlatformAdmins"].name
+           ]
+         },
+       ]
+```
+
+Becomes:
+
+```hcl
+       assignments = [
+         {
+           for account in [
+             { id = "123456789012", name = "ProductionAccount" },
+             { id = "012456789012", name = "DevelopmentAccount" }
+           ] : account => {
+             account_id   = account.id
+             account_name = account.name
+             sso_groups   = [okta_group.aws["AWSPlatformAdmins"].name]
+           }
+         },
+       ]
+```
+
 ## Upgrading to v5.0.0
 
 ### Key Changes
@@ -23,65 +70,69 @@ This version transitions Security Hub configuration from **Local** to **Central*
 ### Variables
 
 The following variables have been replaced:
-* `aws_service_control_policies.allowed_regions` → `regions.allowed_regions`
-* `aws_config.aggregator_regions` → the union of `regions.home_region` and `regions.linked_regions`
+
+- `aws_service_control_policies.allowed_regions` → `regions.allowed_regions`
+- `aws_config.aggregator_regions` → the union of `regions.home_region` and `regions.linked_regions`
 
 The following variables have been introduced:
-* `aws_security_hub.aggregator_linking_mode`. Indicates whether to aggregate findings from all of the available Regions or from a specified list.
-* `aws_security_hub.disabled_control_identifiers`. List of Security Hub control IDs that are disabled in the organisation.
-* `aws_security_hub.enabled_control_identifiers`. List of Security Hub control IDs that are enabled in the organisation.
+
+- `aws_security_hub.aggregator_linking_mode`. Indicates whether to aggregate findings from all of the available Regions or from a specified list.
+- `aws_security_hub.disabled_control_identifiers`. List of Security Hub control IDs that are disabled in the organisation.
+- `aws_security_hub.enabled_control_identifiers`. List of Security Hub control IDs that are enabled in the organisation.
 
 The following variables have been removed:
-* `aws_security_hub.auto_enable_new_accounts`. This variable is not configurable anymore using security hub central configuration.
-* `aws_security_hub.auto_enable_default_standards`. This variable is not configurable anymore using security hub central configuration.
 
-### How to upgrade.
+- `aws_security_hub.auto_enable_new_accounts`. This variable is not configurable anymore using security hub central configuration.
+- `aws_security_hub.auto_enable_default_standards`. This variable is not configurable anymore using security hub central configuration.
+
+### How to upgrade
 
 1. Verify Control Tower Governed Regions.
 
-    Ensure your AWS Control Tower Landing Zone regions includes `us-east-1`.  
+   Ensure your AWS Control Tower Landing Zone regions includes `us-east-1`.
 
-    To check:
-    1. Log in to the **core-management account**.
-    2. Navigate to **AWS Control Tower** → **Landing Zone Settings**.
-    3. Confirm `us-east-1` is listed under **Landing Zone Regions**.
+   To check:
 
-    If `us-east-1` is missing, update your AWS Control Tower settings **before upgrading**.
+   1. Log in to the **core-management account**.
+   2. Navigate to **AWS Control Tower** → **Landing Zone Settings**.
+   3. Confirm `us-east-1` is listed under **Landing Zone Regions**.
+
+   If `us-east-1` is missing, update your AWS Control Tower settings **before upgrading**.
 
 > [!NOTE]
 > For more details on the `regions` variable, refer to the [Specifying the correct regions section in the readme](README.md).
 
-2. Update the variables according to the variables section above. 
+2. Update the variables according to the variables section above.
 
 3. Manually Removing Local Security Hub Standards
 
-    Previous versions managed `aws_securityhub_standards_subscription` resources locally in core accounts. These are now centrally configured using `aws_securityhub_configuration_policy`. **Terraform will attempt to remove these resources from the state**. To prevent disabling them, the resources must be manually removed from the Terraform state.
+   Previous versions managed `aws_securityhub_standards_subscription` resources locally in core accounts. These are now centrally configured using `aws_securityhub_configuration_policy`. **Terraform will attempt to remove these resources from the state**. To prevent disabling them, the resources must be manually removed from the Terraform state.
 
-    *Steps to Remove Resources:*
+   _Steps to Remove Resources:_
 
-    a. Generate Removal Commands. Run the following shell snippet:
+   a. Generate Removal Commands. Run the following shell snippet:
 
-    ```shell
-    terraform init
-    for local_standard in $(terraform state list | grep "module.landing_zone.aws_securityhub_standards_subscription"); do
-      echo "terraform state rm '$local_standard'"
-    done
-    ```
+   ```shell
+   terraform init
+   for local_standard in $(terraform state list | grep "module.landing_zone.aws_securityhub_standards_subscription"); do
+     echo "terraform state rm '$local_standard'"
+   done
+   ```
 
-    b. Execute Commands: Evaluate and run the generated statements. They will look like:
+   b. Execute Commands: Evaluate and run the generated statements. They will look like:
 
-    ```shell
-    terraform state rm 'module.landing_zone.aws_securityhub_standards_subscription.logging["arn:aws:securityhub:eu-central-1::standards/pci-dss/v/3.2.1"]'
-    ...
-    ```
+   ```shell
+   terraform state rm 'module.landing_zone.aws_securityhub_standards_subscription.logging["arn:aws:securityhub:eu-central-1::standards/pci-dss/v/3.2.1"]'
+   ...
+   ```
 
-    *Why Manual Removal is Required*
+   _Why Manual Removal is Required_
 
-    Terraform cannot handle `for_each` loops in `removed` statements ([HashiCorp Issue #34439](https://github.com/hashicorp/terraform/issues/34439)). Therefore the resources created with a `for_each` loop on `local.security_hub_standards_arns` must be manually removed from the Terraform state to prevent unintended deletions.
+   Terraform cannot handle `for_each` loops in `removed` statements ([HashiCorp Issue #34439](https://github.com/hashicorp/terraform/issues/34439)). Therefore the resources created with a `for_each` loop on `local.security_hub_standards_arns` must be manually removed from the Terraform state to prevent unintended deletions.
 
-4. Upgrade your mcaf-landing-zone module to v5.x.x. 
+4. Upgrade your mcaf-landing-zone module to v5.x.x.
 
-5. Upgrade your [mcaf-account-baseline](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline) deployments to v2.0.0 or higher. 
+5. Upgrade your [mcaf-account-baseline](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline) deployments to v2.0.0 or higher.
 
 ### Troubleshooting
 
@@ -90,15 +141,18 @@ The following variables have been removed:
 #### Resolution Steps
 
 1. **Verify `regions.linked_regions`:**
+
    - Ensure that `regions.linked_regions` matches the AWS Control Tower Landing Zone regions.
    - For guidance, refer to the [Specifying the correct regions section in the README](README.md).
 
 2. **Check Organizational Units (OUs):**
+
    - Log in to the **core-management account**.
    - Navigate to **AWS Control Tower** → **Organization**.
    - Confirm all OUs have the **Baseline state** set to `Succeeded`.
 
 3. **Check Account Baseline States:**
+
    - In **AWS Control Tower** → **Organization**, verify that all accounts show a **Baseline state** of `Succeeded`.
    - If any accounts display `Update available`:
      - Select the account.
@@ -117,38 +171,40 @@ If all steps are completed and the issue persists, review AWS Control Tower sett
 
 **Workaround:** Suppress these findings or enable AWS Config yourself in the linked regions for the core-management account.
 
-
 ## Upgrading to v4.0.0
 
-> [!WARNING]
-> **Read the diagram in [PR 210](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/210) and the guide below! If you currently have EKS Runtime Monitoring enabled, you need to perform MANUAL steps after you have migrated to this version.** 
+> [!WARNING] > **Read the diagram in [PR 210](https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/pull/210) and the guide below! If you currently have EKS Runtime Monitoring enabled, you need to perform MANUAL steps after you have migrated to this version.**
 
 ### Behaviour
 
 Using the default `aws_guardduty` values:
-* `EKS_RUNTIME_MONITORING` gets removed from the state (but not disabled)
-* `RUNTIME_MONITORING` is enabled including `ECS_FARGATE_AGENT_MANAGEMENT`, `EC2_AGENT_MANAGEMENT`, and `EKS_ADDON_MANAGEMENT`.
-* Minimum required AWS provider has been set to `v5.54.0`, and minimum required Terraform version has been set to `v1.6`.
+
+- `EKS_RUNTIME_MONITORING` gets removed from the state (but not disabled)
+- `RUNTIME_MONITORING` is enabled including `ECS_FARGATE_AGENT_MANAGEMENT`, `EC2_AGENT_MANAGEMENT`, and `EKS_ADDON_MANAGEMENT`.
+- Minimum required AWS provider has been set to `v5.54.0`, and minimum required Terraform version has been set to `v1.6`.
 
 ### Variables
 
 The following variables have been replaced:
-* `aws_guardduty.eks_runtime_monitoring_status` -> `aws_guardduty.runtime_monitoring_status.enabled`
-* `aws_guardduty.eks_addon_management_status` -> `aws_guardduty.runtime_monitoring_status.eks_addon_management_status`
+
+- `aws_guardduty.eks_runtime_monitoring_status` -> `aws_guardduty.runtime_monitoring_status.enabled`
+- `aws_guardduty.eks_addon_management_status` -> `aws_guardduty.runtime_monitoring_status.eks_addon_management_status`
 
 The following variables have been introduced:
-* `aws_guardduty.runtime_monitoring_status.ecs_fargate_agent_management_status`
-* `aws_guardduty.runtime_monitoring_status.ec2_agent_management_status`
+
+- `aws_guardduty.runtime_monitoring_status.ecs_fargate_agent_management_status`
+- `aws_guardduty.runtime_monitoring_status.ec2_agent_management_status`
 
 ### EKS Runtime Monitoring to Runtime Monitoring migration
 
 #### The issue
-After you upgraded to this version. **RUNTIME_MONITORING is enabled. But  EKS_RUNTIME_MONITORING is not disabled** as is written in the [guardduty_detector_feature documentation](https://registry.terraform.io/providers/hashicorp/aws/5.68.0/docs/resources/guardduty_detector_feature): _Deleting this resource does not disable the detector feature, the resource in simply removed from state instead._
+
+After you upgraded to this version. **RUNTIME_MONITORING is enabled. But EKS_RUNTIME_MONITORING is not disabled** as is written in the [guardduty_detector_feature documentation](https://registry.terraform.io/providers/hashicorp/aws/5.68.0/docs/resources/guardduty_detector_feature): _Deleting this resource does not disable the detector feature, the resource in simply removed from state instead._
 
 To prevent duplicated costs please **disable** EKS_RUNTIME_MONITORING manually after upgrading.
 
 > [!IMPORTANT]
-> Run all the commands with valid credentials in the AWS account where guardduty is delegated administrator. By default this is the **control tower audit** account. 
+> Run all the commands with valid credentials in the AWS account where guardduty is delegated administrator. By default this is the **control tower audit** account.
 > It's not possible to execute these steps from the AWS Console as the EKS Runtime Monitoring protection plan has already been removed from the GUI. The only way to control this feature is via the CLI.
 
 #### Step 1: get the GuardDuty detector id
@@ -168,9 +224,9 @@ Should display:
 ```
 
 > [!IMPORTANT]
-> Ensure you run this command in the right region! If GuardDuty is enabled in multiple regions then execute all steps for all enabled regions. 
+> Ensure you run this command in the right region! If GuardDuty is enabled in multiple regions then execute all steps for all enabled regions.
 
-#### Step 2: update the GuardDuty detector 
+#### Step 2: update the GuardDuty detector
 
 _Replace 12abc34d567e8fa901bc2d34e56789f0 with your own regional detector-id. Execute these commands in the audit account:_
 
@@ -186,7 +242,6 @@ Replace the `<<EXISTING_VALUE>>` with your current configuration for auto-enabli
 aws guardduty update-organization-configuration --detector-id 12abc34d567e8fa901bc2d34e56789f0 --auto-enable-organization-members <<EXISTING_VALUE>>  --features '[{"Name" : "EKS_RUNTIME_MONITORING", "AutoEnable": "NONE"}]'
 ```
 
-
 #### Step 4: update the GuardDuty member accounts
 
 Disable EKS Runtime Monitoring for **all** member accounts in your organization, for example:
@@ -199,7 +254,7 @@ aws guardduty update-member-detectors --detector-id 12abc34d567e8fa901bc2d34e567
 
 > An error occurred (BadRequestException) when calling the UpdateMemberDetectors operation: The request is rejected because a feature cannot be turned off for a member while organization has the feature flag set to 'All Accounts'.
 
-Change these options on the AWS console by following the steps below: 
+Change these options on the AWS console by following the steps below:
 
 1. Go to the GuardDuty Console.
 2. On left navigation bar, under protection plans, select `Runtime Monitoring`.
@@ -283,15 +338,17 @@ This version sets the minimum required aws provider version from v4 to v5.
 ### Variables
 
 The following variables have been replaced:
-* `aws_guardduty.datasources.malware_protection` -> `aws_guardduty.ebs_malware_protection_status`
-* `aws_guardduty.datasources.kubernetes` -> `aws_guardduty.eks_audit_logs_status`
-* `aws_guardduty.datasources.s3_logs` -> `aws_guardduty.s3_data_events_status`
+
+- `aws_guardduty.datasources.malware_protection` -> `aws_guardduty.ebs_malware_protection_status`
+- `aws_guardduty.datasources.kubernetes` -> `aws_guardduty.eks_audit_logs_status`
+- `aws_guardduty.datasources.s3_logs` -> `aws_guardduty.s3_data_events_status`
 
 The following variables have been introduced:
-* `aws_guardduty.eks_addon_management_status`
-* `aws_guardduty.eks_runtime_monitoring_status`
-* `aws_guardduty.lambda_network_logs_status`
-* `aws_guardduty.rds_login_events_status`
+
+- `aws_guardduty.eks_addon_management_status`
+- `aws_guardduty.eks_runtime_monitoring_status`
+- `aws_guardduty.lambda_network_logs_status`
+- `aws_guardduty.rds_login_events_status`
 
 ## Upgrading to v1.0.0
 
