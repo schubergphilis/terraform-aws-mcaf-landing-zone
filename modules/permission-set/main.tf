@@ -1,12 +1,11 @@
 locals {
   aws_sso_account_assignments = flatten([
     for assignment in var.assignments : [
-      for aws_account_id, sso_groups in assignment : [
-        for sso_group in sso_groups : {
-          aws_account_id = aws_account_id
-          sso_group      = sso_group
-        }
-      ]
+      for sso_group in assignment.sso_groups : {
+        aws_account_id   = assignment.account_id
+        aws_account_name = assignment.account_name
+        sso_group        = sso_group
+      }
     ]
   ])
 }
@@ -14,8 +13,8 @@ locals {
 data "aws_ssoadmin_instances" "default" {}
 
 data "aws_identitystore_group" "default" {
-  for_each = toset(distinct([
-    for assignment in local.aws_sso_account_assignments : assignment.sso_group
+  for_each = toset(flatten([
+    for assignment in var.assignments : assignment.sso_groups
   ]))
 
   identity_store_id = tolist(data.aws_ssoadmin_instances.default.identity_store_ids)[0]
@@ -58,7 +57,7 @@ resource "aws_ssoadmin_permission_set" "default" {
 resource "aws_ssoadmin_account_assignment" "default" {
   for_each = {
     for assignment in local.aws_sso_account_assignments :
-    "${assignment.sso_group}:${assignment.aws_account_id}" => assignment
+    "${assignment.sso_group}:${assignment.aws_account_name}" => assignment
   }
 
   instance_arn       = var.create ? aws_ssoadmin_permission_set.default[0].instance_arn : data.aws_ssoadmin_permission_set.default[0].instance_arn

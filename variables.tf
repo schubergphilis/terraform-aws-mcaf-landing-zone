@@ -214,7 +214,11 @@ variable "aws_service_control_policies" {
 
 variable "aws_sso_permission_sets" {
   type = map(object({
-    assignments         = list(map(list(string)))
+    assignments = list(object({
+      account_id   = string
+      account_name = string
+      sso_groups   = list(string)
+    }))
     inline_policy       = optional(string, null)
     managed_policy_arns = optional(list(string), [])
     session_duration    = optional(string, "PT4H")

@@ -12,11 +12,11 @@ The SBP AWS Landing Zone consists of 3 repositories:
 - [MCAF Account Vending Machine (AVM) module](https://github.com/schubergphilis/terraform-aws-mcaf-avm): providing an AWS AVM. This module sets up an AWS account with one or more Terraform Cloud/Enterprise (TFE) workspace(s) backed by a VCS project
 - [MCAF Account Baseline module](https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline): optional module providing baseline configuration for AWS accounts
 
-
 ## Pre-Requisites
 
 > [!IMPORTANT]
 > Before deploying this module, ensure the following pre-requisites are met:
+>
 > - AWS Control Tower is deployed in the `core-management` account.
 > - AWS Control Tower governed regions include at least `us-east-1` (and your designated home region).
 
@@ -30,24 +30,27 @@ Refer to [examples/basic](examples/basic/main.tf) for an example of minimal setu
 
 The mandatory `regions.home_region` variable specifies the AWS Control Tower home region. This must match the region defined in your AWS provider that deploys this module.
 
-To find your home region:  
-1. Log in to the **core-management account**.  
-2. Navigate to **AWS Control Tower** → **Landing Zone Settings**.  
+To find your home region:
+
+1. Log in to the **core-management account**.
+2. Navigate to **AWS Control Tower** → **Landing Zone Settings**.
 3. The home region is listed under **Home Region**.
 
 **Linked Regions**
 
 The optional `regions.linked_regions` variable defines the AWS Control Tower governed regions. This module ensures proper configuration of AWS Security Hub and AWS Config for all specified linked regions to collect data from them.
 
-To find your linked regions:  
-1. Log in to the **core-management account**.  
-2. Navigate to **AWS Control Tower** → **Landing Zone Settings**.  
+To find your linked regions:
+
+1. Log in to the **core-management account**.
+2. Navigate to **AWS Control Tower** → **Landing Zone Settings**.
 3. Linked regions are listed under **Landing Zone Regions**.
 
-*Note:* By default, `us-east-1` is included as a linked region to ensure data collection from global services. To restrict deployment of non-global resources in this region, use the `allowed_regions` functionality described in the section below.
+> [!NOTE]
+> By default, `us-east-1` is included as a linked region to ensure data collection from global services. To restrict deployment of non-global resources in this region, use the `allowed_regions` functionality described in the section below.
 
 > [!IMPORTANT]
-> All specified linked regions need to be an AWS Control Tower governed region. This ensures that an AWS Config recorder is enabled by AWS Control Tower in all governed regions. AWS Security Hub will only function correctly if an AWS Config recorder exists in all linked regions. 
+> All specified linked regions need to be an AWS Control Tower governed region. This ensures that an AWS Config recorder is enabled by AWS Control Tower in all governed regions. AWS Security Hub will only function correctly if an AWS Config recorder exists in all linked regions.
 
 **Allowed Regions**
 
@@ -57,8 +60,8 @@ The optional `regions.allowed_regions` variable defines the allowed regions with
 
 **Scenario 1: Home region only (no deployment in other regions)**
 
-- **Home region:** `eu-central-1`  
-- **Requirement:** Prevent deployment in all other regions.
+- **Home region:** `eu-central-1`
+- **Requirement:** Prevent deployment in all other regions
 
 You need to configure the `regions` variable as follows:
 
@@ -69,12 +72,13 @@ regions = {
 }
 ```
 
-*Note:* Ensure that `us-east-1` is included as a governed region in AWS Control Tower since the `linked_region` variable defaults to this value.
+> [!NOTE]
+> Ensure that `us-east-1` is included as a governed region in AWS Control Tower since the `linked_region` variable defaults to this value.
 
 **Scenario 2: Home region with additional governed regions**
 
-- **Home region:** `eu-central-1` 
-- **Requirement:** Also allow deploying resources in `eu-west-1`.
+- **Home region:** `eu-central-1`
+- **Requirement:** Also allow deploying resources in `eu-west-1`
 
 You need to configure the `regions` variable as follows:
 
@@ -115,7 +119,8 @@ By default, you have to create the email addresses for the accounts created usin
 
 By default, all CloudTrail logs will be stored in a S3 bucket in the `logging` account of your AWS Organization. However, this module also supports creating an additional CloudTrail configuration to publish logs to any S3 bucket chosen by you. This trail will be set at the Organization level, meaning that logs from all accounts will be published to the provided bucket.
 
-NOTE: Before enabling this feature, make sure that the [bucket policy authorizing CloudTrail to deliver logs](https://aws.amazon.com/premiumsupport/knowledge-center/change-cloudtrail-trail/) is in place and that you have enabled [trusted access between AWS Organizations and CloudTrail](https://docs.aws.amazon.com/organizations/latest/userguide/services-that-can-integrate-cloudtrail.html#integrate-enable-ta-cloudtrail). If these two steps are not in place, Terraform will fail to create the trail.
+> [!NOTE]
+> Before enabling this feature, make sure that the [bucket policy authorizing CloudTrail to deliver logs](https://aws.amazon.com/premiumsupport/knowledge-center/change-cloudtrail-trail/) is in place and that you have enabled [trusted access between AWS Organizations and CloudTrail](https://docs.aws.amazon.com/organizations/latest/userguide/services-that-can-integrate-cloudtrail.html#integrate-enable-ta-cloudtrail). If these two steps are not in place, Terraform will fail to create the trail.
 
 Example:
 
@@ -132,7 +137,8 @@ This module provisions by default a set of basic AWS Config Rules. In order to a
 
 If you would like to authorize other accounts to aggregate AWS Config data, the account IDs can also be passed via the variable `aws_config.aggregator_account_ids`.
 
-NOTE: This module already authorizes the `audit` account to aggregate Config data from all other accounts in the organization, so there is no need to specify the `audit` account ID in the `aggregator_account_ids` list.
+> [!NOTE]
+> This module already authorizes the `audit` account to aggregate Config data from all other accounts in the organization, so there is no need to specify the `audit` account ID in the `aggregator_account_ids` list.
 
 Example:
 
@@ -199,7 +205,7 @@ This module supports managing AWS SSO resources to control user access to all ac
 
 This feature can be controlled via the `aws_sso_permission_sets` variable by passing a map (key-value pair) where every key corresponds to an AWS SSO Permission Set name and the value follows the structure below:
 
-- `assignments`: list of maps (key-value pair) of AWS Account IDs as keys and a list of AWS SSO Group names that should have access to the account using the permission set defined
+- `assignments`: list of objects, where each object represents an AWS account with its `account_id`, `account_name`, and a list of AWS SSO Group names (`sso_groups`) that should have access to the account using the defined permission set
 - `inline_policy`: valid IAM policy in JSON format (maximum length of 10240 characters)
 - `managed_policy_arns`: list of strings that contain the ARN's of the managed policies that should be attached to the permission set
 - `session_duration`: length of time in the ISO-8601 standard
@@ -217,15 +223,13 @@ Example:
       ]
 
       assignments = [
-        {
-          for account in [ 123456789012, 012456789012 ] : account => [
-            okta_group.aws["AWSPlatformAdmins"].name
-          ]
-        },
-        {
-          for account in [ 925556789012 ] : account => [
-            okta_group.aws["AWSPlatformUsers"].name
-          ]
+        for account in [
+          { id = "123456789012", name = "ProductionAccount" },
+          { id = "012456789012", name = "DevelopmentAccount" }
+        ] : {
+          account_id   = account.id
+          account_name = account.name
+          sso_groups   = [okta_group.aws["AWSPlatformAdmins"].name]
         }
       ]
     }
@@ -238,11 +242,13 @@ Example:
       ]
 
       assignments = [
-        {
-          for account in [ 123456789012, 012456789012 ] : account => [
-            okta_group.aws["AWSPlatformAdmins"].name,
-            okta_group.aws["AWSPlatformUsers"].name
-          ]
+        for account in [
+          { id = "123456789012", name = "ProductionAccount" },
+          { id = "012456789012", name = "DevelopmentAccount" },
+        ] : {
+          account_id   = account.id
+          account_name = account.name
+          sso_groups   = [okta_group.aws["AWSPlatformAdmins"].name, okta_group.aws["AWSPlatformUsers"].name]
         }
       ]
 
@@ -555,30 +561,30 @@ module "landing_zone" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_control_tower_account_ids"></a> [control\_tower\_account\_ids](#input\_control\_tower\_account\_ids) | Control Tower core account IDs | <pre>object({<br>    audit   = string<br>    logging = string<br>  })</pre> | n/a | yes |
-| <a name="input_regions"></a> [regions](#input\_regions) | Region configuration. See the README for more information on the configuration options. | <pre>object({<br>    allowed_regions = list(string)<br>    home_region     = string<br>    linked_regions  = optional(list(string), ["us-east-1"])<br>  })</pre> | n/a | yes |
-| <a name="input_additional_auditing_trail"></a> [additional\_auditing\_trail](#input\_additional\_auditing\_trail) | CloudTrail configuration for additional auditing trail | <pre>object({<br>    name       = string<br>    bucket     = string<br>    kms_key_id = string<br><br>    event_selector = optional(object({<br>      data_resource = optional(object({<br>        type   = string<br>        values = list(string)<br>      }))<br>      exclude_management_event_sources = optional(set(string), null)<br>      include_management_events        = optional(bool, true)<br>      read_write_type                  = optional(string, "All")<br>    }))<br>  })</pre> | `null` | no |
-| <a name="input_aws_account_password_policy"></a> [aws\_account\_password\_policy](#input\_aws\_account\_password\_policy) | AWS account password policy parameters for the audit, logging and master account | <pre>object({<br>    allow_users_to_change        = bool<br>    max_age                      = number<br>    minimum_length               = number<br>    require_lowercase_characters = bool<br>    require_numbers              = bool<br>    require_symbols              = bool<br>    require_uppercase_characters = bool<br>    reuse_prevention_history     = number<br>  })</pre> | <pre>{<br>  "allow_users_to_change": true,<br>  "max_age": 90,<br>  "minimum_length": 14,<br>  "require_lowercase_characters": true,<br>  "require_numbers": true,<br>  "require_symbols": true,<br>  "require_uppercase_characters": true,<br>  "reuse_prevention_history": 24<br>}</pre> | no |
-| <a name="input_aws_auditmanager"></a> [aws\_auditmanager](#input\_aws\_auditmanager) | AWS Audit Manager config settings | <pre>object({<br>    enabled               = bool<br>    reports_bucket_prefix = string<br>  })</pre> | <pre>{<br>  "enabled": true,<br>  "reports_bucket_prefix": "audit-manager-reports"<br>}</pre> | no |
-| <a name="input_aws_config"></a> [aws\_config](#input\_aws\_config) | AWS Config settings | <pre>object({<br>    aggregator_account_ids          = optional(list(string), [])<br>    delivery_channel_s3_bucket_name = optional(string, null)<br>    delivery_channel_s3_key_prefix  = optional(string, null)<br>    delivery_frequency              = optional(string, "TwentyFour_Hours")<br>    rule_identifiers                = optional(list(string), [])<br>  })</pre> | <pre>{<br>  "aggregator_account_ids": [],<br>  "delivery_channel_s3_bucket_name": null,<br>  "delivery_channel_s3_key_prefix": null,<br>  "delivery_frequency": "TwentyFour_Hours",<br>  "rule_identifiers": []<br>}</pre> | no |
-| <a name="input_aws_config_sns_subscription"></a> [aws\_config\_sns\_subscription](#input\_aws\_config\_sns\_subscription) | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
+| <a name="input_control_tower_account_ids"></a> [control\_tower\_account\_ids](#input\_control\_tower\_account\_ids) | Control Tower core account IDs | <pre>object({<br/>    audit   = string<br/>    logging = string<br/>  })</pre> | n/a | yes |
+| <a name="input_regions"></a> [regions](#input\_regions) | Region configuration. See the README for more information on the configuration options. | <pre>object({<br/>    allowed_regions = list(string)<br/>    home_region     = string<br/>    linked_regions  = optional(list(string), ["us-east-1"])<br/>  })</pre> | n/a | yes |
+| <a name="input_additional_auditing_trail"></a> [additional\_auditing\_trail](#input\_additional\_auditing\_trail) | CloudTrail configuration for additional auditing trail | <pre>object({<br/>    name       = string<br/>    bucket     = string<br/>    kms_key_id = string<br/><br/>    event_selector = optional(object({<br/>      data_resource = optional(object({<br/>        type   = string<br/>        values = list(string)<br/>      }))<br/>      exclude_management_event_sources = optional(set(string), null)<br/>      include_management_events        = optional(bool, true)<br/>      read_write_type                  = optional(string, "All")<br/>    }))<br/>  })</pre> | `null` | no |
+| <a name="input_aws_account_password_policy"></a> [aws\_account\_password\_policy](#input\_aws\_account\_password\_policy) | AWS account password policy parameters for the audit, logging and master account | <pre>object({<br/>    allow_users_to_change        = bool<br/>    max_age                      = number<br/>    minimum_length               = number<br/>    require_lowercase_characters = bool<br/>    require_numbers              = bool<br/>    require_symbols              = bool<br/>    require_uppercase_characters = bool<br/>    reuse_prevention_history     = number<br/>  })</pre> | <pre>{<br/>  "allow_users_to_change": true,<br/>  "max_age": 90,<br/>  "minimum_length": 14,<br/>  "require_lowercase_characters": true,<br/>  "require_numbers": true,<br/>  "require_symbols": true,<br/>  "require_uppercase_characters": true,<br/>  "reuse_prevention_history": 24<br/>}</pre> | no |
+| <a name="input_aws_auditmanager"></a> [aws\_auditmanager](#input\_aws\_auditmanager) | AWS Audit Manager config settings | <pre>object({<br/>    enabled               = bool<br/>    reports_bucket_prefix = string<br/>  })</pre> | <pre>{<br/>  "enabled": true,<br/>  "reports_bucket_prefix": "audit-manager-reports"<br/>}</pre> | no |
+| <a name="input_aws_config"></a> [aws\_config](#input\_aws\_config) | AWS Config settings | <pre>object({<br/>    aggregator_account_ids          = optional(list(string), [])<br/>    delivery_channel_s3_bucket_name = optional(string, null)<br/>    delivery_channel_s3_key_prefix  = optional(string, null)<br/>    delivery_frequency              = optional(string, "TwentyFour_Hours")<br/>    rule_identifiers                = optional(list(string), [])<br/>  })</pre> | <pre>{<br/>  "aggregator_account_ids": [],<br/>  "delivery_channel_s3_bucket_name": null,<br/>  "delivery_channel_s3_key_prefix": null,<br/>  "delivery_frequency": "TwentyFour_Hours",<br/>  "rule_identifiers": []<br/>}</pre> | no |
+| <a name="input_aws_config_sns_subscription"></a> [aws\_config\_sns\_subscription](#input\_aws\_config\_sns\_subscription) | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br/>    endpoint = string<br/>    protocol = string<br/>  }))</pre> | `{}` | no |
 | <a name="input_aws_ebs_encryption_by_default"></a> [aws\_ebs\_encryption\_by\_default](#input\_aws\_ebs\_encryption\_by\_default) | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
-| <a name="input_aws_guardduty"></a> [aws\_guardduty](#input\_aws\_guardduty) | AWS GuardDuty settings | <pre>object({<br>    enabled                       = optional(bool, true)<br>    finding_publishing_frequency  = optional(string, "FIFTEEN_MINUTES")<br>    ebs_malware_protection_status = optional(bool, true)<br>    eks_audit_logs_status         = optional(bool, true)<br>    lambda_network_logs_status    = optional(bool, true)<br>    rds_login_events_status       = optional(bool, true)<br>    s3_data_events_status         = optional(bool, true)<br>    runtime_monitoring_status = optional(object({<br>      enabled                             = optional(bool, true)<br>      eks_addon_management_status         = optional(bool, true)<br>      ecs_fargate_agent_management_status = optional(bool, true)<br>      ec2_agent_management_status         = optional(bool, true)<br>    }), {})<br>  })</pre> | `{}` | no |
-| <a name="input_aws_inspector"></a> [aws\_inspector](#input\_aws\_inspector) | AWS Inspector settings, at least one of the scan options must be enabled | <pre>object({<br>    enabled                 = optional(bool, false)<br>    enable_scan_ec2         = optional(bool, true)<br>    enable_scan_ecr         = optional(bool, true)<br>    enable_scan_lambda      = optional(bool, true)<br>    enable_scan_lambda_code = optional(bool, true)<br>    resource_create_timeout = optional(string, "15m")<br>  })</pre> | <pre>{<br>  "enable_scan_ec2": true,<br>  "enable_scan_ecr": true,<br>  "enable_scan_lambda": true,<br>  "enable_scan_lambda_code": true,<br>  "enabled": false,<br>  "resource_create_timeout": "15m"<br>}</pre> | no |
-| <a name="input_aws_required_tags"></a> [aws\_required\_tags](#input\_aws\_required\_tags) | AWS Required tags settings | <pre>map(list(object({<br>    name         = string<br>    values       = optional(list(string))<br>    enforced_for = optional(list(string))<br>  })))</pre> | `null` | no |
-| <a name="input_aws_security_hub"></a> [aws\_security\_hub](#input\_aws\_security\_hub) | AWS Security Hub settings | <pre>object({<br>    aggregator_linking_mode      = optional(string, "SPECIFIED_REGIONS")<br>    auto_enable_controls         = optional(bool, true)<br>    control_finding_generator    = optional(string, "SECURITY_CONTROL")<br>    create_cis_metric_filters    = optional(bool, true)<br>    disabled_control_identifiers = optional(list(string), null)<br>    enabled_control_identifiers  = optional(list(string), null)<br>    product_arns                 = optional(list(string), [])<br>    standards_arns               = optional(list(string), null)<br>  })</pre> | `{}` | no |
-| <a name="input_aws_security_hub_sns_subscription"></a> [aws\_security\_hub\_sns\_subscription](#input\_aws\_security\_hub\_sns\_subscription) | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
-| <a name="input_aws_service_control_policies"></a> [aws\_service\_control\_policies](#input\_aws\_service\_control\_policies) | AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction | <pre>object({<br>    aws_deny_disabling_security_hub = optional(bool, true)<br>    aws_deny_leaving_org            = optional(bool, true)<br>    aws_deny_root_user_ous          = optional(list(string), [])<br>    aws_require_imdsv2              = optional(bool, true)<br>    principal_exceptions            = optional(list(string), [])<br>  })</pre> | `{}` | no |
-| <a name="input_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#input\_aws\_sso\_permission\_sets) | Map of AWS IAM Identity Center permission sets with AWS accounts and group names that should be granted access to each account | <pre>map(object({<br>    assignments         = list(map(list(string)))<br>    inline_policy       = optional(string, null)<br>    managed_policy_arns = optional(list(string), [])<br>    session_duration    = optional(string, "PT4H")<br>  }))</pre> | `{}` | no |
-| <a name="input_datadog"></a> [datadog](#input\_datadog) | Datadog integration options for the core accounts | <pre>object({<br>    api_key                              = string<br>    cspm_resource_collection_enabled     = optional(bool, false)<br>    enable_integration                   = bool<br>    extended_resource_collection_enabled = optional(bool, false)<br>    install_log_forwarder                = optional(bool, false)<br>    log_collection_services              = optional(list(string), [])<br>    log_forwarder_version                = optional(string)<br>    metric_tag_filters                   = optional(map(string), {})<br>    namespace_rules                      = optional(list(string), [])<br>    site_url                             = string<br>  })</pre> | `null` | no |
+| <a name="input_aws_guardduty"></a> [aws\_guardduty](#input\_aws\_guardduty) | AWS GuardDuty settings | <pre>object({<br/>    enabled                       = optional(bool, true)<br/>    finding_publishing_frequency  = optional(string, "FIFTEEN_MINUTES")<br/>    ebs_malware_protection_status = optional(bool, true)<br/>    eks_audit_logs_status         = optional(bool, true)<br/>    lambda_network_logs_status    = optional(bool, true)<br/>    rds_login_events_status       = optional(bool, true)<br/>    s3_data_events_status         = optional(bool, true)<br/>    runtime_monitoring_status = optional(object({<br/>      enabled                             = optional(bool, true)<br/>      eks_addon_management_status         = optional(bool, true)<br/>      ecs_fargate_agent_management_status = optional(bool, true)<br/>      ec2_agent_management_status         = optional(bool, true)<br/>    }), {})<br/>  })</pre> | `{}` | no |
+| <a name="input_aws_inspector"></a> [aws\_inspector](#input\_aws\_inspector) | AWS Inspector settings, at least one of the scan options must be enabled | <pre>object({<br/>    enabled                 = optional(bool, false)<br/>    enable_scan_ec2         = optional(bool, true)<br/>    enable_scan_ecr         = optional(bool, true)<br/>    enable_scan_lambda      = optional(bool, true)<br/>    enable_scan_lambda_code = optional(bool, true)<br/>    resource_create_timeout = optional(string, "15m")<br/>  })</pre> | <pre>{<br/>  "enable_scan_ec2": true,<br/>  "enable_scan_ecr": true,<br/>  "enable_scan_lambda": true,<br/>  "enable_scan_lambda_code": true,<br/>  "enabled": false,<br/>  "resource_create_timeout": "15m"<br/>}</pre> | no |
+| <a name="input_aws_required_tags"></a> [aws\_required\_tags](#input\_aws\_required\_tags) | AWS Required tags settings | <pre>map(list(object({<br/>    name         = string<br/>    values       = optional(list(string))<br/>    enforced_for = optional(list(string))<br/>  })))</pre> | `null` | no |
+| <a name="input_aws_security_hub"></a> [aws\_security\_hub](#input\_aws\_security\_hub) | AWS Security Hub settings | <pre>object({<br/>    aggregator_linking_mode      = optional(string, "SPECIFIED_REGIONS")<br/>    auto_enable_controls         = optional(bool, true)<br/>    control_finding_generator    = optional(string, "SECURITY_CONTROL")<br/>    create_cis_metric_filters    = optional(bool, true)<br/>    disabled_control_identifiers = optional(list(string), null)<br/>    enabled_control_identifiers  = optional(list(string), null)<br/>    product_arns                 = optional(list(string), [])<br/>    standards_arns               = optional(list(string), null)<br/>  })</pre> | `{}` | no |
+| <a name="input_aws_security_hub_sns_subscription"></a> [aws\_security\_hub\_sns\_subscription](#input\_aws\_security\_hub\_sns\_subscription) | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br/>    endpoint = string<br/>    protocol = string<br/>  }))</pre> | `{}` | no |
+| <a name="input_aws_service_control_policies"></a> [aws\_service\_control\_policies](#input\_aws\_service\_control\_policies) | AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction | <pre>object({<br/>    aws_deny_disabling_security_hub = optional(bool, true)<br/>    aws_deny_leaving_org            = optional(bool, true)<br/>    aws_deny_root_user_ous          = optional(list(string), [])<br/>    aws_require_imdsv2              = optional(bool, true)<br/>    principal_exceptions            = optional(list(string), [])<br/>  })</pre> | `{}` | no |
+| <a name="input_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#input\_aws\_sso\_permission\_sets) | Map of AWS IAM Identity Center permission sets with AWS accounts and group names that should be granted access to each account | <pre>map(object({<br/>    assignments = list(object({<br/>      account_id   = string<br/>      account_name = string<br/>      sso_groups   = list(string)<br/>    }))<br/>    inline_policy       = optional(string, null)<br/>    managed_policy_arns = optional(list(string), [])<br/>    session_duration    = optional(string, "PT4H")<br/>  }))</pre> | `{}` | no |
+| <a name="input_datadog"></a> [datadog](#input\_datadog) | Datadog integration options for the core accounts | <pre>object({<br/>    api_key                              = string<br/>    cspm_resource_collection_enabled     = optional(bool, false)<br/>    enable_integration                   = bool<br/>    extended_resource_collection_enabled = optional(bool, false)<br/>    install_log_forwarder                = optional(bool, false)<br/>    log_collection_services              = optional(list(string), [])<br/>    log_forwarder_version                = optional(string)<br/>    metric_tag_filters                   = optional(map(string), {})<br/>    namespace_rules                      = optional(list(string), [])<br/>    site_url                             = string<br/>  })</pre> | `null` | no |
 | <a name="input_datadog_excluded_regions"></a> [datadog\_excluded\_regions](#input\_datadog\_excluded\_regions) | List of regions where metrics collection will be disabled. | `list(string)` | `[]` | no |
 | <a name="input_kms_key_policy"></a> [kms\_key\_policy](#input\_kms\_key\_policy) | A list of valid KMS key policy JSON documents | `list(string)` | `[]` | no |
 | <a name="input_kms_key_policy_audit"></a> [kms\_key\_policy\_audit](#input\_kms\_key\_policy\_audit) | A list of valid KMS key policy JSON document for use with audit KMS key | `list(string)` | `[]` | no |
 | <a name="input_kms_key_policy_logging"></a> [kms\_key\_policy\_logging](#input\_kms\_key\_policy\_logging) | A list of valid KMS key policy JSON document for use with logging KMS key | `list(string)` | `[]` | no |
 | <a name="input_monitor_iam_activity"></a> [monitor\_iam\_activity](#input\_monitor\_iam\_activity) | Whether IAM activity should be monitored | `bool` | `true` | no |
-| <a name="input_monitor_iam_activity_sns_subscription"></a> [monitor\_iam\_activity\_sns\_subscription](#input\_monitor\_iam\_activity\_sns\_subscription) | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br>    endpoint = string<br>    protocol = string<br>  }))</pre> | `{}` | no |
+| <a name="input_monitor_iam_activity_sns_subscription"></a> [monitor\_iam\_activity\_sns\_subscription](#input\_monitor\_iam\_activity\_sns\_subscription) | Subscription options for the LandingZone-IAMActivity SNS topic | <pre>map(object({<br/>    endpoint = string<br/>    protocol = string<br/>  }))</pre> | `{}` | no |
 | <a name="input_path"></a> [path](#input\_path) | Optional path for all IAM users, user groups, roles, and customer managed policies created by this module | `string` | `"/"` | no |
-| <a name="input_ses_root_accounts_mail_forward"></a> [ses\_root\_accounts\_mail\_forward](#input\_ses\_root\_accounts\_mail\_forward) | SES config to receive and forward root account emails | <pre>object({<br>    domain            = string<br>    from_email        = string<br>    recipient_mapping = map(any)<br><br>    dmarc = object({<br>      policy = optional(string)<br>      rua    = optional(string)<br>      ruf    = optional(string)<br>    })<br>  })</pre> | `null` | no |
+| <a name="input_ses_root_accounts_mail_forward"></a> [ses\_root\_accounts\_mail\_forward](#input\_ses\_root\_accounts\_mail\_forward) | SES config to receive and forward root account emails | <pre>object({<br/>    domain            = string<br/>    from_email        = string<br/>    recipient_mapping = map(any)<br/><br/>    dmarc = object({<br/>      policy = optional(string)<br/>      rua    = optional(string)<br/>      ruf    = optional(string)<br/>    })<br/>  })</pre> | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Map of tags | `map(string)` | `{}` | no |
 
 ## Outputs
@@ -617,16 +623,16 @@ To make local development easier, we have added a pre-commit configuration to th
 
 Install the following tools:
 
-```brew install tflint```
+`brew install tflint`
 
 Install pre-commit:
 
-```pip3 install pre-commit --upgrade```
+`pip3 install pre-commit --upgrade`
 
 To run the pre-commit hooks to see if everything working as expected, (the first time run might take a few minutes):
 
-```pre-commit run -a```
+`pre-commit run -a`
 
 To install the pre-commit hooks to run before each commit:
 
-```pre-commit install```
+`pre-commit install`

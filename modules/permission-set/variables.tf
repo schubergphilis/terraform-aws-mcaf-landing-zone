@@ -4,9 +4,13 @@ variable "name" {
 }
 
 variable "assignments" {
-  type        = list(map(list(string)))
+  type = list(object({
+    account_id   = string
+    account_name = string
+    sso_groups   = list(string)
+  }))
   default     = []
-  description = "List of account IDs and Identity Center groups to assign to the permission set"
+  description = "List of account names and IDs and Identity Center groups to assign to the permission set"
 }
 
 variable "create" {
