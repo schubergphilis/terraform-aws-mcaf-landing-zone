@@ -124,24 +124,6 @@ jobs:
           working-dir: .
         continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
 
-  tfsec:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Terraform security scan
-        uses: aquasecurity/tfsec-action@v1.0.3
-        with:
-          github_token: ${{ github.token }}
-          soft_fail: false
-          tfsec_args: --concise-output --force-all-dirs
-
-      - name: Terraform pr commenter
-        uses: aquasecurity/tfsec-pr-commenter-action@v1.3.1
-        with:
-          github_token: ${{ github.token }}
-          tfsec_args: --concise-output --force-all-dirs
 
   checkov:
     runs-on: ubuntu-latest
