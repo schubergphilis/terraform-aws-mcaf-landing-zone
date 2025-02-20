@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v6.0.1 - 2025-02-20
+
+### What's Changed
+
+#### 🐛 Bug Fixes
+
+* fix: guardduty runtime monitoring configuration to avoid recreation of aws_guardduty_organization_configuration_feature resource on each TF run  (#220) @skesarkar-schubergphilis
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v6.0.0...v6.0.1
+
 ## v6.0.0 - 2025-01-27
 
 ### What's Changed
