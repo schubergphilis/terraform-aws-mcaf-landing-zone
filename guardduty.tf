@@ -73,30 +73,18 @@ resource "aws_guardduty_organization_configuration_feature" "runtime_monitoring"
   name        = "RUNTIME_MONITORING"
   auto_enable = var.aws_guardduty.runtime_monitoring_status.enabled == true ? "ALL" : "NONE"
 
-  dynamic "additional_configuration" {
-    for_each = var.aws_guardduty.runtime_monitoring_status.ecs_fargate_agent_management_status == true ? ["ECS_FARGATE_AGENT_MANAGEMENT"] : []
-
-    content {
-      name        = additional_configuration.value
-      auto_enable = "ALL"
-    }
+  additional_configuration {
+    name        = "ECS_FARGATE_AGENT_MANAGEMENT"
+    auto_enable = var.aws_guardduty.runtime_monitoring_status.ecs_fargate_agent_management_status == true ? "ALL" : "NONE"
   }
 
-  dynamic "additional_configuration" {
-    for_each = var.aws_guardduty.runtime_monitoring_status.ec2_agent_management_status == true ? ["EC2_AGENT_MANAGEMENT"] : []
-
-    content {
-      name        = additional_configuration.value
-      auto_enable = "ALL"
-    }
+  additional_configuration {
+    name        = "EC2_AGENT_MANAGEMENT"
+    auto_enable = var.aws_guardduty.runtime_monitoring_status.ec2_agent_management_status == true ? "ALL" : "NONE"
   }
 
-  dynamic "additional_configuration" {
-    for_each = var.aws_guardduty.runtime_monitoring_status.eks_addon_management_status == true ? ["EKS_ADDON_MANAGEMENT"] : []
-
-    content {
-      name        = additional_configuration.value
-      auto_enable = "ALL"
-    }
+  additional_configuration {
+    name        = "EKS_ADDON_MANAGEMENT"
+    auto_enable = var.aws_guardduty.runtime_monitoring_status.eks_addon_management_status == true ? "ALL" : "NONE"
   }
 }
