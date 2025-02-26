@@ -97,7 +97,7 @@ module "kms_key_audit" {
 }
 
 data "aws_iam_policy_document" "kms_key_audit" {
-  source_policy_documents = var.kms_key_policy_audit
+  override_policy_documents = var.kms_key_policy_audit
 
   statement {
     sid       = "Full permissions for the root user only"
@@ -280,7 +280,7 @@ module "kms_key_logging" {
 }
 
 data "aws_iam_policy_document" "kms_key_logging" {
-  source_policy_documents = var.kms_key_policy_logging
+  override_policy_documents = var.kms_key_policy_logging
 
   statement {
     sid       = "Full permissions for the root user only"
