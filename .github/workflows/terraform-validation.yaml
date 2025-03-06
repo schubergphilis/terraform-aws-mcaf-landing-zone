@@ -116,7 +116,7 @@ jobs:
       - name: Render terraform docs inside the README.md and push changes back to PR branch
         uses: terraform-docs/gh-actions@v1.3.0
         with:
-          args: --sort-by required
+          args: --sort-by required --recursive
           git-commit-message: "docs(readme): update module usage"
           git-push: true
           output-file: README.md
