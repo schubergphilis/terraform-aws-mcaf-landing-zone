@@ -1,3 +1,6 @@
+# DO NOT CHANGE THIS FILE DIRECTLY
+# Source: https://github.com/schubergphilis/mcaf-github-workflows
+
 name: "pr-validation"
 
 on:

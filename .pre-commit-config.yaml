@@ -1,4 +1,5 @@
-# .pre-commit-config.yaml
+# DO NOT CHANGE THIS FILE DIRECTLY
+# Source: https://github.com/schubergphilis/mcaf-github-workflows
 default_stages: [pre-commit]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks

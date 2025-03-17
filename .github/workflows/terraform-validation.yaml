@@ -1,3 +1,6 @@
+# DO NOT CHANGE THIS FILE DIRECTLY
+# Source: https://github.com/schubergphilis/mcaf-github-workflows
+
 name: "terraform"
 
 on:
@@ -116,7 +119,7 @@ jobs:
       - name: Render terraform docs inside the README.md and push changes back to PR branch
         uses: terraform-docs/gh-actions@v1.3.0
         with:
-          args: --sort-by required --recursive
+          args: --sort-by required
           git-commit-message: "docs(readme): update module usage"
           git-push: true
           output-file: README.md
@@ -124,6 +127,28 @@ jobs:
           working-dir: .
         continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
 
+  # If the recursive flag is set to true, the action will not update the main README.md file. 
+  # Therefore we need to run the action twice, once for the root module and once for the modules directory
+  docs-modules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Render terraform docs inside the README.md and push changes back to PR branch
+        uses: terraform-docs/gh-actions@v1.3.0
+        with:
+          args: --sort-by required
+          git-commit-message: "docs(readme): update module usage"
+          git-push: true
+          output-file: README.md
+          output-method: inject
+          recursive-path: modules
+          recursive: true
+          working-dir: .
+        continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
 
   checkov:
     runs-on: ubuntu-latest
