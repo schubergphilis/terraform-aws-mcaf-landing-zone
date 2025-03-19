@@ -127,7 +127,7 @@ jobs:
           working-dir: .
         continue-on-error: true # added this to prevent a PR from a remote fork failing the workflow
 
-  # If the recursive flag is set to true, the action will not update the main README.md file. 
+  # If the recursive flag is set to true, the action will not update the main README.md file.
   # Therefore we need to run the action twice, once for the root module and once for the modules directory
   docs-modules:
     runs-on: ubuntu-latest
