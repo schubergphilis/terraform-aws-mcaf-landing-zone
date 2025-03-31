@@ -237,7 +237,9 @@ variable "control_tower_account_ids" {
 
 variable "datadog" {
   type = object({
-    api_key                              = string
+    api_key                              = optional(string, null)
+    api_key_name_prefix                  = optional(string, "aws-landing-zone-")
+    create_api_key                       = optional(bool, false)
     cspm_resource_collection_enabled     = optional(bool, false)
     enable_integration                   = bool
     extended_resource_collection_enabled = optional(bool, false)
@@ -250,6 +252,17 @@ variable "datadog" {
   })
   default     = null
   description = "Datadog integration options for the core accounts"
+
+  validation {
+    condition = (
+      var.datadog == null ||
+      try(var.datadog.enable_integration, false) == false ||
+      try(length(var.datadog.api_key), 0) > 0 ||
+      try(var.datadog.create_api_key, false)
+    )
+
+    error_message = "If Datadog integration is enabled, either an API key must be provided or the 'create_api_key' option must be set to true."
+  }
 }
 
 variable "datadog_excluded_regions" {
