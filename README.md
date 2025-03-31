@@ -446,9 +446,9 @@ module "landing_zone" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.6 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.54.0 |
-| <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | > 3.0.0 |
+| <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | >= 3.39 |
 | <a name="requirement_mcaf"></a> [mcaf](#requirement\_mcaf) | >= 0.4.2 |
 
 ## Providers
@@ -467,9 +467,9 @@ module "landing_zone" {
 | <a name="module_audit_manager_reports"></a> [audit\_manager\_reports](#module\_audit\_manager\_reports) | schubergphilis/mcaf-s3/aws | ~> 0.14.1 |
 | <a name="module_aws_config_s3"></a> [aws\_config\_s3](#module\_aws\_config\_s3) | schubergphilis/mcaf-s3/aws | ~> 0.14.1 |
 | <a name="module_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#module\_aws\_sso\_permission\_sets) | ./modules/permission-set | n/a |
-| <a name="module_datadog_audit"></a> [datadog\_audit](#module\_datadog\_audit) | schubergphilis/mcaf-datadog/aws | ~> 0.8.5 |
-| <a name="module_datadog_logging"></a> [datadog\_logging](#module\_datadog\_logging) | schubergphilis/mcaf-datadog/aws | ~> 0.8.5 |
-| <a name="module_datadog_master"></a> [datadog\_master](#module\_datadog\_master) | schubergphilis/mcaf-datadog/aws | ~> 0.8.5 |
+| <a name="module_datadog_audit"></a> [datadog\_audit](#module\_datadog\_audit) | schubergphilis/mcaf-datadog/aws | ~> 0.9.0 |
+| <a name="module_datadog_logging"></a> [datadog\_logging](#module\_datadog\_logging) | schubergphilis/mcaf-datadog/aws | ~> 0.9.0 |
+| <a name="module_datadog_master"></a> [datadog\_master](#module\_datadog\_master) | schubergphilis/mcaf-datadog/aws | ~> 0.9.0 |
 | <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | schubergphilis/mcaf-kms/aws | ~> 0.3.0 |
 | <a name="module_kms_key_audit"></a> [kms\_key\_audit](#module\_kms\_key\_audit) | schubergphilis/mcaf-kms/aws | ~> 0.3.0 |
 | <a name="module_kms_key_logging"></a> [kms\_key\_logging](#module\_kms\_key\_logging) | schubergphilis/mcaf-kms/aws | ~> 0.3.0 |
@@ -576,7 +576,7 @@ module "landing_zone" {
 | <a name="input_aws_security_hub_sns_subscription"></a> [aws\_security\_hub\_sns\_subscription](#input\_aws\_security\_hub\_sns\_subscription) | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br/>    endpoint = string<br/>    protocol = string<br/>  }))</pre> | `{}` | no |
 | <a name="input_aws_service_control_policies"></a> [aws\_service\_control\_policies](#input\_aws\_service\_control\_policies) | AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction | <pre>object({<br/>    aws_deny_disabling_security_hub = optional(bool, true)<br/>    aws_deny_leaving_org            = optional(bool, true)<br/>    aws_deny_root_user_ous          = optional(list(string), [])<br/>    aws_require_imdsv2              = optional(bool, true)<br/>    principal_exceptions            = optional(list(string), [])<br/>  })</pre> | `{}` | no |
 | <a name="input_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#input\_aws\_sso\_permission\_sets) | Map of AWS IAM Identity Center permission sets with AWS accounts and group names that should be granted access to each account | <pre>map(object({<br/>    assignments = list(object({<br/>      account_id   = string<br/>      account_name = string<br/>      sso_groups   = list(string)<br/>    }))<br/>    inline_policy       = optional(string, null)<br/>    managed_policy_arns = optional(list(string), [])<br/>    session_duration    = optional(string, "PT4H")<br/>  }))</pre> | `{}` | no |
-| <a name="input_datadog"></a> [datadog](#input\_datadog) | Datadog integration options for the core accounts | <pre>object({<br/>    api_key                              = string<br/>    cspm_resource_collection_enabled     = optional(bool, false)<br/>    enable_integration                   = bool<br/>    extended_resource_collection_enabled = optional(bool, false)<br/>    install_log_forwarder                = optional(bool, false)<br/>    log_collection_services              = optional(list(string), [])<br/>    log_forwarder_version                = optional(string)<br/>    metric_tag_filters                   = optional(map(string), {})<br/>    namespace_rules                      = optional(list(string), [])<br/>    site_url                             = string<br/>  })</pre> | `null` | no |
+| <a name="input_datadog"></a> [datadog](#input\_datadog) | Datadog integration options for the core accounts | <pre>object({<br/>    api_key                              = optional(string, null)<br/>    api_key_name_prefix                  = optional(string, "aws-landing-zone-")<br/>    create_api_key                       = optional(bool, false)<br/>    cspm_resource_collection_enabled     = optional(bool, false)<br/>    enable_integration                   = bool<br/>    extended_resource_collection_enabled = optional(bool, false)<br/>    install_log_forwarder                = optional(bool, false)<br/>    log_collection_services              = optional(list(string), [])<br/>    log_forwarder_version                = optional(string)<br/>    metric_tag_filters                   = optional(map(string), {})<br/>    namespace_rules                      = optional(list(string), [])<br/>    site_url                             = string<br/>  })</pre> | `null` | no |
 | <a name="input_datadog_excluded_regions"></a> [datadog\_excluded\_regions](#input\_datadog\_excluded\_regions) | List of regions where metrics collection will be disabled. | `list(string)` | `[]` | no |
 | <a name="input_kms_key_policy"></a> [kms\_key\_policy](#input\_kms\_key\_policy) | A list of valid KMS key policy JSON documents | `list(string)` | `[]` | no |
 | <a name="input_kms_key_policy_audit"></a> [kms\_key\_policy\_audit](#input\_kms\_key\_policy\_audit) | A list of valid KMS key policy JSON document for use with audit KMS key | `list(string)` | `[]` | no |
