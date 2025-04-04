@@ -5,7 +5,7 @@ locals {
       policy = var.regions.allowed_regions != null ? templatefile("${path.module}/files/organizations/allowed_regions.json.tpl", {
         allowed              = var.regions.allowed_regions != null ? var.regions.allowed_regions : []
         exceptions           = local.aws_service_control_policies_principal_exceptions
-        allowed_plus_us_east = var.regions.allowed_regions != null ? distinct(concat(var.regions.allowed_regions, "us-east-1")) : []
+        allowed_plus_us_east = var.regions.allowed_regions != null ? distinct(concat(var.regions.allowed_regions, ["us-east-1"])) : []
       }) : null
     }
     cloudtrail_log_stream = {
