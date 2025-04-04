@@ -109,12 +109,24 @@
             "Condition": {
                 "StringNotEquals": {
                     "aws:RequestedRegion": ${jsonencode(allowed)}
-                }
-                %{ if length(exceptions) > 0 ~}
-                ,"ArnNotLike": {
+                },
+                "ArnNotLike": {
                     "aws:PrincipalARN": ${jsonencode(exceptions)}
                 }
-                %{ endif ~}
+            }
+        },
+        {
+            "Sid": "DenyAllOtherRegions",
+            "Effect": "Deny",
+            "Action": "*",
+            "Resource": "*",
+            "Condition": {
+                "StringNotEquals": {
+                    "aws:RequestedRegion":  ${jsonencode(allowed_plus_us_east)}
+                },
+                "ArnNotLike": {
+                    "aws:PrincipalARN": ${jsonencode(exceptions)}
+                }
             }
         }
     ]
