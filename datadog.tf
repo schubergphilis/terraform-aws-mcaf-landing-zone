@@ -4,9 +4,11 @@ module "datadog_audit" {
   providers = { aws = aws.audit }
 
   source  = "schubergphilis/mcaf-datadog/aws"
-  version = "~> 0.8.5"
+  version = "~> 0.9.0"
 
   api_key                              = try(var.datadog.api_key, null)
+  api_key_name                         = var.datadog.create_api_key ? "${var.datadog.api_key_name_prefix}${data.aws_caller_identity.audit.account_id}" : null
+  create_api_key                       = var.datadog.create_api_key
   cspm_resource_collection_enabled     = var.datadog.cspm_resource_collection_enabled
   excluded_regions                     = var.datadog_excluded_regions
   extended_resource_collection_enabled = var.datadog.extended_resource_collection_enabled
@@ -24,9 +26,11 @@ module "datadog_master" {
   count = try(var.datadog.enable_integration, false) == true ? 1 : 0
 
   source  = "schubergphilis/mcaf-datadog/aws"
-  version = "~> 0.8.5"
+  version = "~> 0.9.0"
 
   api_key                              = try(var.datadog.api_key, null)
+  api_key_name                         = var.datadog.create_api_key ? "${var.datadog.api_key_name_prefix}${data.aws_caller_identity.management.account_id}" : null
+  create_api_key                       = var.datadog.create_api_key
   cspm_resource_collection_enabled     = var.datadog.cspm_resource_collection_enabled
   excluded_regions                     = var.datadog_excluded_regions
   extended_resource_collection_enabled = var.datadog.extended_resource_collection_enabled
@@ -45,9 +49,11 @@ module "datadog_logging" {
   providers = { aws = aws.logging }
 
   source  = "schubergphilis/mcaf-datadog/aws"
-  version = "~> 0.8.5"
+  version = "~> 0.9.0"
 
   api_key                              = try(var.datadog.api_key, null)
+  api_key_name                         = var.datadog.create_api_key ? "${var.datadog.api_key_name_prefix}${data.aws_caller_identity.logging.account_id}" : null
+  create_api_key                       = var.datadog.create_api_key
   cspm_resource_collection_enabled     = var.datadog.cspm_resource_collection_enabled
   excluded_regions                     = var.datadog_excluded_regions
   extended_resource_collection_enabled = var.datadog.extended_resource_collection_enabled
