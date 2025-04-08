@@ -7,12 +7,12 @@ terraform {
     }
     datadog = {
       source  = "datadog/datadog"
-      version = "> 3.0.0"
+      version = ">= 3.39"
     }
     mcaf = {
       source  = "schubergphilis/mcaf"
       version = ">= 0.4.2"
     }
   }
-  required_version = ">= 1.6"
+  required_version = ">= 1.9.0"
 }
