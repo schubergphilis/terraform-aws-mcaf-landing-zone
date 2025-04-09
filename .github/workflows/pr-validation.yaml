@@ -86,7 +86,7 @@ jobs:
         id: lint_pr_labels
         with:
           hasSome: breaking,bug,chore,documentation,enhancement,feature,fix,security
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          githubToken: ${{ secrets.MCAF_GITHUB_TOKEN }}
 
       - uses: marocchino/sticky-pull-request-comment@v2
         # When the previous steps fails, the workflow would stop. By adding this
