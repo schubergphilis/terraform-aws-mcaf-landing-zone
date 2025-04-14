@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v6.3.1 - 2025-04-14
+
+### What's Changed
+
+#### 🧺 Miscellaneous
+
+* fix: add aws_config_iam_service_linked_role_arn output (#225) @marwinbaumannsbp
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v6.3.0...v6.3.1
+
 ## v6.3.0 - 2025-04-14
 
 ### What's Changed
