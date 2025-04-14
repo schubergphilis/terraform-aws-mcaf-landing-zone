@@ -45,36 +45,6 @@ resource "aws_iam_service_linked_role" "config" {
   aws_service_name = "config.amazonaws.com"
 }
 
-resource "aws_config_configuration_recorder" "default" {
-  name     = "default"
-  role_arn = aws_iam_service_linked_role.config.arn
-
-  recording_group {
-    all_supported                 = true
-    include_global_resource_types = true
-  }
-}
-
-resource "aws_config_configuration_recorder_status" "default" {
-  name       = aws_config_configuration_recorder.default.name
-  is_enabled = true
-  depends_on = [aws_config_delivery_channel.default]
-}
-
-resource "aws_config_delivery_channel" "default" {
-  name           = "default"
-  s3_bucket_name = module.aws_config_s3.name
-  s3_key_prefix  = var.aws_config.delivery_channel_s3_key_prefix
-  s3_kms_key_arn = module.kms_key_logging.arn
-  sns_topic_arn  = data.aws_sns_topic.all_config_notifications.arn
-
-  snapshot_delivery_properties {
-    delivery_frequency = var.aws_config.delivery_frequency
-  }
-
-  depends_on = [aws_config_configuration_recorder.default]
-}
-
 resource "aws_config_organization_managed_rule" "default" {
   for_each = toset(local.aws_config_rules)
 
@@ -209,4 +179,15 @@ module "aws_config_s3" {
       }
     }
   ]
+}
+
+module "aws_config_recorder" {
+  source = "./modules/aws-config-recorder"
+
+  delivery_frequency          = var.aws_config.delivery_frequency
+  iam_service_linked_role_arn = aws_iam_service_linked_role.config.arn
+  kms_key_arn                 = module.kms_key_logging.arn
+  s3_bucket_name              = module.aws_config_s3.name
+  s3_key_prefix               = var.aws_config.delivery_channel_s3_key_prefix
+  sns_topic_arn               = data.aws_sns_topic.all_config_notifications.arn
 }
