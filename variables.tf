@@ -128,21 +128,15 @@ variable "aws_guardduty" {
 
 variable "aws_inspector" {
   type = object({
-    enabled                 = optional(bool, false)
-    enable_scan_ec2         = optional(bool, true)
-    enable_scan_ecr         = optional(bool, true)
-    enable_scan_lambda      = optional(bool, true)
-    enable_scan_lambda_code = optional(bool, true)
-    resource_create_timeout = optional(string, "15m")
+    enabled                     = optional(bool, false)
+    enable_scan_ec2             = optional(bool, true)
+    enable_scan_ecr             = optional(bool, true)
+    enable_scan_lambda          = optional(bool, true)
+    enable_scan_lambda_code     = optional(bool, true)
+    excluded_member_account_ids = optional(list(string), [])
+    resource_create_timeout     = optional(string, "15m")
   })
-  default = {
-    enabled                 = false
-    enable_scan_ec2         = true
-    enable_scan_ecr         = true
-    enable_scan_lambda      = true
-    enable_scan_lambda_code = true
-    resource_create_timeout = "15m"
-  }
+  default     = {}
   description = "AWS Inspector settings, at least one of the scan options must be enabled"
 }
 
