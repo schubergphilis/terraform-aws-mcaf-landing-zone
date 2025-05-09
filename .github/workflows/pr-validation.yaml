@@ -82,16 +82,16 @@ jobs:
     needs: autolabeler
     runs-on: ubuntu-latest
     steps:
-      - uses: danielchabr/pr-labels-checker@v3.3
+      - uses: docker://agilepathway/pull-request-label-checker:v1.6.55
         id: lint_pr_labels
         with:
-          hasSome: breaking,bug,chore,documentation,enhancement,feature,fix,security
-          githubToken: ${{ secrets.MCAF_GITHUB_TOKEN }}
+          any_of: breaking,bug,chore,documentation,enhancement,feature,fix,security
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: marocchino/sticky-pull-request-comment@v2
         # When the previous steps fails, the workflow would stop. By adding this
         # condition you can continue the execution with the populated error message.
-        if: always() && (steps.lint_pr_labels.outputs.passed == false)
+        if: always() && (steps.lint_pr_labels.outputs.label_check == 'failure')
         with:
           header: pr-labels-lint-error
           message: |
@@ -109,7 +109,7 @@ jobs:
             - security
 
       # Delete a previous comment when the issue has been resolved
-      - if: ${{ steps.lint_pr_labels.outputs.passed != false }}
+      - if: ${{ steps.lint_pr_labels.outputs.label_check == 'success' }}
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: pr-labels-lint-error
