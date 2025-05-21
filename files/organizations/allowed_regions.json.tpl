@@ -1,133 +1,70 @@
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "DenyAllRegionsOutsideAllowedList",
-            "Effect": "Deny",
-            "NotAction": [
-                "a4b:*",
-                "access-analyzer:*",
-                "account:*",
-                "acm:*",
-                "activate:*",
-                "artifact:*",
-                "aws-marketplace-management:*",
-                "aws-marketplace:*",
-                "aws-portal:*",
-                "billing:*",
-                "billingconductor:*",
-                "budgets:*",
-                "ce:*",
-                "chatbot:*",
-                "chime:*",
-                "cloudfront:*",
-                "cloudtrail:Describe*",
-                "cloudtrail:Get*",
-                "cloudtrail:List*",
-                "cloudtrail:LookupEvents",
-                "cloudwatch:Describe*",
-                "cloudwatch:Get*",
-                "cloudwatch:List*",
-                "compute-optimizer:*",
-                "config:*",
-                "consoleapp:*",
-                "consolidatedbilling:*",
-                "cur:*",
-                "datapipeline:GetAccountLimits",
-                "devicefarm:*",
-                "directconnect:*",
-                "discovery-marketplace:*",
-                "ec2:DescribeRegions",
-                "ec2:DescribeTransitGateways",
-                "ec2:DescribeVpnGateways",
-                "ecr-public:*",
-                "fms:*",
-                "freetier:*",
-                "globalaccelerator:*",
-                "health:*",
-                "iam:*",
-                "importexport:*",
-                "invoicing:*",
-                "iq:*",
-                "kms:*",
-                "license-manager:ListReceivedLicenses",
-                "lightsail:Get*",
-                "logs:*",
-                "mobileanalytics:*",
-                "networkmanager:*",
-                "notifications-contacts:*",
-                "notifications:*",
-                "organizations:*",
-                "payments:*",
-                "pricing:*",
-                "quicksight:DescribeAccountSubscription",
-                "quicksight:DescribeTemplate",
-                "resource-explorer-2:*",
-                "route53-recovery-cluster:*",
-                "route53-recovery-control-config:*",
-                "route53-recovery-readiness:*",
-                "route53:*",
-                "route53domains:*",
-                "s3:CreateMultiRegionAccessPoint",
-                "s3:DeleteMultiRegionAccessPoint",
-                "s3:DescribeMultiRegionAccessPointOperation",
-                "s3:GetAccountPublicAccessBlock",
-                "s3:GetBucketLocation",
-                "s3:GetBucketPolicy",
-                "s3:GetBucketPolicyStatus",
-                "s3:GetBucketPublicAccessBlock",
-                "s3:GetMultiRegionAccessPoint",
-                "s3:GetMultiRegionAccessPointPolicy",
-                "s3:GetMultiRegionAccessPointPolicyStatus",
-                "s3:GetStorageLensConfiguration",
-                "s3:GetStorageLensDashboard",
-                "s3:ListAllMyBuckets",
-                "s3:ListMultiRegionAccessPoints",
-                "s3:ListStorageLensConfigurations",
-                "s3:PutAccountPublicAccessBlock",
-                "s3:PutBucketPolicy",
-                "s3:PutMultiRegionAccessPointPolicy",
-                "savingsplans:*",
-                "servicequotas:*",
-                "shield:*",
-                "sso:*",
-                "sts:*",
-                "support:*",
-                "supportapp:*",
-                "supportplans:*",
-                "sustainability:*",
-                "tag:GetResources",
-                "tax:*",
-                "trustedadvisor:*",
-                "vendor-insights:ListEntitledSecurityProfiles",
-                "waf-regional:*",
-                "waf:*",
-                "wafv2:*",
-                "wellarchitected:*"
-            ],
-            "Resource": "*",
-            "Condition": {
-                "StringNotEquals": {
-                    "aws:RequestedRegion": ${jsonencode(allowed)}
-                },
-                "ArnNotLike": {
-                    "aws:PrincipalARN": ${jsonencode(exceptions)}
-                }
-            }
+  "Version": "2012-10-17",
+  "Statement": [
+
+    {
+      "Sid": "DenyAllRegionsOutsideAllowedList",
+      "Effect": "Deny",
+      "NotAction": ${jsonencode(default_notactions)},
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": ${jsonencode(allowed)}
         },
-        {
-            "Sid": "DenyAllOtherRegions",
-            "Effect": "Deny",
-            "Action": "*",
-            "Resource": "*",
-            "Condition": {
-                "StringNotEquals": {
-                    "aws:RequestedRegion":  ${jsonencode(allowed_plus_us_east)}
-                },
-                "ArnNotLike": {
-                    "aws:PrincipalARN": ${jsonencode(exceptions)}
-                }
-            }
+        "ArnNotLike": {
+          "aws:PrincipalARN": ${jsonencode(exceptions)}
         }
-    ]
+      }
+    }%{ if length(regional_notactions) > 0 },%{ endif }
+
+    %{ for region, notactions in regional_notactions }
+    {
+      "Sid": "DenyAllRegionsOutsideAllowedList_${region}",
+      "Effect": "Deny",
+      "NotAction": ${jsonencode(notactions)},
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": ["${region}"]
+        },
+        "ArnNotLike": {
+          "aws:PrincipalARN": ${jsonencode(exceptions)}
+        }
+      }
+    }%{ if region != keys(regional_notactions)[-1] },%{ endif }
+    %{ endfor %}%{ if length(other_default_notactions) > 0 },%{ endif %}
+
+    {
+      "Sid": "DenyAllOtherRegions",
+      "Effect": "Deny",
+      "NotAction": ${jsonencode(other_default_notactions)},
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:RequestedRegion": ${jsonencode(allowed_plus_us_east)}
+        },
+        "ArnNotLike": {
+          "aws:PrincipalARN": ${jsonencode(exceptions)}
+        }
+      }
+    }%{ if length(other_regional_notactions) > 0 },%{ endif %}
+
+    %{ for region, notactions in other_regional_notactions }
+    {
+      "Sid": "DenyAllOtherRegions_${region}",
+      "Effect": "Deny",
+      "NotAction": ${jsonencode(notactions)},
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": ["${region}"]
+        },
+        "ArnNotLike": {
+          "aws:PrincipalARN": ${jsonencode(exceptions)}
+        }
+      }
+    }%{ if region != keys(other_regional_notactions)[-1] },%{ endif %}
+    %{ endfor %}
+
+  ]
 }

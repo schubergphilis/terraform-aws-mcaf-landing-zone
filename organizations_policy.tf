@@ -1,11 +1,135 @@
 locals {
+  # your existing static NotAction list:
+  default_notactions = [
+    "a4b:*",
+    "access-analyzer:*",
+    "account:*",
+    "acm:*",
+    "activate:*",
+    "artifact:*",
+    "aws-marketplace-management:*",
+    "aws-marketplace:*",
+    "aws-portal:*",
+    "billing:*",
+    "billingconductor:*",
+    "budgets:*",
+    "ce:*",
+    "chatbot:*",
+    "chime:*",
+    "cloudfront:*",
+    "cloudtrail:Describe*",
+    "cloudtrail:Get*",
+    "cloudtrail:List*",
+    "cloudtrail:LookupEvents",
+    "cloudwatch:Describe*",
+    "cloudwatch:Get*",
+    "cloudwatch:List*",
+    "compute-optimizer:*",
+    "config:*",
+    "consoleapp:*",
+    "consolidatedbilling:*",
+    "cur:*",
+    "datapipeline:GetAccountLimits",
+    "devicefarm:*",
+    "directconnect:*",
+    "discovery-marketplace:*",
+    "ec2:DescribeRegions",
+    "ec2:DescribeTransitGateways",
+    "ec2:DescribeVpnGateways",
+    "ecr-public:*",
+    "fms:*",
+    "freetier:*",
+    "globalaccelerator:*",
+    "health:*",
+    "iam:*",
+    "importexport:*",
+    "invoicing:*",
+    "iq:*",
+    "kms:*",
+    "license-manager:ListReceivedLicenses",
+    "lightsail:Get*",
+    "logs:*",
+    "mobileanalytics:*",
+    "networkmanager:*",
+    "notifications-contacts:*",
+    "notifications:*",
+    "organizations:*",
+    "payments:*",
+    "pricing:*",
+    "quicksight:DescribeAccountSubscription",
+    "quicksight:DescribeTemplate",
+    "resource-explorer-2:*",
+    "route53-recovery-cluster:*",
+    "route53-recovery-control-config:*",
+    "route53-recovery-readiness:*",
+    "route53:*",
+    "route53domains:*",
+    "s3:CreateMultiRegionAccessPoint",
+    "s3:DeleteMultiRegionAccessPoint",
+    "s3:DescribeMultiRegionAccessPointOperation",
+    "s3:GetAccountPublicAccessBlock",
+    "s3:GetBucketLocation",
+    "s3:GetBucketPolicy",
+    "s3:GetBucketPolicyStatus",
+    "s3:GetBucketPublicAccessBlock",
+    "s3:GetMultiRegionAccessPoint",
+    "s3:GetMultiRegionAccessPointPolicy",
+    "s3:GetMultiRegionAccessPointPolicyStatus",
+    "s3:GetStorageLensConfiguration",
+    "s3:GetStorageLensDashboard",
+    "s3:ListAllMyBuckets",
+    "s3:ListMultiRegionAccessPoints",
+    "s3:ListStorageLensConfigurations",
+    "s3:PutAccountPublicAccessBlock",
+    "s3:PutBucketPolicy",
+    "s3:PutMultiRegionAccessPointPolicy",
+    "savingsplans:*",
+    "servicequotas:*",
+    "shield:*",
+    "sso:*",
+    "sts:*",
+    "support:*",
+    "supportapp:*",
+    "sustainability:*",
+    "tag:GetResources",
+    "tax:*",
+    "trustedadvisor:*",
+    "vendor-insights:ListEntitledSecurityProfiles",
+    "waf-regional:*",
+    "waf:*",
+    "wafv2:*",
+    "wellarchitected:*"
+  ]
+
+  # 2) pull in your per-region exception map
+  regional_exceptions = var.regions.allowed_regions_additional_service_exceptions_per_region
+
+  # 3) for each region, build the combined NotAction list
+  regional_notactions = {
+    for region, extras in local.regional_exceptions :
+    region => distinct(concat(local.default_notactions, extras))
+  }
+
+  # 4) the “other-regions” base list
+  other_default_notactions = ["supportplans:*"]
+
+  # 5) for each region, the “other-regions” carve-out
+  other_regional_notactions = {
+    for region, extras in local.regional_exceptions :
+    region => distinct(concat(local.other_default_notactions, extras))
+  }
+
   enabled_root_policies = {
     allowed_regions = {
       enable = var.regions.allowed_regions != null ? true : false
       policy = var.regions.allowed_regions != null ? templatefile("${path.module}/files/organizations/allowed_regions.json.tpl", {
-        allowed              = var.regions.allowed_regions != null ? var.regions.allowed_regions : []
-        exceptions           = local.aws_service_control_policies_principal_exceptions
-        allowed_plus_us_east = var.regions.allowed_regions != null ? distinct(concat(var.regions.allowed_regions, ["us-east-1"])) : []
+        allowed                   = var.regions.allowed_regions != null ? var.regions.allowed_regions : []
+        allowed_plus_us_east      = var.regions.allowed_regions != null ? distinct(concat(var.regions.allowed_regions, ["us-east-1"])) : []
+        exceptions                = local.aws_service_control_policies_principal_exceptions
+        default_notactions        = local.default_notactions
+        regional_notactions       = local.regional_notactions
+        other_default_notactions  = local.other_default_notactions
+        other_regional_notactions = local.other_regional_notactions
       }) : null
     }
     cloudtrail_log_stream = {
