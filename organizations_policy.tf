@@ -1,6 +1,6 @@
 locals {
   # your existing static NotAction list:
-  default_notactions = [
+  default_notactions_base = [
     "a4b:*",
     "access-analyzer:*",
     "account:*",
@@ -90,6 +90,7 @@ locals {
     "sts:*",
     "support:*",
     "supportapp:*",
+    "supportplans:*",
     "sustainability:*",
     "tag:GetResources",
     "tax:*",
@@ -101,29 +102,48 @@ locals {
     "wellarchitected:*"
   ]
 
-  # 2) pull in your per-region exception map
+  # 2) the user’s global exceptions
+  global_exceptions = var.regions.allowed_regions_additional_service_exceptions
+
+  # 3) merge them for the “deny-outside-allowed” rule
+  default_notactions = distinct(concat(
+    local.default_notactions_base,
+    local.global_exceptions
+  ))
+
+  # 4) per-region extras
   regional_exceptions = var.regions.allowed_regions_additional_service_exceptions_per_region
 
-  # 3) for each region, build the combined NotAction list
+  # 5) carve-out in each exception region
   regional_notactions = {
-    for region, extras in local.regional_exceptions :
-    region => distinct(concat(local.default_notactions, extras))
+    for region, extra in local.regional_exceptions :
+    region => distinct(concat(local.default_notactions, extra))
   }
 
-  # 4) the “other-regions” base list
-  other_default_notactions = ["supportplans:*"]
+  # 6) “other-regions” base
+  other_default_notactions_base = ["supportplans:*"]
 
-  # 5) for each region, the “other-regions” carve-out
+  # 7) also merge globals into the “other-regions” rule
+  other_default_notactions = distinct(concat(
+    local.other_default_notactions_base,
+    local.global_exceptions
+  ))
+
+  # 8) per-region carve-out for “other-regions”
   other_regional_notactions = {
-    for region, extras in local.regional_exceptions :
-    region => distinct(concat(local.other_default_notactions, extras))
+    for region, extra in local.regional_exceptions :
+    region => distinct(concat(local.other_default_notactions, extra))
   }
 
+  # 9) your region lists, unchanged
   allowed              = var.regions.allowed_regions != null ? var.regions.allowed_regions : []
   allowed_plus_us_east = var.regions.allowed_regions != null ? distinct(concat(var.regions.allowed_regions, ["us-east-1"])) : []
   exceptions           = local.aws_service_control_policies_principal_exceptions
 
+  # 10) build the JSON Statement array
   statements = concat(
+
+    # a) default “deny anything not in default_notactions” outside allowed
     [
       {
         Sid       = "DenyAllRegionsOutsideAllowedList"
@@ -136,6 +156,8 @@ locals {
         }
       }
     ],
+
+    # b) per-region carve-outs (merge in extra services)
     [
       for region, na in local.regional_notactions : {
         Sid       = "DenyAllRegionsOutsideAllowedList_${region}"
@@ -148,6 +170,8 @@ locals {
         }
       }
     ],
+
+    # c) default “deny other regions” (outside allowed+us-east-1)
     [
       {
         Sid       = "DenyAllOtherRegions"
@@ -160,6 +184,8 @@ locals {
         }
       }
     ],
+
+    # d) per-region carve-outs for “other regions”
     [
       for region, na in local.other_regional_notactions : {
         Sid       = "DenyAllOtherRegions_${region}"
