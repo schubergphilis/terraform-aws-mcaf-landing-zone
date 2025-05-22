@@ -104,8 +104,7 @@ locals {
 
   # 2) the user’s global exceptions
   global_exceptions = var.regions.allowed_regions_additional_service_exceptions
-
-  # 3) merge them for the “deny-outside-allowed” rule
+  # 3) merge for the “deny‐outside‐allowed_regions” rules only
   default_notactions = distinct(concat(
     local.default_notactions_base,
     local.global_exceptions
@@ -114,28 +113,22 @@ locals {
   # 4) per-region extras
   regional_exceptions = var.regions.allowed_regions_additional_service_exceptions_per_region
 
-  # 5) carve-out in each exception region
+  # 5) carve-out in each exception region for the first rule
   regional_notactions = {
-    for region, extra in local.regional_exceptions :
-    region => distinct(concat(local.default_notactions, extra))
+    for region, extras in local.regional_exceptions :
+    region => distinct(concat(local.default_notactions, extras))
   }
 
-  # 6) “other-regions” base
-  other_default_notactions_base = ["supportplans:*"]
+  # 6) “other-regions” base stays pure – no global_exceptions merged here
+  other_default_notactions = ["supportplans:*"]
 
-  # 7) also merge globals into the “other-regions” rule
-  other_default_notactions = distinct(concat(
-    local.other_default_notactions_base,
-    local.global_exceptions
-  ))
-
-  # 8) per-region carve-out for “other-regions”
+  # 7) per-region carve-out for the “other-regions” rule
   other_regional_notactions = {
-    for region, extra in local.regional_exceptions :
-    region => distinct(concat(local.other_default_notactions, extra))
+    for region, extras in local.regional_exceptions :
+    region => distinct(concat(local.other_default_notactions, extras))
   }
 
-  # 9) your region lists, unchanged
+  # 8) your region lists
   allowed              = var.regions.allowed_regions != null ? var.regions.allowed_regions : []
   allowed_plus_us_east = var.regions.allowed_regions != null ? distinct(concat(var.regions.allowed_regions, ["us-east-1"])) : []
   exceptions           = local.aws_service_control_policies_principal_exceptions
