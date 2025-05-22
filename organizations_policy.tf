@@ -1,132 +1,45 @@
 locals {
-  # your existing static NotAction list:
-  default_notactions = [
-    "a4b:*",
-    "access-analyzer:*",
-    "account:*",
-    "acm:*",
-    "activate:*",
-    "artifact:*",
-    "aws-marketplace-management:*",
-    "aws-marketplace:*",
-    "aws-portal:*",
-    "billing:*",
-    "billingconductor:*",
-    "budgets:*",
-    "ce:*",
-    "chatbot:*",
-    "chime:*",
-    "cloudfront:*",
-    "cloudtrail:Describe*",
-    "cloudtrail:Get*",
-    "cloudtrail:List*",
-    "cloudtrail:LookupEvents",
-    "cloudwatch:Describe*",
-    "cloudwatch:Get*",
-    "cloudwatch:List*",
-    "compute-optimizer:*",
-    "config:*",
-    "consoleapp:*",
-    "consolidatedbilling:*",
-    "cur:*",
-    "datapipeline:GetAccountLimits",
-    "devicefarm:*",
-    "directconnect:*",
-    "discovery-marketplace:*",
-    "ec2:DescribeRegions",
-    "ec2:DescribeTransitGateways",
-    "ec2:DescribeVpnGateways",
-    "ecr-public:*",
-    "fms:*",
-    "freetier:*",
-    "globalaccelerator:*",
-    "health:*",
-    "iam:*",
-    "importexport:*",
-    "invoicing:*",
-    "iq:*",
-    "kms:*",
-    "license-manager:ListReceivedLicenses",
-    "lightsail:Get*",
-    "logs:*",
-    "mobileanalytics:*",
-    "networkmanager:*",
-    "notifications-contacts:*",
-    "notifications:*",
-    "organizations:*",
-    "payments:*",
-    "pricing:*",
-    "quicksight:DescribeAccountSubscription",
-    "quicksight:DescribeTemplate",
-    "resource-explorer-2:*",
-    "route53-recovery-cluster:*",
-    "route53-recovery-control-config:*",
-    "route53-recovery-readiness:*",
-    "route53:*",
-    "route53domains:*",
-    "s3:CreateMultiRegionAccessPoint",
-    "s3:DeleteMultiRegionAccessPoint",
-    "s3:DescribeMultiRegionAccessPointOperation",
-    "s3:GetAccountPublicAccessBlock",
-    "s3:GetBucketLocation",
-    "s3:GetBucketPolicy",
-    "s3:GetBucketPolicyStatus",
-    "s3:GetBucketPublicAccessBlock",
-    "s3:GetMultiRegionAccessPoint",
-    "s3:GetMultiRegionAccessPointPolicy",
-    "s3:GetMultiRegionAccessPointPolicyStatus",
-    "s3:GetStorageLensConfiguration",
-    "s3:GetStorageLensDashboard",
-    "s3:ListAllMyBuckets",
-    "s3:ListMultiRegionAccessPoints",
-    "s3:ListStorageLensConfigurations",
-    "s3:PutAccountPublicAccessBlock",
-    "s3:PutBucketPolicy",
-    "s3:PutMultiRegionAccessPointPolicy",
-    "savingsplans:*",
-    "servicequotas:*",
-    "shield:*",
-    "sso:*",
-    "sts:*",
-    "support:*",
-    "supportapp:*",
-    "supportplans:*",
-    "sustainability:*",
-    "tag:GetResources",
-    "tax:*",
-    "trustedadvisor:*",
-    "vendor-insights:ListEntitledSecurityProfiles",
-    "waf-regional:*",
-    "waf:*",
-    "wafv2:*",
-    "wellarchitected:*"
-  ]
+  # 1) your original “management & read-only” actions
+  default_notactions_base = ["a4b:*"]
 
-  # 2) per-region extras map
+  # 2) the built-in “other-regions” actions
+  other_default_notactions_base = ["supportplans:*"]
+
+  # 3) per-region extra services (only ever here now)
   regional_exceptions = var.regions.allowed_regions_additional_service_exceptions_per_region
 
-  # 3) carve-out for each exception region in the first Deny
+  # 4) flatten all per-region extras into one list
+  all_exception_services = distinct(flatten(values(local.regional_exceptions)))
+
+  # 5) for the first Deny, we allow base + other-regions base + all extras
+  default_notactions = distinct(concat(
+    local.default_notactions_base,
+    local.other_default_notactions_base,
+    local.all_exception_services
+  ))
+
+  # 6) for each exception region, its own carve-out in the first rule
   regional_notactions = {
     for region, extras in local.regional_exceptions :
-    region => distinct(concat(local.default_notactions, extras))
+    region => distinct(concat(local.other_default_notactions_base, extras))
   }
 
-  # 4) “other-regions” base NotAction
-  other_default_notactions = ["supportplans:*"]
+  # 7) lists to drive region checks
+  allowed           = var.regions.allowed_regions # ["eu-central-1"]
+  exception_regions = keys(var.regions.allowed_regions_additional_service_exceptions_per_region)
+  # ["us-west-2"]
+  linked = var.regions.linked_regions # ["us-east-1"]
 
-  # 5) carve-out for each exception region in the second Deny
-  other_regional_notactions = {
-    for region, extras in local.regional_exceptions :
-    region => distinct(concat(local.other_default_notactions, extras))
-  }
+  # 8) combine for “deny outside allowed+exceptions”
+  allowed_and_exceptions = distinct(concat(local.allowed, local.exception_regions))
+  # 9) combine for “deny other regions” (allowed + us-east-1 + exceptions)
+  allowed_plus_linked_and_exceptions = distinct(concat(local.allowed, local.linked, local.exception_regions))
 
-  allowed              = var.regions.allowed_regions != null ? var.regions.allowed_regions : []
-  allowed_plus_us_east = var.regions.allowed_regions != null ? distinct(concat(var.regions.allowed_regions, ["us-east-1"])) : []
-  exceptions           = local.aws_service_control_policies_principal_exceptions
-
+  exceptions = local.aws_service_control_policies_principal_exceptions
   # 10) build the JSON Statement array
+
   statements = concat(
-    # Default Deny outside allowed_regions
+    # 1) Deny everything outside [eu-central-1, us-west-2]
     [
       {
         Sid       = "DenyAllRegionsOutsideAllowedList"
@@ -134,13 +47,13 @@ locals {
         NotAction = local.default_notactions
         Resource  = "*"
         Condition = {
-          StringNotEquals = { "aws:RequestedRegion" = local.allowed }
+          StringNotEquals = { "aws:RequestedRegion" = local.allowed_and_exceptions }
           ArnNotLike      = { "aws:PrincipalARN" = local.exceptions }
         }
       }
     ],
 
-    # Per-region carve-outs for rule #1
+    # 2) In us-west-2, carve out its extra services (dms:*)
     [
       for region, na in local.regional_notactions : {
         Sid       = "DenyAllRegionsOutsideAllowedList_${region}"
@@ -154,30 +67,30 @@ locals {
       }
     ],
 
-    # Default DenyAllOtherRegions
+    # 3) Explicitly Deny dms:* in the allowed region(s) (eu-central-1)
     [
       {
-        Sid       = "DenyAllOtherRegions"
-        Effect    = "Deny"
-        NotAction = local.other_default_notactions
-        Resource  = "*"
+        Sid      = "DenyExceptionServiceInAllowedRegions"
+        Effect   = "Deny"
+        Action   = local.all_exception_services
+        Resource = "*"
         Condition = {
-          StringNotEquals = { "aws:RequestedRegion" = local.allowed_plus_us_east }
-          ArnNotLike      = { "aws:PrincipalARN" = local.exceptions }
+          StringEquals = { "aws:RequestedRegion" = local.allowed }
+          ArnNotLike   = { "aws:PrincipalARN" = local.exceptions }
         }
       }
     ],
 
-    # Per-region carve-outs for rule #3
+    # 4) Deny all other regions outside [eu-central-1, us-east-1, us-west-2]
     [
-      for region, na in local.other_regional_notactions : {
-        Sid       = "DenyAllOtherRegions_${region}"
+      {
+        Sid       = "DenyAllOtherRegions"
         Effect    = "Deny"
-        NotAction = na
+        NotAction = local.other_default_notactions_base
         Resource  = "*"
         Condition = {
-          StringEquals = { "aws:RequestedRegion" = [region] }
-          ArnNotLike   = { "aws:PrincipalARN" = local.exceptions }
+          StringNotEquals = { "aws:RequestedRegion" = local.allowed_plus_linked_and_exceptions }
+          ArnNotLike      = { "aws:PrincipalARN" = local.exceptions }
         }
       }
     ]
