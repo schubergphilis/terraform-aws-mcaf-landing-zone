@@ -54,7 +54,28 @@ To find your linked regions:
 
 **Allowed Regions**
 
-The optional `regions.allowed_regions` variable defines the allowed regions within your AWS Organization. This triggers the deployment of a [Service Control Policy (SCP)](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region), which is attached to the root of your AWS Organization.
+The `regions.allowed_regions` variable defines the allowed regions within your AWS Organization. This triggers the deployment of a [Service Control Policy (SCP)](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region), which is attached to the root of your AWS Organization.
+
+**Additional per-region service exceptions**
+
+Sometimes you need to allow a handful of actions in a region that you haven’t fully “opened up.” Use the variable:
+
+```hcl
+regions.allowed_regions_additional_service_exceptions_per_region = {
+  "<region-name>" = [ "<service-action-pattern>", … ]
+}
+``
+
+for example:
+
+```hcl
+regions = {
+...
+    additional_allowed_service_actions_per_region = {
+      "us-west-2" = ["dms:*"],
+    }
+  }
+```
 
 #### Configuration Scenarios
 

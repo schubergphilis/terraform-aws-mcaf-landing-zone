@@ -292,8 +292,8 @@ variable "monitor_iam_activity_sns_subscription" {
 
 variable "regions" {
   type = object({
-    allowed_regions                               = list(string)
     additional_allowed_service_actions_per_region = optional(map(list(string)), {})
+    allowed_regions                               = list(string)
     home_region                                   = string
     linked_regions                                = optional(list(string), ["us-east-1"])
   })

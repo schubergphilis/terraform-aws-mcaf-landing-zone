@@ -1,5 +1,4 @@
 locals {
-
   ################################################################################
   # Allowed Regions SCP creation
   ################################################################################
@@ -119,14 +118,11 @@ locals {
   # 2) Region-specific whitelisting
   ################################################################################
 
-  # Map of region → extra actions to allow there
-  per_region_whitelist_map = var.regions.additional_allowed_service_actions_per_region
-
   # Flattened list of *all* region-specific whitelisted actions
-  all_region_whitelisted_actions = distinct(flatten(values(local.per_region_whitelist_map)))
+  all_region_whitelisted_actions = distinct(flatten(values(var.regions.additional_allowed_service_actions_per_region)))
 
   # List of regions that have extra whitelisted actions
-  regions_with_whitelist_exceptions = keys(local.per_region_whitelist_map)
+  regions_with_whitelist_exceptions = keys(var.regions.additional_allowed_service_actions_per_region)
 
   ################################################################################
   # 3) Compute exemption sets for each Deny statement
@@ -142,7 +138,7 @@ locals {
 
   # B) For each exception region, the NotAction list in the per-region carve-out
   exempted_actions_per_region = {
-    for region, service_action in local.per_region_whitelist_map :
+    for region, service_action in var.regions.additional_allowed_service_actions_per_region :
     region => distinct(concat(
       local.multi_region_service_actions,
       service_action
@@ -158,25 +154,26 @@ locals {
   ################################################################################
 
   # For Statement #1: allowed + exception regions
-  allowed_plus_exception_regions = distinct(concat(
+  allowed_plus_exception_regions = var.regions.allowed_regions != null ? distinct(concat(
     var.regions.allowed_regions,
     local.regions_with_whitelist_exceptions
-  ))
+  )) : []
 
-  # For Statement #4: allowed + linked + exception regions
-  allowed_linked_exception_regions = distinct(concat(
+  # For Statement #4: allowed + linked + exception regions + us-east-1
+  # (us-east-1 is the default region for the global services, so we need to allow it)
+  allowed_linked_exception_regions = var.regions.allowed_regions != null ? distinct(concat(
     var.regions.allowed_regions,
     var.regions.linked_regions,
-    local.regions_with_whitelist_exceptions
-  ))
+    local.regions_with_whitelist_exceptions,
+    ["us-east-1"]
+  )) : []
 
   ################################################################################
   # 5) Assemble the 4 SCP statements
   ################################################################################
 
-  statements = concat(
-    # 1) Deny everywhere *except* allowed + exception regions,
-    #    but exempt the “exempted_actions_for_outside_deny”
+  allowed_regions_policy_statements = concat(
+    # Deny any region not in your allowed regions + all regions in additional_allowed_service_actions_per_region, but exempt global, multi-region, and all per-region-whitelisted actions.
     [
       {
         Sid       = "DenyOutsideAllowedAndExceptionRegions"
@@ -194,7 +191,7 @@ locals {
       }
     ],
 
-    # 2) In each exception region, carve out its region-specific actions
+    # 2) In each additional_allowed_service_actions_per_region region, carve out its region-specific actions
     [
       for region, notactions in local.exempted_actions_per_region : {
         Sid       = "DenyOutsideAllowedList_${region}"
@@ -212,7 +209,7 @@ locals {
       }
     ],
 
-    # 3) Explicitly Deny the whitelisted services *within* your allowed regions
+    # 3) Explicitly Deny the additional_allowed_service_actions *within* your globally allowed regions
     [
       {
         Sid      = "DenyRegionSpecificWhitelistInAllowedRegions"
@@ -230,8 +227,9 @@ locals {
       }
     ],
 
-    # 4) Deny all other regions (outside allowed + linked + exception),
-    #    exempting only the multi-region services
+    # Deny any region not in your allowed + linked + exception set, but exempt only the multi-region actions.
+    # This statement is for leak prevention:
+    # It explicitly denies any per-region-only services within your core allowed regions so they can’t slip in where you don’t want them.
     [
       {
         Sid       = "DenyOtherRegions"
@@ -251,11 +249,11 @@ locals {
   )
 
   allowed_regions_policy = {
-    enable = length(var.regions.allowed_regions) > 0
-    policy = jsonencode({
+    enable = var.regions.allowed_regions != null ? true : false
+    policy = var.regions.allowed_regions != null ? jsonencode({
       Version   = "2012-10-17"
-      Statement = local.statements
-    })
+      Statement = local.allowed_regions_policy_statements
+    }) : null
   }
 
   ################################################################################
