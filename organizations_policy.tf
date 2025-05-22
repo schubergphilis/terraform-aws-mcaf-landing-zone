@@ -119,17 +119,67 @@ locals {
     region => distinct(concat(local.other_default_notactions, extras))
   }
 
+  allowed              = var.regions.allowed_regions != null ? var.regions.allowed_regions : []
+  allowed_plus_us_east = var.regions.allowed_regions != null ? distinct(concat(var.regions.allowed_regions, ["us-east-1"])) : []
+  exceptions           = local.aws_service_control_policies_principal_exceptions
+
+  statements = concat(
+    [
+      {
+        Sid       = "DenyAllRegionsOutsideAllowedList"
+        Effect    = "Deny"
+        NotAction = local.default_notactions
+        Resource  = "*"
+        Condition = {
+          StringNotEquals = { "aws:RequestedRegion" = local.allowed }
+          ArnNotLike      = { "aws:PrincipalARN" = local.exceptions }
+        }
+      }
+    ],
+    [
+      for region, na in local.regional_notactions : {
+        Sid       = "DenyAllRegionsOutsideAllowedList_${region}"
+        Effect    = "Deny"
+        NotAction = na
+        Resource  = "*"
+        Condition = {
+          StringEquals = { "aws:RequestedRegion" = [region] }
+          ArnNotLike   = { "aws:PrincipalARN" = local.exceptions }
+        }
+      }
+    ],
+    [
+      {
+        Sid       = "DenyAllOtherRegions"
+        Effect    = "Deny"
+        NotAction = local.other_default_notactions
+        Resource  = "*"
+        Condition = {
+          StringNotEquals = { "aws:RequestedRegion" = local.allowed_plus_us_east }
+          ArnNotLike      = { "aws:PrincipalARN" = local.exceptions }
+        }
+      }
+    ],
+    [
+      for region, na in local.other_regional_notactions : {
+        Sid       = "DenyAllOtherRegions_${region}"
+        Effect    = "Deny"
+        NotAction = na
+        Resource  = "*"
+        Condition = {
+          StringEquals = { "aws:RequestedRegion" = [region] }
+          ArnNotLike   = { "aws:PrincipalARN" = local.exceptions }
+        }
+      }
+    ]
+  )
+
   enabled_root_policies = {
     allowed_regions = {
       enable = var.regions.allowed_regions != null ? true : false
-      policy = var.regions.allowed_regions != null ? templatefile("${path.module}/files/organizations/allowed_regions.json.tpl", {
-        allowed                   = var.regions.allowed_regions != null ? var.regions.allowed_regions : []
-        allowed_plus_us_east      = var.regions.allowed_regions != null ? distinct(concat(var.regions.allowed_regions, ["us-east-1"])) : []
-        exceptions                = local.aws_service_control_policies_principal_exceptions
-        default_notactions        = local.default_notactions
-        regional_notactions       = local.regional_notactions
-        other_default_notactions  = local.other_default_notactions
-        other_regional_notactions = local.other_regional_notactions
+      policy = var.regions.allowed_regions != null ? jsonencode({
+        Version   = "2012-10-17"
+        Statement = local.statements
       }) : null
     }
     cloudtrail_log_stream = {
