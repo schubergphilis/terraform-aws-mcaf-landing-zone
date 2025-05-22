@@ -1,109 +1,269 @@
 locals {
-  # 1) your original “management & read-only” actions
-  default_notactions_base = ["a4b:*"]
 
-  # 2) the built-in “other-regions” actions
-  other_default_notactions_base = ["supportplans:*"]
+  ################################################################################
+  # Allowed Regions SCP creation
+  ################################################################################
 
-  # 3) per-region extra services (only ever here now)
-  regional_exceptions = var.regions.allowed_regions_additional_service_exceptions_per_region
+  ################################################################################
+  # 1) Core service lists
+  ################################################################################
 
-  # 4) flatten all per-region extras into one list
-  all_exception_services = distinct(flatten(values(local.regional_exceptions)))
+  # AWS services that exist only at the global (non-regional) level
+  global_service_actions = [
+    "a4b:*",
+    "access-analyzer:*",
+    "account:*",
+    "acm:*",
+    "activate:*",
+    "artifact:*",
+    "aws-marketplace-management:*",
+    "aws-marketplace:*",
+    "aws-portal:*",
+    "billing:*",
+    "billingconductor:*",
+    "budgets:*",
+    "ce:*",
+    "chatbot:*",
+    "chime:*",
+    "cloudfront:*",
+    "cloudtrail:Describe*",
+    "cloudtrail:Get*",
+    "cloudtrail:List*",
+    "cloudtrail:LookupEvents",
+    "cloudwatch:Describe*",
+    "cloudwatch:Get*",
+    "cloudwatch:List*",
+    "compute-optimizer:*",
+    "config:*",
+    "consoleapp:*",
+    "consolidatedbilling:*",
+    "cur:*",
+    "datapipeline:GetAccountLimits",
+    "devicefarm:*",
+    "directconnect:*",
+    "discovery-marketplace:*",
+    "ec2:DescribeRegions",
+    "ec2:DescribeTransitGateways",
+    "ec2:DescribeVpnGateways",
+    "ecr-public:*",
+    "fms:*",
+    "freetier:*",
+    "globalaccelerator:*",
+    "health:*",
+    "iam:*",
+    "importexport:*",
+    "invoicing:*",
+    "iq:*",
+    "kms:*",
+    "license-manager:ListReceivedLicenses",
+    "lightsail:Get*",
+    "logs:*",
+    "mobileanalytics:*",
+    "networkmanager:*",
+    "notifications-contacts:*",
+    "notifications:*",
+    "organizations:*",
+    "payments:*",
+    "pricing:*",
+    "quicksight:DescribeAccountSubscription",
+    "quicksight:DescribeTemplate",
+    "resource-explorer-2:*",
+    "route53-recovery-cluster:*",
+    "route53-recovery-control-config:*",
+    "route53-recovery-readiness:*",
+    "route53:*",
+    "route53domains:*",
+    "s3:CreateMultiRegionAccessPoint",
+    "s3:DeleteMultiRegionAccessPoint",
+    "s3:DescribeMultiRegionAccessPointOperation",
+    "s3:GetAccountPublicAccessBlock",
+    "s3:GetBucketLocation",
+    "s3:GetBucketPolicy",
+    "s3:GetBucketPolicyStatus",
+    "s3:GetBucketPublicAccessBlock",
+    "s3:GetMultiRegionAccessPoint",
+    "s3:GetMultiRegionAccessPointPolicy",
+    "s3:GetMultiRegionAccessPointPolicyStatus",
+    "s3:GetStorageLensConfiguration",
+    "s3:GetStorageLensDashboard",
+    "s3:ListAllMyBuckets",
+    "s3:ListMultiRegionAccessPoints",
+    "s3:ListStorageLensConfigurations",
+    "s3:PutAccountPublicAccessBlock",
+    "s3:PutBucketPolicy",
+    "s3:PutMultiRegionAccessPointPolicy",
+    "savingsplans:*",
+    "servicequotas:*",
+    "shield:*",
+    "sso:*",
+    "sts:*",
+    "support:*",
+    "supportapp:*",
+    "sustainability:*",
+    "tag:GetResources",
+    "tax:*",
+    "trustedadvisor:*",
+    "vendor-insights:ListEntitledSecurityProfiles",
+    "waf-regional:*",
+    "waf:*",
+    "wafv2:*",
+    "wellarchitected:*"
+  ]
 
-  # 5) for the first Deny, we allow base + other-regions base + all extras
-  default_notactions = distinct(concat(
-    local.default_notactions_base,
-    local.other_default_notactions_base,
-    local.all_exception_services
+  # AWS services that are inherently multi-region
+  multi_region_service_actions = [
+    "supportplans:*"
+  ]
+
+  ################################################################################
+  # 2) Region-specific whitelisting
+  ################################################################################
+
+  # Map of region → extra actions to allow there
+  per_region_whitelist_map = var.regions.additional_allowed_service_actions_per_region
+
+  # Flattened list of *all* region-specific whitelisted actions
+  all_region_whitelisted_actions = distinct(flatten(values(local.per_region_whitelist_map)))
+
+  # List of regions that have extra whitelisted actions
+  regions_with_whitelist_exceptions = keys(local.per_region_whitelist_map)
+
+  ################################################################################
+  # 3) Compute exemption sets for each Deny statement
+  ################################################################################
+
+  # A) Actions to exempt from the “DenyAllRegionsOutsideAllowedList” rule:
+  #    global + multi-region + any region-specific whitelists
+  exempted_actions_for_outside_deny = distinct(concat(
+    local.global_service_actions,
+    local.multi_region_service_actions,
+    local.all_region_whitelisted_actions
   ))
 
-  # 6) for each exception region, its own carve-out in the first rule
-  regional_notactions = {
-    for region, extras in local.regional_exceptions :
-    region => distinct(concat(local.other_default_notactions_base, extras))
+  # B) For each exception region, the NotAction list in the per-region carve-out
+  exempted_actions_per_region = {
+    for region, service_action in local.per_region_whitelist_map :
+    region => distinct(concat(
+      local.multi_region_service_actions,
+      service_action
+    ))
   }
 
-  # 7) lists to drive region checks
-  allowed           = var.regions.allowed_regions # ["eu-central-1"]
-  exception_regions = keys(var.regions.allowed_regions_additional_service_exceptions_per_region)
-  # ["us-west-2"]
-  linked = var.regions.linked_regions # ["us-east-1"]
+  # C) Actions to exempt from the “DenyAllOtherRegions” rule:
+  #    only the multi-region services (no global or region-specific here)
+  exempted_actions_for_other_deny = local.multi_region_service_actions
 
-  # 8) combine for “deny outside allowed+exceptions”
-  allowed_and_exceptions = distinct(concat(local.allowed, local.exception_regions))
-  # 9) combine for “deny other regions” (allowed + us-east-1 + exceptions)
-  allowed_plus_linked_and_exceptions = distinct(concat(local.allowed, local.linked, local.exception_regions))
+  ################################################################################
+  # 4) Build the sets of regions used in conditions
+  ################################################################################
 
-  exceptions = local.aws_service_control_policies_principal_exceptions
-  # 10) build the JSON Statement array
+  # For Statement #1: allowed + exception regions
+  allowed_plus_exception_regions = distinct(concat(
+    var.regions.allowed_regions,
+    local.regions_with_whitelist_exceptions
+  ))
+
+  # For Statement #4: allowed + linked + exception regions
+  allowed_linked_exception_regions = distinct(concat(
+    var.regions.allowed_regions,
+    var.regions.linked_regions,
+    local.regions_with_whitelist_exceptions
+  ))
+
+  ################################################################################
+  # 5) Assemble the 4 SCP statements
+  ################################################################################
 
   statements = concat(
-    # 1) Deny everything outside [eu-central-1, us-west-2]
+    # 1) Deny everywhere *except* allowed + exception regions,
+    #    but exempt the “exempted_actions_for_outside_deny”
     [
       {
-        Sid       = "DenyAllRegionsOutsideAllowedList"
+        Sid       = "DenyOutsideAllowedAndExceptionRegions"
         Effect    = "Deny"
-        NotAction = local.default_notactions
+        NotAction = local.exempted_actions_for_outside_deny
         Resource  = "*"
         Condition = {
-          StringNotEquals = { "aws:RequestedRegion" = local.allowed_and_exceptions }
-          ArnNotLike      = { "aws:PrincipalARN" = local.exceptions }
+          StringNotEquals = {
+            "aws:RequestedRegion" = local.allowed_plus_exception_regions
+          }
+          ArnNotLike = {
+            "aws:PrincipalARN" = local.aws_service_control_policies_principal_exceptions
+          }
         }
       }
     ],
 
-    # 2) In us-west-2, carve out its extra services (dms:*)
+    # 2) In each exception region, carve out its region-specific actions
     [
-      for region, na in local.regional_notactions : {
-        Sid       = "DenyAllRegionsOutsideAllowedList_${region}"
+      for region, notactions in local.exempted_actions_per_region : {
+        Sid       = "DenyOutsideAllowedList_${region}"
         Effect    = "Deny"
-        NotAction = na
+        NotAction = notactions
         Resource  = "*"
         Condition = {
-          StringEquals = { "aws:RequestedRegion" = [region] }
-          ArnNotLike   = { "aws:PrincipalARN" = local.exceptions }
+          StringEquals = {
+            "aws:RequestedRegion" = [region]
+          }
+          ArnNotLike = {
+            "aws:PrincipalARN" = local.aws_service_control_policies_principal_exceptions
+          }
         }
       }
     ],
 
-    # 3) Explicitly Deny dms:* in the allowed region(s) (eu-central-1)
+    # 3) Explicitly Deny the whitelisted services *within* your allowed regions
     [
       {
-        Sid      = "DenyExceptionServiceInAllowedRegions"
+        Sid      = "DenyRegionSpecificWhitelistInAllowedRegions"
         Effect   = "Deny"
-        Action   = local.all_exception_services
+        Action   = local.all_region_whitelisted_actions
         Resource = "*"
         Condition = {
-          StringEquals = { "aws:RequestedRegion" = local.allowed }
-          ArnNotLike   = { "aws:PrincipalARN" = local.exceptions }
+          StringEquals = {
+            "aws:RequestedRegion" = var.regions.allowed_regions
+          }
+          ArnNotLike = {
+            "aws:PrincipalARN" = local.aws_service_control_policies_principal_exceptions
+          }
         }
       }
     ],
 
-    # 4) Deny all other regions outside [eu-central-1, us-east-1, us-west-2]
+    # 4) Deny all other regions (outside allowed + linked + exception),
+    #    exempting only the multi-region services
     [
       {
-        Sid       = "DenyAllOtherRegions"
+        Sid       = "DenyOtherRegions"
         Effect    = "Deny"
-        NotAction = local.other_default_notactions_base
+        NotAction = local.exempted_actions_for_other_deny
         Resource  = "*"
         Condition = {
-          StringNotEquals = { "aws:RequestedRegion" = local.allowed_plus_linked_and_exceptions }
-          ArnNotLike      = { "aws:PrincipalARN" = local.exceptions }
+          StringNotEquals = {
+            "aws:RequestedRegion" = local.allowed_linked_exception_regions
+          }
+          ArnNotLike = {
+            "aws:PrincipalARN" = local.aws_service_control_policies_principal_exceptions
+          }
         }
       }
     ]
   )
 
+  allowed_regions_policy = {
+    enable = length(var.regions.allowed_regions) > 0
+    policy = jsonencode({
+      Version   = "2012-10-17"
+      Statement = local.statements
+    })
+  }
+
+  ################################################################################
+  # Enabled Root Policies
+  ################################################################################
+
   enabled_root_policies = {
-    allowed_regions = {
-      enable = var.regions.allowed_regions != null ? true : false
-      policy = var.regions.allowed_regions != null ? jsonencode({
-        Version   = "2012-10-17"
-        Statement = local.statements
-      }) : null
-    }
+    allowed_regions = local.allowed_regions_policy
     cloudtrail_log_stream = {
       enable = true // This is not configurable and will be applied all the time.
       policy = file("${path.module}/files/organizations/cloudtrail_log_stream.json")
