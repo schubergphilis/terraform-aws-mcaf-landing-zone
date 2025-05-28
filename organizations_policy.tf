@@ -7,12 +7,10 @@ locals {
   # 1) Core service lists
   ################################################################################
 
-  # AWS services that exist only at the global (non-regional) level
+  # AWS services that exist only at the global (us-east-1) level
   global_service_actions = [
     "a4b:*",
-    "access-analyzer:*",
     "account:*",
-    "acm:*",
     "activate:*",
     "artifact:*",
     "aws-marketplace-management:*",
@@ -25,15 +23,7 @@ locals {
     "chatbot:*",
     "chime:*",
     "cloudfront:*",
-    "cloudtrail:Describe*",
-    "cloudtrail:Get*",
-    "cloudtrail:List*",
-    "cloudtrail:LookupEvents",
-    "cloudwatch:Describe*",
-    "cloudwatch:Get*",
-    "cloudwatch:List*",
     "compute-optimizer:*",
-    "config:*",
     "consoleapp:*",
     "consolidatedbilling:*",
     "cur:*",
@@ -41,22 +31,15 @@ locals {
     "devicefarm:*",
     "directconnect:*",
     "discovery-marketplace:*",
-    "ec2:DescribeRegions",
-    "ec2:DescribeTransitGateways",
-    "ec2:DescribeVpnGateways",
     "ecr-public:*",
     "fms:*",
     "freetier:*",
     "globalaccelerator:*",
     "health:*",
     "iam:*",
-    "importexport:*",
     "invoicing:*",
     "iq:*",
-    "kms:*",
     "license-manager:ListReceivedLicenses",
-    "lightsail:Get*",
-    "logs:*",
     "mobileanalytics:*",
     "networkmanager:*",
     "notifications-contacts:*",
@@ -64,14 +47,49 @@ locals {
     "organizations:*",
     "payments:*",
     "pricing:*",
-    "quicksight:DescribeAccountSubscription",
-    "quicksight:DescribeTemplate",
     "resource-explorer-2:*",
     "route53-recovery-cluster:*",
     "route53-recovery-control-config:*",
     "route53-recovery-readiness:*",
     "route53:*",
     "route53domains:*",
+    "servicequotas:*",
+    "shield:*",
+    "sso:*",
+    "support:*",
+    "supportapp:*",
+    "sustainability:*",
+    "tag:GetResources",
+    "tax:*",
+    "trustedadvisor:*",
+    "vendor-insights:ListEntitledSecurityProfiles",
+    "waf-regional:*",
+    "waf:*",
+    "wafv2:*",
+  ]
+
+  # AWS services that are typically used at the global (us-east-1) level, but also have regional endpoints.
+  # Therefore need additional protection to ensure they are not allowed in regions outside of the allowed list.
+  global_and_regional_service_actions = [
+    "access-analyzer:*",
+    "acm:*",
+    "cloudtrail:Describe*",
+    "cloudtrail:Get*",
+    "cloudtrail:List*",
+    "cloudtrail:LookupEvents",
+    "cloudwatch:Describe*",
+    "cloudwatch:Get*",
+    "cloudwatch:List*",
+    "config:*",
+    "ec2:DescribeRegions",
+    "ec2:DescribeTransitGateways",
+    "ec2:DescribeVpnGateways",
+    "importexport:*",
+    "kms:*",
+    "lightsail:Get*",
+    "logs:*",
+    "quicksight:DescribeAccountSubscription",
+    "quicksight:DescribeTemplate",
     "s3:CreateMultiRegionAccessPoint",
     "s3:DeleteMultiRegionAccessPoint",
     "s3:DescribeMultiRegionAccessPointOperation",
@@ -89,29 +107,11 @@ locals {
     "s3:ListMultiRegionAccessPoints",
     "s3:ListStorageLensConfigurations",
     "s3:PutAccountPublicAccessBlock",
-    "s3:PutBucketPolicy",
     "s3:PutMultiRegionAccessPointPolicy",
     "savingsplans:*",
-    "servicequotas:*",
-    "shield:*",
-    "sso:*",
     "sts:*",
-    "support:*",
-    "supportapp:*",
-    "sustainability:*",
-    "tag:GetResources",
-    "tax:*",
-    "trustedadvisor:*",
-    "vendor-insights:ListEntitledSecurityProfiles",
-    "waf-regional:*",
-    "waf:*",
-    "wafv2:*",
-    "wellarchitected:*"
-  ]
-
-  # AWS services that are inherently multi-region
-  multi_region_service_actions = [
-    "supportplans:*"
+    "supportplans:*",
+    "wellarchitected:*",
   ]
 
   ################################################################################
@@ -132,7 +132,7 @@ locals {
   #    global + multi-region + any region-specific whitelists
   exempted_actions_for_outside_deny = distinct(concat(
     local.global_service_actions,
-    local.multi_region_service_actions,
+    local.global_and_regional_service_actions,
     local.all_region_whitelisted_actions
   ))
 
@@ -140,14 +140,14 @@ locals {
   exempted_actions_per_region = {
     for region, service_action in var.regions.additional_allowed_service_actions_per_region :
     region => distinct(concat(
-      local.multi_region_service_actions,
+      local.global_and_regional_service_actions,
       service_action
     ))
   }
 
   # C) Actions to exempt from the “DenyAllOtherRegions” rule:
   #    only the multi-region services (no global or region-specific here)
-  exempted_actions_for_other_deny = local.multi_region_service_actions
+  exempted_actions_for_other_regions_deny = local.global_and_regional_service_actions
 
   ################################################################################
   # 4) Build the sets of regions used in conditions
@@ -169,7 +169,7 @@ locals {
   )) : []
 
   ################################################################################
-  # 5) Assemble the 4 SCP statements
+  # 5) Assemble the 3 SCP statements
   ################################################################################
 
   allowed_regions_policy_statements = concat(
@@ -209,24 +209,6 @@ locals {
       }
     ],
 
-    # 3) Explicitly Deny the additional_allowed_service_actions *within* your globally allowed regions
-    [
-      {
-        Sid      = "DenyRegionSpecificWhitelistInAllowedRegions"
-        Effect   = "Deny"
-        Action   = local.all_region_whitelisted_actions
-        Resource = "*"
-        Condition = {
-          StringEquals = {
-            "aws:RequestedRegion" = var.regions.allowed_regions
-          }
-          ArnNotLike = {
-            "aws:PrincipalARN" = local.aws_service_control_policies_principal_exceptions
-          }
-        }
-      }
-    ],
-
     # Deny any region not in your allowed + linked + exception set, but exempt only the multi-region actions.
     # This statement is for leak prevention:
     # It explicitly denies any per-region-only services within your core allowed regions so they can’t slip in where you don’t want them.
@@ -234,7 +216,7 @@ locals {
       {
         Sid       = "DenyOtherRegions"
         Effect    = "Deny"
-        NotAction = local.exempted_actions_for_other_deny
+        NotAction = local.exempted_actions_for_other_regions_deny
         Resource  = "*"
         Condition = {
           StringNotEquals = {
