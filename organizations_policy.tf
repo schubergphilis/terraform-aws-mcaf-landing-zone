@@ -116,7 +116,7 @@ locals {
   ]
 
   ################################################################################
-  # 2) Build the sets of regions & exemption sets used in the SCP Statements
+  # 2) Build the regions & exemption sets used in the SCP Statements
   ################################################################################
 
   # List of regions that have extra whitelisted actions
@@ -142,6 +142,26 @@ locals {
     ))
   }
 
+  per_region_lists = [
+    for region, svc in var.regions.additional_allowed_service_actions_per_region : {
+      region  = region
+      actions = distinct(concat(local.multi_region_service_actions, svc))
+    }
+  ]
+
+  unique_action_lists = distinct([
+    for entry in local.per_region_lists : entry.actions
+  ])
+
+  per_region_grouped = [
+    for actions in local.unique_action_lists : {
+      actions = actions
+      regions = [
+        for entry in local.per_region_lists : entry.region if entry.actions == actions
+      ]
+    }
+  ]
+
   # Statement #3:
   allowed_plus_linked_plus_exception_plus_global_regions = var.regions.allowed_regions != null ? distinct(concat(
     var.regions.allowed_regions,
@@ -154,7 +174,7 @@ locals {
   # 3) Assemble the 3 SCP statements
   ################################################################################
 
-  allowed_regions_policy_statements = jsonencode(concat(
+  allowed_regions_policy_statements = concat(
     # Statement (1) explanation: 
     # Allow all services in your `allowed_regions` & regions listed in the `additional_allowed_service_actions_per_region`, 
     # For all other regions, every service action is denied except for global & multi-region service actions.
@@ -179,14 +199,14 @@ locals {
     # In each `additional_allowed_service_actions_per_region` region, 
     # only allow the actions listed in the `additional_allowed_service_actions_per_region` map & the `multi_region_service_actions`.
     [
-      for region, notactions in local.exempted_actions_per_region : {
-        Sid       = "DenyOutsideAllowedList_${region}"
+      for grp in local.per_region_grouped : {
+        Sid       = "DenyOutsideAllowedList_${join("_", grp.regions)}"
         Effect    = "Deny"
-        NotAction = notactions
+        NotAction = grp.actions
         Resource  = "*"
         Condition = {
           StringEquals = {
-            "aws:RequestedRegion" = [region]
+            "aws:RequestedRegion" = grp.regions
           }
           ArnNotLike = {
             "aws:PrincipalARN" = local.aws_service_control_policies_principal_exceptions
@@ -215,14 +235,14 @@ locals {
         }
       }
     ]
-  ))
+  )
 
   allowed_regions_policy = {
     enable = var.regions.allowed_regions != null ? true : false
-    policy = var.regions.allowed_regions != null ? jsonencode({
+    policy = var.regions.allowed_regions != null ? {
       Version   = "2012-10-17"
       Statement = local.allowed_regions_policy_statements
-    }) : null
+    } : null
   }
 
   ################################################################################
@@ -254,9 +274,9 @@ locals {
     }
   }
 
-  root_policies_to_merge = [for key, value in local.enabled_root_policies : jsondecode(
-    value.enable == true ? value.policy : "{\"Statement\": []}"
-  )]
+  root_policies_to_merge = [for key, value in local.enabled_root_policies :
+    value.enable == true ? value.policy : { Statement : [] }
+  ]
 
   root_policies_merged = flatten([
     for policy in local.root_policies_to_merge : policy.Statement
