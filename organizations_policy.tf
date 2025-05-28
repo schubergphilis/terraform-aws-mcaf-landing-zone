@@ -154,7 +154,7 @@ locals {
   # 3) Assemble the 3 SCP statements
   ################################################################################
 
-  allowed_regions_policy_statements = concat(
+  allowed_regions_policy_statements = jsonencode(concat(
     # Statement (1) explanation: 
     # Allow all services in your `allowed_regions` & regions listed in the `additional_allowed_service_actions_per_region`, 
     # For all other regions, every service action is denied except for global & multi-region service actions.
@@ -197,7 +197,8 @@ locals {
 
     # Statement (3) explanation:
     # Deny all service actions except for the `multi_region_service_actions` in any region not in your allowed + linked + exception + [us-east-1] set.
-    # This statement is for leak prevention, as some services like acm & logs are both global and regional specific services. 
+    # This statement is for leak prevention: It explicitly denies any per-region-only services within your core allowed regions so they can’t slip in where you don’t want them;
+    # as some services like acm & logs are both global and regional specific services. 
     [
       {
         Sid       = "DenyAllOtherRegions"
@@ -214,7 +215,7 @@ locals {
         }
       }
     ]
-  )
+  ))
 
   allowed_regions_policy = {
     enable = var.regions.allowed_regions != null ? true : false
