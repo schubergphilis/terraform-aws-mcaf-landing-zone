@@ -116,15 +116,11 @@ locals {
   ]
 
   ################################################################################
-  # 2) Region-specific whitelisting
+  # 2) Build the sets of regions & exemption sets used in the SCP Statements
   ################################################################################
 
   # List of regions that have extra whitelisted actions
   regions_with_whitelist_exceptions = keys(var.regions.additional_allowed_service_actions_per_region)
-
-  ################################################################################
-  # 3) Build the sets of regions & exemption sets used in the SCP Statements
-  ################################################################################
 
   # Statement #1:
   allowed_plus_exception_regions = var.regions.allowed_regions != null ? distinct(concat(
@@ -155,7 +151,7 @@ locals {
   )) : []
 
   ################################################################################
-  # 4) Assemble the 3 SCP statements
+  # 3) Assemble the 3 SCP statements
   ################################################################################
 
   allowed_regions_policy_statements = concat(
