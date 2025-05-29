@@ -18,20 +18,6 @@ variable "additional_auditing_trail" {
   description = "CloudTrail configuration for additional auditing trail"
 }
 
-variable "regions" {
-  type = object({
-    allowed_regions = list(string)
-    home_region     = string
-    linked_regions  = optional(list(string), ["us-east-1"])
-  })
-  description = "Region configuration. See the README for more information on the configuration options."
-
-  validation {
-    condition     = length(var.regions.linked_regions) > 0
-    error_message = "The 'linked_regions' list must include at least one region. By default, 'us-east-1' is specified to ensure the tracking of global resources. Please specify at least one region if overriding the default."
-  }
-}
-
 variable "aws_account_password_policy" {
   type = object({
     allow_users_to_change        = bool
@@ -302,6 +288,21 @@ variable "monitor_iam_activity_sns_subscription" {
   }))
   default     = {}
   description = "Subscription options for the LandingZone-IAMActivity SNS topic"
+}
+
+variable "regions" {
+  type = object({
+    additional_allowed_service_actions_per_region = optional(map(list(string)), {})
+    allowed_regions                               = list(string)
+    home_region                                   = string
+    linked_regions                                = optional(list(string), ["us-east-1"])
+  })
+  description = "Region configuration, plus global and per-region service SCP exceptions. See the README for more information on the configuration options."
+
+  validation {
+    condition     = length(var.regions.linked_regions) > 0
+    error_message = "The 'linked_regions' list must include at least one region. By default, 'us-east-1' is specified to ensure the tracking of global resources. Please specify at least one region if overriding the default."
+  }
 }
 
 variable "path" {
