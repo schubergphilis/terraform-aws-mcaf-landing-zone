@@ -61,7 +61,7 @@ The `regions.allowed_regions` variable defines the allowed regions within your A
 Sometimes you need to allow a handful of service actions in a region that you haven’t fully “opened up.” Use the variable:
 
 ```hcl
-regions.allowed_regions_additional_service_exceptions_per_region = {
+regions.additional_allowed_service_actions_per_region = {
   "<region-name>" = [ "<service-action-pattern>", … ]
 }
 ``

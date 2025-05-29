@@ -1,8 +1,4 @@
 locals {
-  ################################################################################
-  # Enabled Root Policies
-  ################################################################################
-
   enabled_root_policies = {
     cloudtrail_log_stream = {
       enable = true // This is not configurable and will be applied all the time.
