@@ -77,10 +77,10 @@ module "tag_policy_assignment" {
   tags        = var.tags
 }
 
-resource "aws_organizations_policy" "ai-optout" {
+resource "aws_organizations_policy" "aiservices_opt_out" {
   count = var.aws_aiservices_opt_out_policy_enabled ? 1 : 0
 
-  name        = "ai-services-optout"
+  name        = "LandingZone-AiServicesOptOut"
   content     = file("${path.module}/files/organizations/ai_opt_out_policy.json")
   description = "Opt out of AI services using our data"
   type        = "AISERVICES_OPT_OUT_POLICY"
