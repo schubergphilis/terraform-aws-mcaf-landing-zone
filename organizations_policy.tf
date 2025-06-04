@@ -83,3 +83,10 @@ module "tag_policy_assignment" {
   ou_path     = each.key
   tags        = var.tags
 }
+
+resource "aws_organizations_policy" "ai-optout" {
+  name        = "ai-services-optout"
+  description = "Opt out of AI services using our data"
+  type        = "AISERVICES_OPT_OUT_POLICY"
+  content     = file("${path.module}/files/organizations/ai_opt_out_policy.json")
+}
