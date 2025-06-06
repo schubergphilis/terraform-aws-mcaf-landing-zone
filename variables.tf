@@ -42,6 +42,12 @@ variable "aws_account_password_policy" {
   description = "AWS account password policy parameters for the audit, logging and master account"
 }
 
+variable "aws_aiservices_opt_out_policy_enabled" {
+  type        = bool
+  default     = true
+  description = "Enable the AWS AI Services Opt-Out Policy at the organization level to prevent AWS from using your content for model training."
+}
+
 variable "aws_auditmanager" {
   type = object({
     enabled               = bool

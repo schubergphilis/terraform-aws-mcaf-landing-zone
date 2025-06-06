@@ -76,3 +76,17 @@ module "tag_policy_assignment" {
   ou_path     = each.key
   tags        = var.tags
 }
+
+resource "aws_organizations_policy" "aiservices_opt_out" {
+  count = var.aws_aiservices_opt_out_policy_enabled ? 1 : 0
+
+  name        = "LandingZone-AiServicesOptOut"
+  content     = file("${path.module}/files/organizations/ai_opt_out_policy.json")
+  description = "Opt out of AI services using our data"
+  type        = "AISERVICES_OPT_OUT_POLICY"
+}
+
+resource "aws_organizations_policy_attachment" "lz_aiservices_opt_out_policies" {
+  policy_id = aws_organizations_policy.aiservices_opt_out[0].id
+  target_id = data.aws_organizations_organization.default.roots[0].id
+}
