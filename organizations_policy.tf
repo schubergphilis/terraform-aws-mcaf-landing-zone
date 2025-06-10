@@ -86,7 +86,9 @@ resource "aws_organizations_policy" "aiservices_opt_out" {
   type        = "AISERVICES_OPT_OUT_POLICY"
 }
 
-resource "aws_organizations_policy_attachment" "lz_aiservices_opt_out_policies" {
+resource "aws_organizations_policy_attachment" "aiservices_opt_out" {
+  count = var.aws_aiservices_opt_out_policy_enabled ? 1 : 0
+
   policy_id = aws_organizations_policy.aiservices_opt_out[0].id
   target_id = data.aws_organizations_organization.default.roots[0].id
 }
