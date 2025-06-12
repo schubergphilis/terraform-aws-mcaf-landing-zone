@@ -82,6 +82,7 @@ locals {
     "s3:GetStorageLensConfiguration",
     "s3:GetStorageLensDashboard",
     "s3:ListAllMyBuckets",
+    "s3:ListBuckets",
     "s3:ListMultiRegionAccessPoints",
     "s3:ListStorageLensConfigurations",
     "s3:PutAccountPublicAccessBlock",
