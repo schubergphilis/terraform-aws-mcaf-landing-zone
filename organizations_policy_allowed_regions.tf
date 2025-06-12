@@ -89,6 +89,7 @@ locals {
     "savingsplans:*",
     "servicequotas:*",
     "shield:*",
+    "ssm:GetPar*",
     "sso:*",
     "sts:*",
     "support:*",
