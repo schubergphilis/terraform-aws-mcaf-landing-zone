@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v6.6.1 - 2025-06-12
+
+### What's Changed
+
+#### 🐛 Bug Fixes
+
+* bug: add ssm:GetPar* to the global services actions to be able to deploy global services using AWS CDK (#230) @marwinbaumannsbp
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v6.6.0...v6.6.1
+
 ## v6.6.0 - 2025-06-10
 
 ### What's Changed
