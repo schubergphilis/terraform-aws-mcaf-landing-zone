@@ -82,7 +82,7 @@ locals {
     "s3:GetStorageLensConfiguration",
     "s3:GetStorageLensDashboard",
     "s3:ListAllMyBuckets",
-    "s3:ListBuckets",
+    "s3:ListBucket",
     "s3:ListMultiRegionAccessPoints",
     "s3:ListStorageLensConfigurations",
     "s3:PutAccountPublicAccessBlock",
@@ -163,8 +163,8 @@ locals {
   ################################################################################
 
   allowed_regions_policy_statements = concat(
-    # Statement (1) explanation: 
-    # Allow all services in your `allowed_regions` & regions listed in the `additional_allowed_service_actions_per_region`, 
+    # Statement (1) explanation:
+    # Allow all services in your `allowed_regions` & regions listed in the `additional_allowed_service_actions_per_region`,
     # For all other regions, every service action is denied except for global & multi-region service actions.
     [
       {
@@ -184,7 +184,7 @@ locals {
     ],
 
     # Statement (2) explanation:
-    # In each `additional_allowed_service_actions_per_region` region, 
+    # In each `additional_allowed_service_actions_per_region` region,
     # only allow the actions listed in the `additional_allowed_service_actions_per_region` map & the `multi_region_service_actions`.
     [
       for group in local.exempted_actions_per_region_grouped : {
@@ -206,7 +206,7 @@ locals {
     # Statement (3) explanation:
     # Deny all service actions except for the `multi_region_service_actions` in any region not in your allowed + linked + exception + [us-east-1] set.
     # This statement is for leak prevention: It explicitly denies any per-region-only services within your core allowed regions so they can’t slip in where you don’t want them;
-    # as some services like acm & logs are both global and regional specific services. 
+    # as some services like acm & logs are both global and regional specific services.
     [
       {
         Sid       = "DenyAllOtherRegions"
