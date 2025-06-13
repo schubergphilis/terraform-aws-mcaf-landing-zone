@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v6.6.4 - 2025-06-13
+
+### What's Changed
+
+#### 🐛 Bug Fixes
+
+* bug: add iac specific actions that need to be allowed (#233) @jorrite
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v6.6.3...v6.6.4
+
 ## v6.6.3 - 2025-06-13
 
 ### What's Changed
