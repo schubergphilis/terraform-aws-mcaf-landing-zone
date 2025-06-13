@@ -107,15 +107,15 @@ locals {
 
   # AWS actions that are necessary for IaC tooling to function (CDK, Cloudformation)
   iac_actions = [
+    "cloudformation:ContinueUpdateRollback",
     "cloudformation:CreateChangeSet",
+    "cloudformation:CreateStack",
     "cloudformation:DeleteChangeSet",
     "cloudformation:DescribeChangeSet",
     "cloudformation:DescribeStacks",
     "cloudformation:ExecuteChangeSet",
-    "cloudformation:CreateStack",
-    "cloudformation:UpdateStack",
     "cloudformation:RollbackStack",
-    "cloudformation:ContinueUpdateRollback",
+    "cloudformation:UpdateStack",
     "s3:Abort*",
     "s3:DeleteObject*",
     "s3:GetBucket*",
@@ -130,7 +130,6 @@ locals {
   multi_region_service_actions = [
     "supportplans:*"
   ]
-
 
   ################################################################################
   # 2) Build the regions & exemption sets used in the SCP Statements
