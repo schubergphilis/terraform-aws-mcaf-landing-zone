@@ -77,6 +77,28 @@ regions = {
   }
 ```
 
+**Security lake service action exception in us-east-1**
+
+If you have enabled AWS Security lake in the `us-east-1` region and have enabled the [Rollup regions configuration](https://docs.aws.amazon.com/security-lake/latest/userguide/add-rollup-region.html), you may need to perform additional configuration steps to ensure proper S3 replication. This is required when objects need to be replicated from your Security lake S3 bucket in `us-east-1` to a central S3 bucket in `eu-central-1` as part of the Security lake rollup configuration setup.
+
+Be default, the necessary actions for S3 replication are not present in the `DenyAllRegionsOutsideAllowedList` SCP statement. 
+
+To resolve this, you should enable additional actions in this SCP statement by setting the following optional variable in our configuration:
+
+```hcl
+regions.enable_securitylake_aggregation_actions = true
+``
+
+for example:
+
+```hcl
+regions = {
+...
+    enable_securitylake_aggregation_actions = true,
+  }
+```
+
+
 #### Configuration Scenarios
 
 **Scenario 1: Home region only (no deployment in other regions)**
