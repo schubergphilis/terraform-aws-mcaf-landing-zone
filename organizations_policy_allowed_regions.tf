@@ -82,7 +82,6 @@ locals {
     "s3:GetStorageLensConfiguration",
     "s3:GetStorageLensDashboard",
     "s3:ListAllMyBuckets",
-    "s3:ListBucket",
     "s3:ListMultiRegionAccessPoints",
     "s3:ListStorageLensConfigurations",
     "s3:PutAccountPublicAccessBlock",
@@ -90,7 +89,6 @@ locals {
     "savingsplans:*",
     "servicequotas:*",
     "shield:*",
-    "ssm:GetPar*",
     "sso:*",
     "sts:*",
     "support:*",
@@ -107,10 +105,32 @@ locals {
     "wellarchitected:*",
   ]
 
+  # AWS actions that are necessary for IaC tooling to function (CDK, Cloudformation)
+  iac_actions = [
+    "cloudformation:CreateChangeSet",
+    "cloudformation:DeleteChangeSet",
+    "cloudformation:DescribeChangeSet",
+    "cloudformation:DescribeStacks",
+    "cloudformation:ExecuteChangeSet",
+    "cloudformation:CreateStack",
+    "cloudformation:UpdateStack",
+    "cloudformation:RollbackStack",
+    "cloudformation:ContinueUpdateRollback",
+    "s3:Abort*",
+    "s3:DeleteObject*",
+    "s3:GetBucket*",
+    "s3:GetEncryptionConfiguration",
+    "s3:GetObject*",
+    "s3:List*",
+    "s3:PutObject*",
+    "ssm:GetPar*",
+  ]
+
   # AWS services that are inherently multi-region, meaning they can operate across multiple regions.
   multi_region_service_actions = [
     "supportplans:*"
   ]
+
 
   ################################################################################
   # 2) Build the regions & exemption sets used in the SCP Statements
@@ -127,6 +147,7 @@ locals {
 
   exempted_actions_global = distinct(concat(
     local.global_service_actions,
+    local.iac_actions,
     local.multi_region_service_actions,
   ))
 
