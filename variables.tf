@@ -302,6 +302,7 @@ variable "regions" {
     allowed_regions                               = list(string)
     home_region                                   = string
     linked_regions                                = optional(list(string), ["us-east-1"])
+    enable_securitylake_aggregation_actions       = optional(bool, false)
   })
   description = "Region configuration, plus global and per-region service SCP exceptions. See the README for more information on the configuration options."
 

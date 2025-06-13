@@ -5,7 +5,7 @@ locals {
 
   # AWS services that need to be allowed in the global (us-east-1) region.
   # These services are typically used for account management, billing, and other global operations.
-  global_service_actions = [
+  us_east_1_service_actions = [
     "a4b:*",
     "access-analyzer:*",
     "account:*",
@@ -112,6 +112,27 @@ locals {
     "supportplans:*"
   ]
 
+  # AWS Security lake S3 replication actions to allow S3 replication from us-east-1 bucket to eu-central-1
+  # Reference https://docs.aws.amazon.com/security-lake/latest/userguide/add-rollup-region.html#iam-role-replication
+  # Fill in the required actions if the var.regions.enable_securitylake_aggregation_actions is passed as True; otherwise supply an empty list
+  # Additionally 'glue:Get*' and 'lakeformation:List*' actions are added to prevent Security lake UI from showing permission denied in us-east-1
+  securitylake_aggregation_actions = var.regions.enable_securitylake_aggregation_actions ? [
+    "s3:ListBucket",
+    "s3:GetReplicationConfiguration",
+    "s3:GetObjectVersionForReplication",
+    "s3:GetObjectVersion",
+    "s3:GetObjectVersionAcl",
+    "s3:GetObjectVersionTagging",
+    "s3:GetObjectRetention",
+    "s3:GetObjectLegalHold",
+    "s3:ReplicateObject",
+    "s3:ReplicateDelete",
+    "s3:ReplicateTags",
+    "s3:GetObjectVersionTagging",
+    "glue:Get*",
+    "lakeformation:List*"
+  ] : []
+
   ################################################################################
   # 2) Build the regions & exemption sets used in the SCP Statements
   ################################################################################
@@ -126,8 +147,9 @@ locals {
   )) : []
 
   exempted_actions_global = distinct(concat(
-    local.global_service_actions,
+    local.us_east_1_service_actions,
     local.multi_region_service_actions,
+    local.securitylake_aggregation_actions,
   ))
 
   # Statement #2:
