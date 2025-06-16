@@ -111,8 +111,7 @@ locals {
     "cloudformation:CreateChangeSet",
     "cloudformation:CreateStack",
     "cloudformation:DeleteChangeSet",
-    "cloudformation:DescribeChangeSet",
-    "cloudformation:DescribeStacks",
+    "cloudformation:Describe*",
     "cloudformation:ExecuteChangeSet",
     "cloudformation:RollbackStack",
     "cloudformation:UpdateStack",
@@ -123,7 +122,8 @@ locals {
     "s3:GetObject*",
     "s3:List*",
     "s3:PutObject*",
-    "ssm:GetPar*",
+    "ssm:Describe*",
+    "ssm:Get*",
   ]
 
   # AWS services that are inherently multi-region, meaning they can operate across multiple regions.

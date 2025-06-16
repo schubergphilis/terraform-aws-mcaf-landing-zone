@@ -63,50 +63,64 @@ jobs:
           terraform init
           terraform test
 
-      - uses: actions/github-script@v7
+      - name: Comment CI results
+        uses: actions/github-script@v7
         if: github.event_name == 'pull_request' || always()
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const fmt = process.env.FMT_RESULT;
+            const init = process.env.INIT_RESULT;
+            const lint = process.env.LINT_RESULT;
+            const validate = process.env.VALIDATE_RESULT;
+            const validateOutput = process.env.VALIDATE_STDOUT;
+
             // 1. Retrieve existing bot comments for the PR
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             })
+
             const botComment = comments.find(comment => {
               return comment.user.type === 'Bot' && comment.body.includes('Terraform Format and Style')
             })
 
             // 2. Prepare format of the comment
-            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-            #### Terraform Lint 📖\`${{ steps.lint.outcome }}\`
-            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            const output = `#### Terraform Format and Style 🖌 \`${fmt}\`
+            #### Terraform Initialization ⚙️ \`${init}\`
+            #### Terraform Lint 📖 \`${lint}\`
+            #### Terraform Validation 🤖 \`${validate}\`
             <details><summary>Validation Output</summary>
 
             \`\`\`\n
-            ${{ steps.validate.outputs.stdout }}
+            ${validateOutput}
             \`\`\`
 
             </details>`;
 
             // 3. If we have a comment, update it, otherwise create a new one
             if (botComment) {
-              github.rest.issues.updateComment({
+              await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: botComment.id,
                 body: output
               })
             } else {
-              github.rest.issues.createComment({
+              await github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 body: output
               })
             }
+        env:
+          FMT_RESULT: ${{ steps.fmt.outcome }}
+          INIT_RESULT: ${{ steps.init.outcome }}
+          LINT_RESULT: ${{ steps.lint.outcome }}
+          VALIDATE_RESULT: ${{ steps.validate.outcome }}
+          VALIDATE_STDOUT: ${{ steps.validate.outputs.stdout }}
 
   docs:
     runs-on: ubuntu-latest
