@@ -3,9 +3,10 @@ locals {
   # 1) Core service lists
   ################################################################################
 
-  # AWS services that need to be allowed in the global (us-east-1) region.
+  # AWS services that need to be allowed in the us-east-1 ("global") region.
   # These services are typically used for account management, billing, and other global operations.
-  global_service_actions = [
+  # Mirrors roughly: https://docs.aws.amazon.com/controltower/latest/controlreference/primary-region-deny-policy.html
+  us_east_1_global_service_actions = [
     "a4b:*",
     "access-analyzer:*",
     "account:*",
@@ -105,8 +106,8 @@ locals {
     "wellarchitected:*",
   ]
 
-  # AWS actions that are necessary for IaC tooling to function (CDK, Cloudformation)
-  iac_actions = [
+  # Required AWS actions in us-east-1 for IaC tools (CDK/CloudFormation) to deploy global services.
+  us_east_1_iac_service_actions = [
     "cloudformation:ContinueUpdateRollback",
     "cloudformation:CreateChangeSet",
     "cloudformation:CreateStack",
@@ -126,6 +127,21 @@ locals {
     "ssm:Get*",
   ]
 
+  # AWS Security lake S3 replication actions to allow S3 replication from the us-east-1 bucket to the bucket in the home region.
+  # Reference https://docs.aws.amazon.com/security-lake/latest/userguide/add-rollup-region.html#iam-role-replication
+  # Additionally 'glue:Get*' and 'lakeformation:List*' actions are added to prevent Security Lake UI from showing permission denied in us-east-1
+  us_east_1_security_lake_aggregation_service_actions = var.regions.enable_security_lake_aggregation_service_actions ? [
+    "s3:GetReplicationConfiguration",
+    "s3:ReplicateObject",
+    "s3:ReplicateDelete",
+    "s3:ReplicateTags",
+    "sqs:ReceiveMessage",
+    "sqs:DeleteMessage",
+    "sqs:GetQueueAttributes",
+    "glue:Get*",
+    "lakeformation:List*"
+  ] : []
+
   # AWS services that are inherently multi-region, meaning they can operate across multiple regions.
   multi_region_service_actions = [
     "supportplans:*"
@@ -144,10 +160,11 @@ locals {
     local.regions_with_whitelist_exceptions
   )) : []
 
-  exempted_actions_global = distinct(concat(
-    local.global_service_actions,
-    local.iac_actions,
+  exempted_actions_us_east_1 = distinct(concat(
     local.multi_region_service_actions,
+    local.us_east_1_global_service_actions,
+    local.us_east_1_iac_service_actions,
+    local.us_east_1_security_lake_aggregation_service_actions,
   ))
 
   # Statement #2:
@@ -171,7 +188,7 @@ locals {
   ]
 
   # Statement #3:
-  allowed_plus_linked_plus_exception_plus_global_regions = var.regions.allowed_regions != null ? distinct(concat(
+  allowed_plus_linked_plus_exception_plus_us_east_1_regions = var.regions.allowed_regions != null ? distinct(concat(
     var.regions.allowed_regions,
     var.regions.linked_regions,
     local.regions_with_whitelist_exceptions,
@@ -190,7 +207,7 @@ locals {
       {
         Sid       = "DenyAllRegionsOutsideAllowedList"
         Effect    = "Deny"
-        NotAction = local.exempted_actions_global
+        NotAction = local.exempted_actions_us_east_1
         Resource  = "*"
         Condition = {
           StringNotEquals = {
@@ -235,7 +252,7 @@ locals {
         Resource  = "*"
         Condition = {
           StringNotEquals = {
-            "aws:RequestedRegion" = local.allowed_plus_linked_plus_exception_plus_global_regions
+            "aws:RequestedRegion" = local.allowed_plus_linked_plus_exception_plus_us_east_1_regions
           }
           ArnNotLike = {
             "aws:PrincipalARN" = local.aws_service_control_policies_principal_exceptions
