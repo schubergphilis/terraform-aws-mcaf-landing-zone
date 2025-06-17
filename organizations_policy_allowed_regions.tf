@@ -116,8 +116,11 @@ locals {
     "s3:GetObject*",
     "s3:List*",
     "s3:PutObject*",
-    "ssm:Describe*",
-    "ssm:Get*",
+    "ssm:*",
+    // "ssm:AddTagsToResource",
+    // "ssm:Describe*",
+    // "ssm:Get*",
+    // "ssm:Put*",
   ]
 
   # AWS Security lake S3 replication actions to allow S3 replication from the us-east-1 bucket to the bucket in the home region.
