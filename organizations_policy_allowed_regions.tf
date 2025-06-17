@@ -136,18 +136,10 @@ locals {
   # Fill in the required actions if the var.regions.enable_securitylake_aggregation_actions is passed as True; otherwise supply an empty list
   # Additionally 'glue:Get*' and 'lakeformation:List*' actions are added to prevent Security lake UI from showing permission denied in us-east-1
   securitylake_aggregation_actions = var.regions.enable_securitylake_aggregation_actions ? [
-    "s3:ListBucket",
     "s3:GetReplicationConfiguration",
-    "s3:GetObjectVersionForReplication",
-    "s3:GetObjectVersion",
-    "s3:GetObjectVersionAcl",
-    "s3:GetObjectVersionTagging",
-    "s3:GetObjectRetention",
-    "s3:GetObjectLegalHold",
     "s3:ReplicateObject",
     "s3:ReplicateDelete",
     "s3:ReplicateTags",
-    "s3:GetObjectVersionTagging",
     "glue:Get*",
     "lakeformation:List*"
   ] : []
