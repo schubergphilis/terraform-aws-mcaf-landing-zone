@@ -140,6 +140,9 @@ locals {
     "s3:ReplicateObject",
     "s3:ReplicateDelete",
     "s3:ReplicateTags",
+    "sqs:ReceiveMessage",
+    "sqs:DeleteMessage",
+    "sqs:GetQueueAttributes",
     "glue:Get*",
     "lakeformation:List*"
   ] : []
