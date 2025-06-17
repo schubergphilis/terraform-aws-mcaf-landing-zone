@@ -27,9 +27,7 @@ locals {
     "cloudtrail:Get*",
     "cloudtrail:List*",
     "cloudtrail:LookupEvents",
-    "cloudwatch:Describe*",
-    "cloudwatch:Get*",
-    "cloudwatch:List*",
+    "cloudwatch:*",
     "compute-optimizer:*",
     "config:*",
     "consoleapp:*",
@@ -51,6 +49,7 @@ locals {
     "invoicing:*",
     "iq:*",
     "kms:*",
+    "lambda:*", // Needed for Lambda@Edge
     "license-manager:ListReceivedLicenses",
     "lightsail:Get*",
     "logs:*",
