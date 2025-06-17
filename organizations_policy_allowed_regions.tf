@@ -108,14 +108,7 @@ locals {
 
   # Required AWS actions in us-east-1 for IaC tools (CDK/CloudFormation) to deploy global services.
   us_east_1_iac_service_actions = [
-    "cloudformation:ContinueUpdateRollback",
-    "cloudformation:CreateChangeSet",
-    "cloudformation:CreateStack",
-    "cloudformation:DeleteChangeSet",
-    "cloudformation:Describe*",
-    "cloudformation:ExecuteChangeSet",
-    "cloudformation:RollbackStack",
-    "cloudformation:UpdateStack",
+    "cloudformation:*",
     "s3:Abort*",
     "s3:DeleteObject*",
     "s3:GetBucket*",
