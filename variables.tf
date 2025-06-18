@@ -310,6 +310,14 @@ variable "regions" {
     condition     = length(var.regions.linked_regions) > 0
     error_message = "The 'linked_regions' list must include at least one region. By default, 'us-east-1' is specified to ensure the tracking of global resources. Please specify at least one region if overriding the default."
   }
+
+  validation {
+    condition = alltrue([
+      for region in keys(var.regions.additional_allowed_service_actions_per_region) :
+      !contains(var.regions.allowed_regions, region)
+    ])
+    error_message = "You cannot specify 'additional_allowed_service_actions_per_region' for a region already in 'allowed_regions'. The 'allowed_regions' list already grants full service-action access there, so any per-region overrides must only target regions not listed in 'allowed_regions'."
+  }
 }
 
 variable "path" {
