@@ -34,5 +34,6 @@ locals {
   security_hub_has_cis_aws_foundations_enabled = length(regexall(
     "cis-aws-foundations-benchmark/v", join(",", local.security_hub_standards_arns)
   )) > 0 ? true : false
+
   all_organisation_regions = toset(distinct(concat([var.regions.home_region], var.regions.linked_regions, var.regions.allowed_regions, [data.aws_region.current.name])))
 }
