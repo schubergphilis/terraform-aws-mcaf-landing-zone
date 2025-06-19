@@ -115,7 +115,7 @@ locals {
     "s3:GetObject*",
     "s3:List*",
     "s3:PutObject*",
-    "sns:Get*",
+    "sns:*",
     "ssm:*",
     // "ssm:AddTagsToResource",
     // "ssm:Describe*",
