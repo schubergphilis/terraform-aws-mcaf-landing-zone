@@ -3,6 +3,11 @@ output "aws_config_s3_bucket_arn" {
   value       = module.aws_config_s3.arn
 }
 
+output "aws_config_s3_bucket_name" {
+  description = "Name of the AWS Config S3 bucket in the logging account"
+  value       = module.aws_config_s3.name
+}
+
 output "aws_config_iam_service_linked_role_arn" {
   description = "IAM Service Linked Role ARN for AWS Config in the management account"
   value       = aws_iam_service_linked_role.config.arn

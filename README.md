@@ -630,6 +630,7 @@ module "landing_zone" {
 |------|-------------|
 | <a name="output_aws_config_iam_service_linked_role_arn"></a> [aws\_config\_iam\_service\_linked\_role\_arn](#output\_aws\_config\_iam\_service\_linked\_role\_arn) | IAM Service Linked Role ARN for AWS Config in the management account |
 | <a name="output_aws_config_s3_bucket_arn"></a> [aws\_config\_s3\_bucket\_arn](#output\_aws\_config\_s3\_bucket\_arn) | ARN of the AWS Config S3 bucket in the logging account |
+| <a name="output_aws_config_s3_bucket_name"></a> [aws\_config\_s3\_bucket\_name](#output\_aws\_config\_s3\_bucket\_name) | Name of the AWS Config S3 bucket in the logging account |
 | <a name="output_kms_key_arn"></a> [kms\_key\_arn](#output\_kms\_key\_arn) | ARN of KMS key for the management account |
 | <a name="output_kms_key_audit_arn"></a> [kms\_key\_audit\_arn](#output\_kms\_key\_audit\_arn) | ARN of KMS key for the audit account |
 | <a name="output_kms_key_audit_id"></a> [kms\_key\_audit\_id](#output\_kms\_key\_audit\_id) | ID of KMS key for the audit account |
