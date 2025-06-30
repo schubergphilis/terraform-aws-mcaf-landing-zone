@@ -27,7 +27,9 @@ locals {
     "cloudtrail:Get*",
     "cloudtrail:List*",
     "cloudtrail:LookupEvents",
-    "cloudwatch:*",
+    "cloudwatch:Describe*",
+    "cloudwatch:Get*",
+    "cloudwatch:List*",
     "compute-optimizer:*",
     "config:*",
     "consoleapp:*",
@@ -49,7 +51,6 @@ locals {
     "invoicing:*",
     "iq:*",
     "kms:*",
-    "lambda:*", // Needed for Lambda@Edge
     "license-manager:ListReceivedLicenses",
     "lightsail:Get*",
     "logs:*",
@@ -105,8 +106,13 @@ locals {
     "wellarchitected:*",
   ]
 
+  # Required AWS actions in us-east-1 for AWS Edge services.
+  us_east_1_edge_service_actions = var.regions.enable_edge_service_actions ? [
+    "lambda:*", // Lambda@Edge
+  ] : []
+
   # Required AWS actions in us-east-1 for CDK/CloudFormation to deploy global services.
-  us_east_1_cdk_service_actions = var.region.enable_cdk_service_actions ? [
+  us_east_1_cdk_service_actions = var.regions.enable_cdk_service_actions ? [
     "cloudformation:*",
     "s3:Abort*",
     "s3:DeleteObject*",
@@ -116,6 +122,7 @@ locals {
     "s3:List*",
     "s3:PutObject*",
     "sns:*",
+    "cloudwatch:*",
     "ssm:AddTagsToResource",
     "ssm:DeleteParameter",
     "ssm:DeleteParameters",
@@ -164,8 +171,9 @@ locals {
 
   exempted_actions_us_east_1 = distinct(concat(
     local.multi_region_service_actions,
-    local.us_east_1_global_service_actions,
     local.us_east_1_cdk_service_actions,
+    local.us_east_1_edge_service_actions,
+    local.us_east_1_global_service_actions,
     local.us_east_1_security_lake_aggregation_service_actions,
   ))
 
