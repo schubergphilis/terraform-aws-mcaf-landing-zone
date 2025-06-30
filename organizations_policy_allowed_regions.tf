@@ -114,6 +114,7 @@ locals {
   # Required AWS actions in us-east-1 for CDK/CloudFormation to deploy global services.
   us_east_1_cdk_service_actions = var.regions.enable_cdk_service_actions ? [
     "cloudformation:*",
+    "cloudwatch:*",
     "s3:Abort*",
     "s3:DeleteObject*",
     "s3:GetBucket*",
@@ -122,7 +123,6 @@ locals {
     "s3:List*",
     "s3:PutObject*",
     "sns:*",
-    "cloudwatch:*",
     "ssm:AddTagsToResource",
     "ssm:DeleteParameter",
     "ssm:DeleteParameters",
