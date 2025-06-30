@@ -106,16 +106,15 @@ locals {
     "wellarchitected:*",
   ]
 
-  # Required AWS actions in us-east-1 for IaC tools (CDK/CloudFormation) to deploy global services.
-  us_east_1_iac_service_actions = [
-    "cloudformation:ContinueUpdateRollback",
-    "cloudformation:CreateChangeSet",
-    "cloudformation:CreateStack",
-    "cloudformation:DeleteChangeSet",
-    "cloudformation:Describe*",
-    "cloudformation:ExecuteChangeSet",
-    "cloudformation:RollbackStack",
-    "cloudformation:UpdateStack",
+  # Required AWS actions in us-east-1 for AWS Edge services.
+  us_east_1_edge_service_actions = var.regions.enable_edge_service_actions ? [
+    "lambda:*", // Lambda@Edge
+  ] : []
+
+  # Required AWS actions in us-east-1 for CDK/CloudFormation to deploy global services.
+  us_east_1_cdk_service_actions = var.regions.enable_cdk_service_actions ? [
+    "cloudformation:*",
+    "cloudwatch:*",
     "s3:Abort*",
     "s3:DeleteObject*",
     "s3:GetBucket*",
@@ -123,9 +122,19 @@ locals {
     "s3:GetObject*",
     "s3:List*",
     "s3:PutObject*",
-    "ssm:Describe*",
-    "ssm:Get*",
-  ]
+    "sns:*",
+    "ssm:AddTagsToResource",
+    "ssm:DeleteParameter",
+    "ssm:DeleteParameters",
+    "ssm:DescribeParameters",
+    "ssm:GetParameter",
+    "ssm:GetParameterHistory",
+    "ssm:GetParameters",
+    "ssm:GetParametersByPath",
+    "ssm:ListTagsForResource",
+    "ssm:PutParameter",
+    "ssm:RemoveTagsFromResource"
+  ] : []
 
   # AWS Security lake S3 replication actions to allow S3 replication from the us-east-1 bucket to the bucket in the home region.
   # Reference https://docs.aws.amazon.com/security-lake/latest/userguide/add-rollup-region.html#iam-role-replication
@@ -162,8 +171,9 @@ locals {
 
   exempted_actions_us_east_1 = distinct(concat(
     local.multi_region_service_actions,
+    local.us_east_1_cdk_service_actions,
+    local.us_east_1_edge_service_actions,
     local.us_east_1_global_service_actions,
-    local.us_east_1_iac_service_actions,
     local.us_east_1_security_lake_aggregation_service_actions,
   ))
 

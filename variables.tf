@@ -300,6 +300,8 @@ variable "regions" {
   type = object({
     additional_allowed_service_actions_per_region    = optional(map(list(string)), {})
     allowed_regions                                  = list(string)
+    enable_cdk_service_actions                       = optional(bool, false)
+    enable_edge_service_actions                      = optional(bool, false)
     enable_security_lake_aggregation_service_actions = optional(bool, false)
     home_region                                      = string
     linked_regions                                   = optional(list(string), ["us-east-1"])
