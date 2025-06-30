@@ -27,6 +27,57 @@ data "aws_iam_policy_document" "kms_key" {
     }
   }
 
+  statement {
+    sid = "Allow ControlTower CloudTrail Log Group Encryption"
+    actions = [
+      "kms:Decrypt",
+      "kms:Describe*",
+      "kms:Encrypt",
+      "kms:GenerateDataKey*",
+      "kms:ReEncrypt*"
+    ]
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.management.account_id}:key/*"]
+
+    condition {
+      test     = "ArnLike"
+      variable = "kms:EncryptionContext:aws:logs:arn"
+
+      values = [
+        "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.management.account_id}:aws-controltower/CloudTrailLogs:*"
+      ]
+    }
+
+    principals {
+      type = "Service"
+      identifiers = [
+        "logs.${data.aws_region.current.name}.amazonaws.com"
+      ]
+    }
+  }
+
+  statement {
+    sid       = "Allow Control Tower dependencies CloudWatch, CloudTrail, Config & SNS Decrypt"
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.management.account_id}:key/*"]
+
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey"
+    ]
+
+    principals {
+      type = "Service"
+      identifiers = [
+        "config.amazonaws.com",
+        "cloudtrail.amazonaws.com",
+        "cloudwatch.amazonaws.com",
+        "events.amazonaws.com",
+        "sns.amazonaws.com"
+      ]
+    }
+  }
+
   dynamic "statement" {
     for_each = var.ses_root_accounts_mail_forward != null ? ["allow_ses"] : []
     content {
