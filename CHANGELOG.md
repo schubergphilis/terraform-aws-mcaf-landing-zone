@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### 🚀 Features
 
-* feature: Add kms actions to kms logging policy (#239) @svashisht
+* feature: Add kms actions to kms logging policy in core-logging (#239) @svashisht
 
 **Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v6.8.0...v6.8.1
 
