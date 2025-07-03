@@ -363,6 +363,7 @@ data "aws_iam_policy_document" "kms_key_logging" {
       "kms:Describe*",
       "kms:Enable*",
       "kms:Get*",
+      "kms:GenerateDataKey*",
       "kms:List*",
       "kms:Put*",
       "kms:Revoke*",
