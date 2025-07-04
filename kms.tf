@@ -5,13 +5,13 @@ locals {
   all_statements_audit = flatten([
     for policy in local.decoded_policy_documents_audit : try(coalesce(policy.Statement, policy.statement), [])
   ])
-  user_sids_audit = [for statement in local.all_statements_audit : try(coalesce(statement.Sid, statement.sid),"")]
+  user_sids_audit                   = [for statement in local.all_statements_audit : try(coalesce(statement.Sid, statement.sid), "")]
   has_admin_control_tower_sid_audit = contains(local.user_sids_audit, "Administrative permissions for pipeline")
   # Extract user-supplied statement matching the SID 'Administrative permissions for pipeline'
   user_admin_statement_audit = local.has_admin_control_tower_sid_audit && length([
     for s in local.all_statements_audit : s
     if try(coalesce(s.Sid, s.sid), "") == "Administrative permissions for pipeline"
-  ]) > 0 ? one([
+    ]) > 0 ? one([
     for s in local.all_statements_audit : try(coalesce(s.Action, s.action), [])
     if try(coalesce(s.Sid, s.sid), "") == "Administrative permissions for pipeline"
   ]) : []
@@ -38,13 +38,13 @@ locals {
   all_statements_logging = flatten([
     for policy in local.decoded_policy_documents_logging : try(coalesce(policy.Statement, policy.statement), [])
   ])
-  user_sids_logging = [for statement in local.all_statements_logging : try(coalesce(statement.Sid, statement.sid),"")]
+  user_sids_logging                   = [for statement in local.all_statements_logging : try(coalesce(statement.Sid, statement.sid), "")]
   has_admin_control_tower_sid_logging = contains(local.user_sids_logging, "Administrative permissions for pipeline")
   # Extract user-supplied statement matching the SID 'Administrative permissions for pipeline'
   user_admin_statement_logging = local.has_admin_control_tower_sid_logging && length([
     for s in local.all_statements_logging : s
     if try(coalesce(s.Sid, s.sid), "") == "Administrative permissions for pipeline"
-  ]) > 0 ? one([
+    ]) > 0 ? one([
     for s in local.all_statements_logging : try(coalesce(s.Action, s.action), [])
     if try(coalesce(s.Sid, s.sid), "") == "Administrative permissions for pipeline"
   ]) : []
@@ -65,7 +65,7 @@ locals {
     local.default_admin_control_tower_actions_logging,
     try(local.user_admin_statement_logging.actions, [])
   ))
-  
+
 }
 
 # Management Account
