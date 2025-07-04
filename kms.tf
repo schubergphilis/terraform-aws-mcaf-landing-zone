@@ -1,3 +1,73 @@
+locals {
+
+  # Audit Account
+  decoded_policy_documents_audit = [for policy_json in var.kms_key_policy_audit : jsondecode(policy_json)]
+  all_statements_audit = flatten([
+    for policy in local.decoded_policy_documents_audit : try(coalesce(policy.Statement, policy.statement), [])
+  ])
+  user_sids_audit                   = [for statement in local.all_statements_audit : try(coalesce(statement.Sid, statement.sid), "")]
+  has_admin_control_tower_sid_audit = contains(local.user_sids_audit, "Administrative permissions for pipeline")
+  # Extract user-supplied statement matching the SID 'Administrative permissions for pipeline'
+  user_admin_statement_audit = local.has_admin_control_tower_sid_audit && length([
+    for s in local.all_statements_audit : s
+    if try(coalesce(s.Sid, s.sid), "") == "Administrative permissions for pipeline"
+    ]) > 0 ? one([
+    for s in local.all_statements_audit : try(coalesce(s.Action, s.action), [])
+    if try(coalesce(s.Sid, s.sid), "") == "Administrative permissions for pipeline"
+  ]) : []
+  default_admin_control_tower_actions_audit = [
+    "kms:Create*",
+    "kms:Describe*",
+    "kms:Enable*",
+    "kms:GenerateDataKey*",
+    "kms:Get*",
+    "kms:List*",
+    "kms:Put*",
+    "kms:Revoke*",
+    "kms:TagResource",
+    "kms:UntagResource",
+    "kms:Update*"
+  ]
+  merged_admin_control_tower_actions_audit = distinct(concat(
+    local.default_admin_control_tower_actions_audit,
+    try(local.user_admin_statement_audit.actions, [])
+  ))
+
+  # Logging Account
+  decoded_policy_documents_logging = [for policy_json in var.kms_key_policy_logging : jsondecode(policy_json)]
+  all_statements_logging = flatten([
+    for policy in local.decoded_policy_documents_logging : try(coalesce(policy.Statement, policy.statement), [])
+  ])
+  user_sids_logging                   = [for statement in local.all_statements_logging : try(coalesce(statement.Sid, statement.sid), "")]
+  has_admin_control_tower_sid_logging = contains(local.user_sids_logging, "Administrative permissions for pipeline")
+  # Extract user-supplied statement matching the SID 'Administrative permissions for pipeline'
+  user_admin_statement_logging = local.has_admin_control_tower_sid_logging && length([
+    for s in local.all_statements_logging : s
+    if try(coalesce(s.Sid, s.sid), "") == "Administrative permissions for pipeline"
+    ]) > 0 ? one([
+    for s in local.all_statements_logging : try(coalesce(s.Action, s.action), [])
+    if try(coalesce(s.Sid, s.sid), "") == "Administrative permissions for pipeline"
+  ]) : []
+  default_admin_control_tower_actions_logging = [
+    "kms:Create*",
+    "kms:Describe*",
+    "kms:Enable*",
+    "kms:Get*",
+    "kms:List*",
+    "kms:Put*",
+    "kms:Revoke*",
+    "kms:TagResource",
+    "kms:UntagResource",
+    "kms:Update*",
+    "kms:GenerateDataKey*"
+  ]
+  merged_admin_control_tower_actions_logging = distinct(concat(
+    local.default_admin_control_tower_actions_logging,
+    try(local.user_admin_statement_logging.actions, [])
+  ))
+
+}
+
 # Management Account
 module "kms_key" {
   source  = "schubergphilis/mcaf-kms/aws"
@@ -170,33 +240,25 @@ data "aws_iam_policy_document" "kms_key_audit" {
     }
   }
 
-  statement {
-    sid       = "Administrative permissions for pipeline"
-    effect    = "Allow"
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
+  # Add merged 'Administrative permissions for pipeline' if user includes that SID
+  dynamic "statement" {
+    for_each = local.has_admin_control_tower_sid_audit ? [1] : []
 
-    actions = [
-      "kms:Create*",
-      "kms:Describe*",
-      "kms:Enable*",
-      "kms:GenerateDataKey*",
-      "kms:Get*",
-      "kms:List*",
-      "kms:Put*",
-      "kms:Revoke*",
-      "kms:TagResource",
-      "kms:UntagResource",
-      "kms:Update*"
-    ]
+    content {
+      sid       = "Administrative permissions for pipeline"
+      effect    = "Allow"
+      resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.audit.account_id}:key/*"]
 
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.audit.account_id}:role/AWSControlTowerExecution"
-      ]
+      actions = local.merged_admin_control_tower_actions_audit
+
+      principals {
+        type = "AWS"
+        identifiers = [
+          "arn:aws:iam::${data.aws_caller_identity.audit.account_id}:AWSControlTowerExecution"
+        ]
+      }
     }
   }
-
   statement {
     sid       = "List KMS keys permissions for all IAM users"
     effect    = "Allow"
@@ -353,32 +415,25 @@ data "aws_iam_policy_document" "kms_key_logging" {
     }
   }
 
-  statement {
-    sid       = "Administrative permissions for pipeline"
-    effect    = "Allow"
-    resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
+  # Add merged 'Administrative permissions for pipeline' if user includes that SID
+  dynamic "statement" {
+    for_each = local.has_admin_control_tower_sid_logging ? [1] : []
 
-    actions = [
-      "kms:Create*",
-      "kms:Describe*",
-      "kms:Enable*",
-      "kms:Get*",
-      "kms:List*",
-      "kms:Put*",
-      "kms:Revoke*",
-      "kms:TagResource",
-      "kms:UntagResource",
-      "kms:Update*"
-    ]
+    content {
+      sid       = "Administrative permissions for pipeline"
+      effect    = "Allow"
+      resources = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.logging.account_id}:key/*"]
 
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.logging.account_id}:role/AWSControlTowerExecution"
-      ]
+      actions = local.merged_admin_control_tower_actions_logging
+
+      principals {
+        type = "AWS"
+        identifiers = [
+          "arn:aws:iam::${data.aws_caller_identity.logging.account_id}:AWSControlTowerExecution"
+        ]
+      }
     }
   }
-
   statement {
     sid       = "List KMS keys permissions for all IAM users"
     effect    = "Allow"
