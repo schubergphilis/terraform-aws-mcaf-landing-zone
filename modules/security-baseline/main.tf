@@ -1,6 +1,5 @@
-resource "aws_iam_account_password_policy" "audit" {
-  count    = var.aws_account_password_policy != null ? 1 : 0
-  provider = aws.audit
+resource "aws_iam_account_password_policy" "default" {
+  count = var.aws_account_password_policy != null ? 1 : 0
 
   allow_users_to_change_password = var.aws_account_password_policy.allow_users_to_change
   max_password_age               = var.aws_account_password_policy.max_age
@@ -12,15 +11,11 @@ resource "aws_iam_account_password_policy" "audit" {
   require_uppercase_characters   = var.aws_account_password_policy.require_uppercase_characters
 }
 
-resource "aws_ebs_encryption_by_default" "audit" {
-  provider = aws.audit
-
+resource "aws_ebs_encryption_by_default" "default" {
   enabled = var.aws_ebs_encryption_by_default
 }
 
-resource "aws_s3_account_public_access_block" "audit" {
-  provider = aws.audit
-
+resource "aws_s3_account_public_access_block" "default" {
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
