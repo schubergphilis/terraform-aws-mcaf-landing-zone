@@ -109,6 +109,17 @@ variable "aws_ebs_snapshot_block_public_access_state" {
   }
 }
 
+variable "aws_ec2_image_block_public_access_state" {
+  type        = string
+  default     = "block-new-sharing"
+  description = "Configure blocking new AMIs from being publicly shared, alternatives: `unblocked`"
+
+  validation {
+    condition     = contains(["block-new-sharing", "unblocked"], var.aws_ec2_image_block_public_access_state)
+    error_message = "Allowed values for aws_ec2_image_block_public_access_state are: \"block-new-sharing\", \"unblocked\"."
+  }
+}
+
 variable "aws_ssm_documents_public_sharing_permission" {
   type        = string
   default     = "Disable"

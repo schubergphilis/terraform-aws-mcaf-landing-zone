@@ -20,6 +20,12 @@ resource "aws_s3_account_public_access_block" "default" {
   restrict_public_buckets = true
 }
 
+# This is set regionally, but enforced account-wide, see:
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/manage-block-public-access-for-amis.html#enable-block-public-access-for-amis
+resource "aws_ec2_image_block_public_access" "default" {
+  state = var.security_baseline_input.aws_ec2_image_block_public_access_state
+}
+
 module "regional_resources_baseline" {
   for_each = var.security_baseline_input.regions
 
