@@ -26,7 +26,7 @@ No requirements.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_security_baseline_input"></a> [security\_baseline\_input](#input\_security\_baseline\_input) | n/a | <pre>object({<br/>    regions                       = set(string)<br/>    aws_ebs_encryption_by_default = bool<br/>    aws_account_password_policy = object({<br/>      allow_users_to_change        = bool<br/>      max_age                      = number<br/>      minimum_length               = number<br/>      require_lowercase_characters = bool<br/>      require_numbers              = bool<br/>      require_symbols              = bool<br/>      require_uppercase_characters = bool<br/>      reuse_prevention_history     = number<br/>    })<br/>  })</pre> | n/a | yes |
+| <a name="input_security_baseline_input"></a> [security\_baseline\_input](#input\_security\_baseline\_input) | n/a | <pre>object({<br/>    regions                                     = set(string)<br/>    aws_ebs_encryption_by_default               = bool<br/>    aws_ebs_snapshot_block_public_access_state  = string<br/>    aws_ssm_documents_public_sharing_permission = string<br/>    aws_account_password_policy = object({<br/>      allow_users_to_change        = bool<br/>      max_age                      = number<br/>      minimum_length               = number<br/>      require_lowercase_characters = bool<br/>      require_numbers              = bool<br/>      require_symbols              = bool<br/>      require_uppercase_characters = bool<br/>      reuse_prevention_history     = number<br/>    })<br/>  })</pre> | n/a | yes |
 
 ## Outputs
 
