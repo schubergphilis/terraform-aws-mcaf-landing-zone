@@ -481,7 +481,7 @@ module "landing_zone" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.54.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.7.0 |
 | <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | >= 3.39 |
 | <a name="requirement_mcaf"></a> [mcaf](#requirement\_mcaf) | >= 0.4.2 |
 
@@ -489,9 +489,9 @@ module "landing_zone" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.54.0 |
-| <a name="provider_aws.audit"></a> [aws.audit](#provider\_aws.audit) | >= 5.54.0 |
-| <a name="provider_aws.logging"></a> [aws.logging](#provider\_aws.logging) | >= 5.54.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.7.0 |
+| <a name="provider_aws.audit"></a> [aws.audit](#provider\_aws.audit) | >= 6.7.0 |
+| <a name="provider_aws.logging"></a> [aws.logging](#provider\_aws.logging) | >= 6.7.0 |
 | <a name="provider_mcaf"></a> [mcaf](#provider\_mcaf) | >= 0.4.2 |
 
 ## Modules
