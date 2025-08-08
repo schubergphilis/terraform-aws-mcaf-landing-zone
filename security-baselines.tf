@@ -1,5 +1,6 @@
 locals {
   security_baseline_input = {
+    regions                       = toset(var.regions.allowed_regions)
     aws_ebs_encryption_by_default = var.aws_ebs_encryption_by_default
     aws_account_password_policy   = var.aws_account_password_policy
   }

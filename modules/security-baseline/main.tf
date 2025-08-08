@@ -11,13 +11,18 @@ resource "aws_iam_account_password_policy" "default" {
   require_uppercase_characters   = var.security_baseline_input.aws_account_password_policy.require_uppercase_characters
 }
 
-resource "aws_ebs_encryption_by_default" "default" {
-  enabled = var.security_baseline_input.aws_ebs_encryption_by_default
-}
-
 resource "aws_s3_account_public_access_block" "default" {
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
+}
+
+module "regional_resources_baseline" {
+  for_each = var.security_baseline_input.regions
+
+  source = "./../../modules/security-baseline-regional"
+
+  region                        = each.value
+  aws_ebs_encryption_by_default = var.security_baseline_input.aws_ebs_encryption_by_default
 }
