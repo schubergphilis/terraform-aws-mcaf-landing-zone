@@ -98,6 +98,28 @@ variable "aws_ebs_encryption_by_default" {
   description = "Set to true to enable AWS Elastic Block Store encryption by default"
 }
 
+variable "aws_ebs_snapshot_block_public_access_state" {
+  type        = string
+  default     = "block-new-sharing"
+  description = "Configure regionally the EBS snapshot public sharing policy, alternatives: `block-all-sharing` and `unblocked`"
+
+  validation {
+    condition     = contains(["unblocked", "block-new-sharing", "block-all-sharing"], var.aws_ebs_snapshot_block_public_access_state)
+    error_message = "Allowed values for aws_ebs_snapshot_block_public_access_state are: \"unblocked\", \"block-new-sharing\", \"block-all-sharing\"."
+  }
+}
+
+variable "aws_ssm_documents_public_sharing_permission" {
+  type        = string
+  default     = "Disable"
+  description = "Configure the SSM documents public sharing policy, alternatives: `Enable`"
+
+  validation {
+    condition     = contains(["Disable", "Enable"], var.aws_ssm_documents_public_sharing_permission)
+    error_message = "Allowed values for aws_ssm_documents_public_sharing_permission are: \"Disable\", \"Enable\"."
+  }
+}
+
 variable "aws_guardduty" {
   type = object({
     enabled                       = optional(bool, true)

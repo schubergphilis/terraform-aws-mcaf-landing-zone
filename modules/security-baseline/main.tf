@@ -1,4 +1,6 @@
 resource "aws_iam_account_password_policy" "default" {
+  #checkov:skip=CKV_AWS_9: good default set in top-level variables
+
   count = var.security_baseline_input.aws_account_password_policy != null ? 1 : 0
 
   allow_users_to_change_password = var.security_baseline_input.aws_account_password_policy.allow_users_to_change
@@ -23,6 +25,8 @@ module "regional_resources_baseline" {
 
   source = "./../../modules/security-baseline-regional"
 
-  region                        = each.value
-  aws_ebs_encryption_by_default = var.security_baseline_input.aws_ebs_encryption_by_default
+  region                                      = each.value
+  aws_ebs_encryption_by_default               = var.security_baseline_input.aws_ebs_encryption_by_default
+  aws_ebs_snapshot_block_public_access_state  = var.security_baseline_input.aws_ebs_snapshot_block_public_access_state
+  aws_ssm_documents_public_sharing_permission = var.security_baseline_input.aws_ssm_documents_public_sharing_permission
 }
