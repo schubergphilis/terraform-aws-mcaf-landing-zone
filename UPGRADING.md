@@ -2,6 +2,86 @@
 
 This document captures required refactoring on your part when upgrading to a module version that contains breaking changes.
 
+## Upgrading to v7.0.0
+
+### Key Changes v7.0.0
+
+This module can now apply its best security practices on multiple regions where relevant.
+By default it will set them for all `regions.allowed_regions`.
+
+Furthermore this version sets secure defaults for:
+
+- Public sharing of EBS volumes: block new.
+- Public sharing of EC2 images: block new.
+- Public sharing of SSM documents: disable.
+
+### Variables v7.0.0
+
+The following variables have been added:
+
+- `aws_ebs_snapshot_block_public_access_state`. Configure the EBS snapshot public sharing policy (`block-new-sharing`), alternatives: `block-all-sharing` and `unblocked`.
+- `aws_ec2_image_block_public_access_state`. Configure the AMI public sharing policy (`block-new-sharing`), alternatives: `unblocked`.
+- `aws_ssm_documents_public_sharing_permission`. Configure SSM public document sharing (`Disable`), alternatives: `Enable`.
+
+### How to upgrade v7.0.0
+
+Some resources had to be moved to separate modules.
+To prevent recreating those resources use this snippet as an example for the appropriate resources:
+
+```hcl
+moved {
+  from = module.this_landing_zone.aws_ebs_encryption_by_default.audit
+  to   = module.this_landing_zone.module.security_baseline_audit.module.regional_resources_baseline["eu-west-1"].aws_ebs_encryption_by_default.default
+}
+
+moved {
+  from = module.this_landing_zone.aws_ebs_encryption_by_default.logging
+  to   = module.this_landing_zone.module.security_baseline_logging.module.regional_resources_baseline["eu-west-1"].aws_ebs_encryption_by_default.default
+}
+
+moved {
+  from = module.this_landing_zone.aws_ebs_encryption_by_default.master
+  to   = module.this_landing_zone.module.security_baseline_master.module.regional_resources_baseline["eu-west-1"].aws_ebs_encryption_by_default.default
+}
+
+moved {
+  from = module.this_landing_zone.aws_iam_account_password_policy.audit[0]
+  to   = module.this_landing_zone.module.security_baseline_audit.aws_iam_account_password_policy.default[0]
+}
+
+moved {
+  from = module.this_landing_zone.aws_iam_account_password_policy.logging[0]
+  to   = module.this_landing_zone.module.security_baseline_logging.aws_iam_account_password_policy.default[0]
+}
+
+moved {
+  from = module.this_landing_zone.aws_iam_account_password_policy.master[0]
+  to   = module.this_landing_zone.module.security_baseline_master.aws_iam_account_password_policy.default[0]
+}
+
+moved {
+  from = module.this_landing_zone.aws_s3_account_public_access_block.audit
+  to   = module.this_landing_zone.module.security_baseline_audit.aws_s3_account_public_access_block.default
+}
+
+moved {
+  from = module.this_landing_zone.aws_s3_account_public_access_block.logging
+  to   = module.this_landing_zone.module.security_baseline_logging.aws_s3_account_public_access_block.default
+}
+
+moved {
+  from = module.this_landing_zone.aws_s3_account_public_access_block.master
+  to   = module.this_landing_zone.module.security_baseline_master.aws_s3_account_public_access_block.default
+}
+```
+
+If the secure default is what you desire, then no action is required for variables.
+If you want to deploy backwards compatibly, then:
+
+- Set `aws_ebs_snapshot_block_public_access_state` to `unblocked`.
+- Set `aws_ec2_image_block_public_access_state` to `unblocked`.
+- Set `aws_ssm_documents_public_sharing_permission` to `Enable`.
+
 ## Upgrading to v6.0.0
 
 ### Key Changes

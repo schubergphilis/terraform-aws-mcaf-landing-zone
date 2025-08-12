@@ -481,7 +481,7 @@ module "landing_zone" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.54.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.7.0 |
 | <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | >= 3.39 |
 | <a name="requirement_mcaf"></a> [mcaf](#requirement\_mcaf) | >= 0.4.2 |
 
@@ -489,9 +489,9 @@ module "landing_zone" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.54.0 |
-| <a name="provider_aws.audit"></a> [aws.audit](#provider\_aws.audit) | >= 5.54.0 |
-| <a name="provider_aws.logging"></a> [aws.logging](#provider\_aws.logging) | >= 5.54.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.7.0 |
+| <a name="provider_aws.audit"></a> [aws.audit](#provider\_aws.audit) | >= 6.7.0 |
+| <a name="provider_aws.logging"></a> [aws.logging](#provider\_aws.logging) | >= 6.7.0 |
 | <a name="provider_mcaf"></a> [mcaf](#provider\_mcaf) | >= 0.4.2 |
 
 ## Modules
@@ -508,6 +508,9 @@ module "landing_zone" {
 | <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | schubergphilis/mcaf-kms/aws | ~> 0.3.0 |
 | <a name="module_kms_key_audit"></a> [kms\_key\_audit](#module\_kms\_key\_audit) | schubergphilis/mcaf-kms/aws | ~> 0.3.0 |
 | <a name="module_kms_key_logging"></a> [kms\_key\_logging](#module\_kms\_key\_logging) | schubergphilis/mcaf-kms/aws | ~> 0.3.0 |
+| <a name="module_security_baseline_audit"></a> [security\_baseline\_audit](#module\_security\_baseline\_audit) | ./modules/security-baseline | n/a |
+| <a name="module_security_baseline_logging"></a> [security\_baseline\_logging](#module\_security\_baseline\_logging) | ./modules/security-baseline | n/a |
+| <a name="module_security_baseline_master"></a> [security\_baseline\_master](#module\_security\_baseline\_master) | ./modules/security-baseline | n/a |
 | <a name="module_ses-root-accounts-mail-alias"></a> [ses-root-accounts-mail-alias](#module\_ses-root-accounts-mail-alias) | schubergphilis/mcaf-ses/aws | ~> 0.1.4 |
 | <a name="module_ses-root-accounts-mail-forward"></a> [ses-root-accounts-mail-forward](#module\_ses-root-accounts-mail-forward) | schubergphilis/mcaf-ses-forwarder/aws | ~> 0.3.0 |
 | <a name="module_tag_policy_assignment"></a> [tag\_policy\_assignment](#module\_tag\_policy\_assignment) | ./modules/tag-policy-assignment | n/a |
@@ -528,9 +531,6 @@ module "landing_zone" {
 | [aws_config_aggregate_authorization.master_to_audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_aggregate_authorization) | resource |
 | [aws_config_configuration_aggregator.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_configuration_aggregator) | resource |
 | [aws_config_organization_managed_rule.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_organization_managed_rule) | resource |
-| [aws_ebs_encryption_by_default.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ebs_encryption_by_default) | resource |
-| [aws_ebs_encryption_by_default.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ebs_encryption_by_default) | resource |
-| [aws_ebs_encryption_by_default.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ebs_encryption_by_default) | resource |
 | [aws_guardduty_detector.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector) | resource |
 | [aws_guardduty_organization_admin_account.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_organization_admin_account) | resource |
 | [aws_guardduty_organization_configuration.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_organization_configuration) | resource |
@@ -540,9 +540,6 @@ module "landing_zone" {
 | [aws_guardduty_organization_configuration_feature.rds_login_events](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_organization_configuration_feature) | resource |
 | [aws_guardduty_organization_configuration_feature.runtime_monitoring](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_organization_configuration_feature) | resource |
 | [aws_guardduty_organization_configuration_feature.s3_data_events](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_organization_configuration_feature) | resource |
-| [aws_iam_account_password_policy.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_account_password_policy) | resource |
-| [aws_iam_account_password_policy.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_account_password_policy) | resource |
-| [aws_iam_account_password_policy.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_account_password_policy) | resource |
 | [aws_iam_role.sns_feedback](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.sns_feedback_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_service_linked_role.config](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_service_linked_role) | resource |
@@ -559,9 +556,6 @@ module "landing_zone" {
 | [aws_organizations_policy_attachment.allowed_regions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy_attachment) | resource |
 | [aws_organizations_policy_attachment.deny_root_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy_attachment) | resource |
 | [aws_organizations_policy_attachment.lz_root_policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy_attachment) | resource |
-| [aws_s3_account_public_access_block.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_account_public_access_block) | resource |
-| [aws_s3_account_public_access_block.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_account_public_access_block) | resource |
-| [aws_s3_account_public_access_block.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_account_public_access_block) | resource |
 | [aws_securityhub_account.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_account) | resource |
 | [aws_securityhub_account.management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_account) | resource |
 | [aws_securityhub_configuration_policy.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/securityhub_configuration_policy) | resource |
@@ -606,12 +600,15 @@ module "landing_zone" {
 | <a name="input_aws_config"></a> [aws\_config](#input\_aws\_config) | AWS Config settings | <pre>object({<br/>    aggregator_account_ids          = optional(list(string), [])<br/>    delivery_channel_s3_bucket_name = optional(string, null)<br/>    delivery_channel_s3_key_prefix  = optional(string, null)<br/>    delivery_frequency              = optional(string, "TwentyFour_Hours")<br/>    rule_identifiers                = optional(list(string), [])<br/>  })</pre> | <pre>{<br/>  "aggregator_account_ids": [],<br/>  "delivery_channel_s3_bucket_name": null,<br/>  "delivery_channel_s3_key_prefix": null,<br/>  "delivery_frequency": "TwentyFour_Hours",<br/>  "rule_identifiers": []<br/>}</pre> | no |
 | <a name="input_aws_config_sns_subscription"></a> [aws\_config\_sns\_subscription](#input\_aws\_config\_sns\_subscription) | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br/>    endpoint = string<br/>    protocol = string<br/>  }))</pre> | `{}` | no |
 | <a name="input_aws_ebs_encryption_by_default"></a> [aws\_ebs\_encryption\_by\_default](#input\_aws\_ebs\_encryption\_by\_default) | Set to true to enable AWS Elastic Block Store encryption by default | `bool` | `true` | no |
+| <a name="input_aws_ebs_snapshot_block_public_access_state"></a> [aws\_ebs\_snapshot\_block\_public\_access\_state](#input\_aws\_ebs\_snapshot\_block\_public\_access\_state) | Configure regionally the EBS snapshot public sharing policy, alternatives: `block-all-sharing` and `unblocked` | `string` | `"block-new-sharing"` | no |
+| <a name="input_aws_ec2_image_block_public_access_state"></a> [aws\_ec2\_image\_block\_public\_access\_state](#input\_aws\_ec2\_image\_block\_public\_access\_state) | Configure blocking new AMIs from being publicly shared, alternatives: `unblocked` | `string` | `"block-new-sharing"` | no |
 | <a name="input_aws_guardduty"></a> [aws\_guardduty](#input\_aws\_guardduty) | AWS GuardDuty settings | <pre>object({<br/>    enabled                       = optional(bool, true)<br/>    finding_publishing_frequency  = optional(string, "FIFTEEN_MINUTES")<br/>    ebs_malware_protection_status = optional(bool, true)<br/>    eks_audit_logs_status         = optional(bool, true)<br/>    lambda_network_logs_status    = optional(bool, true)<br/>    rds_login_events_status       = optional(bool, true)<br/>    s3_data_events_status         = optional(bool, true)<br/>    runtime_monitoring_status = optional(object({<br/>      enabled                             = optional(bool, true)<br/>      eks_addon_management_status         = optional(bool, true)<br/>      ecs_fargate_agent_management_status = optional(bool, true)<br/>      ec2_agent_management_status         = optional(bool, true)<br/>    }), {})<br/>  })</pre> | `{}` | no |
 | <a name="input_aws_inspector"></a> [aws\_inspector](#input\_aws\_inspector) | AWS Inspector settings, at least one of the scan options must be enabled | <pre>object({<br/>    enabled                     = optional(bool, false)<br/>    enable_scan_ec2             = optional(bool, true)<br/>    enable_scan_ecr             = optional(bool, true)<br/>    enable_scan_lambda          = optional(bool, true)<br/>    enable_scan_lambda_code     = optional(bool, true)<br/>    excluded_member_account_ids = optional(list(string), [])<br/>    resource_create_timeout     = optional(string, "15m")<br/>  })</pre> | `{}` | no |
 | <a name="input_aws_required_tags"></a> [aws\_required\_tags](#input\_aws\_required\_tags) | AWS Required tags settings | <pre>map(list(object({<br/>    name         = string<br/>    values       = optional(list(string))<br/>    enforced_for = optional(list(string))<br/>  })))</pre> | `null` | no |
 | <a name="input_aws_security_hub"></a> [aws\_security\_hub](#input\_aws\_security\_hub) | AWS Security Hub settings | <pre>object({<br/>    aggregator_linking_mode      = optional(string, "SPECIFIED_REGIONS")<br/>    auto_enable_controls         = optional(bool, true)<br/>    control_finding_generator    = optional(string, "SECURITY_CONTROL")<br/>    create_cis_metric_filters    = optional(bool, true)<br/>    disabled_control_identifiers = optional(list(string), null)<br/>    enabled_control_identifiers  = optional(list(string), null)<br/>    product_arns                 = optional(list(string), [])<br/>    standards_arns               = optional(list(string), null)<br/>  })</pre> | `{}` | no |
 | <a name="input_aws_security_hub_sns_subscription"></a> [aws\_security\_hub\_sns\_subscription](#input\_aws\_security\_hub\_sns\_subscription) | Subscription options for the LandingZone-SecurityHubFindings SNS topic | <pre>map(object({<br/>    endpoint = string<br/>    protocol = string<br/>  }))</pre> | `{}` | no |
 | <a name="input_aws_service_control_policies"></a> [aws\_service\_control\_policies](#input\_aws\_service\_control\_policies) | AWS SCP's parameters to disable required/denied policies, set a list of allowed AWS regions, and set principals that are exempt from the restriction | <pre>object({<br/>    aws_deny_disabling_security_hub = optional(bool, true)<br/>    aws_deny_leaving_org            = optional(bool, true)<br/>    aws_deny_root_user_ous          = optional(list(string), [])<br/>    aws_require_imdsv2              = optional(bool, true)<br/>    principal_exceptions            = optional(list(string), [])<br/>  })</pre> | `{}` | no |
+| <a name="input_aws_ssm_documents_public_sharing_permission"></a> [aws\_ssm\_documents\_public\_sharing\_permission](#input\_aws\_ssm\_documents\_public\_sharing\_permission) | Configure the SSM documents public sharing policy, alternatives: `Enable` | `string` | `"Disable"` | no |
 | <a name="input_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#input\_aws\_sso\_permission\_sets) | Map of AWS IAM Identity Center permission sets with AWS accounts and group names that should be granted access to each account | <pre>map(object({<br/>    assignments = list(object({<br/>      account_id   = string<br/>      account_name = string<br/>      sso_groups   = list(string)<br/>    }))<br/>    inline_policy       = optional(string, null)<br/>    managed_policy_arns = optional(list(string), [])<br/>    session_duration    = optional(string, "PT4H")<br/>  }))</pre> | `{}` | no |
 | <a name="input_datadog"></a> [datadog](#input\_datadog) | Datadog integration options for the core accounts | <pre>object({<br/>    api_key                              = optional(string, null)<br/>    api_key_name_prefix                  = optional(string, "aws-landing-zone-")<br/>    create_api_key                       = optional(bool, false)<br/>    cspm_resource_collection_enabled     = optional(bool, false)<br/>    enable_integration                   = bool<br/>    extended_resource_collection_enabled = optional(bool, false)<br/>    install_log_forwarder                = optional(bool, false)<br/>    log_collection_services              = optional(list(string), [])<br/>    log_forwarder_version                = optional(string)<br/>    metric_tag_filters                   = optional(map(string), {})<br/>    namespace_rules                      = optional(list(string), [])<br/>    site_url                             = string<br/>  })</pre> | `null` | no |
 | <a name="input_datadog_excluded_regions"></a> [datadog\_excluded\_regions](#input\_datadog\_excluded\_regions) | List of regions where metrics collection will be disabled. | `list(string)` | `[]` | no |
