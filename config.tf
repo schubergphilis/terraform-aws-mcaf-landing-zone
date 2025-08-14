@@ -28,17 +28,17 @@ locals {
 resource "aws_config_aggregate_authorization" "master" {
   for_each = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator if aggregator.account_id != var.control_tower_account_ids.audit }
 
-  account_id = each.value.account_id
-  region     = each.value.region
-  tags       = var.tags
+  account_id            = each.value.account_id
+  authorized_aws_region = each.value.region
+  tags                  = var.tags
 }
 
 resource "aws_config_aggregate_authorization" "master_to_audit" {
   for_each = local.all_organisation_regions
 
-  account_id = var.control_tower_account_ids.audit
-  region     = each.value
-  tags       = var.tags
+  account_id            = var.control_tower_account_ids.audit
+  authorized_aws_region = each.value
+  tags                  = var.tags
 }
 
 resource "aws_iam_service_linked_role" "config" {
@@ -71,9 +71,9 @@ resource "aws_config_aggregate_authorization" "audit" {
   for_each = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator if aggregator.account_id != var.control_tower_account_ids.audit }
   provider = aws.audit
 
-  account_id = each.value.account_id
-  region     = each.value.region
-  tags       = var.tags
+  account_id            = each.value.account_id
+  authorized_aws_region = each.value.region
+  tags                  = var.tags
 }
 
 resource "aws_sns_topic_subscription" "aws_config" {
@@ -91,9 +91,9 @@ resource "aws_config_aggregate_authorization" "logging" {
   for_each = { for aggregator in local.aws_config_aggregators : "${aggregator.account_id}-${aggregator.region}" => aggregator if aggregator.account_id != var.control_tower_account_ids.audit }
   provider = aws.logging
 
-  account_id = each.value.account_id
-  region     = each.value.region
-  tags       = var.tags
+  account_id            = each.value.account_id
+  authorized_aws_region = each.value.region
+  tags                  = var.tags
 }
 
 data "aws_iam_policy_document" "aws_config_s3" {
