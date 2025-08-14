@@ -22,7 +22,7 @@ mock_provider "datadog" {}
 mock_provider "aws" {
   mock_data "aws_region" {
     defaults = {
-      name = "eu-central-1"
+      region = "eu-central-1"
     }
   }
 
@@ -90,7 +90,7 @@ mock_provider "aws" {
 
   mock_data "aws_region" {
     defaults = {
-      name = "eu-central-1"
+      region = "eu-central-1"
     }
   }
 
@@ -118,7 +118,7 @@ mock_provider "aws" {
 
   mock_data "aws_region" {
     defaults = {
-      name = "eu-central-1"
+      region = "eu-central-1"
     }
   }
 
