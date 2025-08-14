@@ -24,9 +24,9 @@ locals {
   aws_service_control_policies_principal_exceptions = distinct(concat(var.aws_service_control_policies.principal_exceptions, ["arn:aws:iam::*:role/AWSControlTowerExecution"]))
 
   security_hub_standards_arns_default = [
-    "arn:aws:securityhub:${data.aws_region.current.name}::standards/aws-foundational-security-best-practices/v/1.0.0",
-    "arn:aws:securityhub:${data.aws_region.current.name}::standards/cis-aws-foundations-benchmark/v/1.4.0",
-    "arn:aws:securityhub:${data.aws_region.current.name}::standards/pci-dss/v/3.2.1"
+    "arn:aws:securityhub:${data.aws_region.current.region}::standards/aws-foundational-security-best-practices/v/1.0.0",
+    "arn:aws:securityhub:${data.aws_region.current.region}::standards/cis-aws-foundations-benchmark/v/1.4.0",
+    "arn:aws:securityhub:${data.aws_region.current.region}::standards/pci-dss/v/3.2.1"
   ]
 
   security_hub_standards_arns = var.aws_security_hub.standards_arns != null ? var.aws_security_hub.standards_arns : local.security_hub_standards_arns_default
@@ -35,5 +35,5 @@ locals {
     "cis-aws-foundations-benchmark/v", join(",", local.security_hub_standards_arns)
   )) > 0 ? true : false
 
-  all_organisation_regions = toset(distinct(concat([var.regions.home_region], var.regions.linked_regions, var.regions.allowed_regions, [data.aws_region.current.name])))
+  all_organisation_regions = toset(distinct(concat([var.regions.home_region], var.regions.linked_regions, var.regions.allowed_regions, [data.aws_region.current.region])))
 }

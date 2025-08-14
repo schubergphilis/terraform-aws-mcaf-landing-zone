@@ -20,7 +20,7 @@ locals {
 
   aws_config_s3_name = coalesce(
     var.aws_config.delivery_channel_s3_bucket_name,
-    "aws-config-configuration-history-${var.control_tower_account_ids.logging}-${data.aws_region.current.name}"
+    "aws-config-configuration-history-${var.control_tower_account_ids.logging}-${data.aws_region.current.region}"
   )
 }
 
@@ -83,7 +83,7 @@ resource "aws_sns_topic_subscription" "aws_config" {
   endpoint               = each.value.endpoint
   endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
   protocol               = each.value.protocol
-  topic_arn              = "arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_account_ids.audit}:aws-controltower-AggregateSecurityNotifications"
+  topic_arn              = "arn:aws:sns:${data.aws_region.current.region}:${var.control_tower_account_ids.audit}:aws-controltower-AggregateSecurityNotifications"
 }
 
 // AWS Config - Logging account configuration
