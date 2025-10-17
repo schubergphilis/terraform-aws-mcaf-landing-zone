@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v7.0.2 - 2025-10-17
+
+### What's Changed
+
+#### 🐛 Bug Fixes
+
+* fix: deprecated argument region in aws_config_aggregate_authorization (#242) @mlflr
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v7.0.1...v7.0.2
+
 ## v7.0.1 - 2025-08-14
 
 ### What's Changed
