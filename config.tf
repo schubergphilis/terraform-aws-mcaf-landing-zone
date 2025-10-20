@@ -182,9 +182,11 @@ module "aws_config_s3" {
 }
 
 module "aws_config_recorder" {
+  for_each = local.all_organisation_regions
+
   source = "./modules/aws-config-recorder"
 
-  region = local.all_organisation_regions
+  region = each.value
 
   delivery_frequency          = var.aws_config.delivery_frequency
   iam_service_linked_role_arn = aws_iam_service_linked_role.config.arn
