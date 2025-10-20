@@ -511,8 +511,8 @@ module "landing_zone" {
 | <a name="module_security_baseline_audit"></a> [security\_baseline\_audit](#module\_security\_baseline\_audit) | ./modules/security-baseline | n/a |
 | <a name="module_security_baseline_logging"></a> [security\_baseline\_logging](#module\_security\_baseline\_logging) | ./modules/security-baseline | n/a |
 | <a name="module_security_baseline_master"></a> [security\_baseline\_master](#module\_security\_baseline\_master) | ./modules/security-baseline | n/a |
-| <a name="module_ses-root-accounts-mail-alias"></a> [ses-root-accounts-mail-alias](#module\_ses-root-accounts-mail-alias) | schubergphilis/mcaf-ses/aws | ~> 0.1.4 |
-| <a name="module_ses-root-accounts-mail-forward"></a> [ses-root-accounts-mail-forward](#module\_ses-root-accounts-mail-forward) | schubergphilis/mcaf-ses-forwarder/aws | ~> 0.3.0 |
+| <a name="module_ses-root-accounts-mail-alias"></a> [ses-root-accounts-mail-alias](#module\_ses-root-accounts-mail-alias) | schubergphilis/mcaf-ses/aws | ~> 1.0.0 |
+| <a name="module_ses-root-accounts-mail-forward"></a> [ses-root-accounts-mail-forward](#module\_ses-root-accounts-mail-forward) | schubergphilis/mcaf-ses-forwarder/aws | ~> 1.0.0 |
 | <a name="module_tag_policy_assignment"></a> [tag\_policy\_assignment](#module\_tag\_policy\_assignment) | ./modules/tag-policy-assignment | n/a |
 
 ## Resources
