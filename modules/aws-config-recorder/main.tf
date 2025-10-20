@@ -1,4 +1,6 @@
 resource "aws_config_configuration_recorder" "default" {
+  region = var.region
+
   name     = "default"
   role_arn = var.iam_service_linked_role_arn
 
@@ -9,6 +11,8 @@ resource "aws_config_configuration_recorder" "default" {
 }
 
 resource "aws_config_delivery_channel" "default" {
+  region = var.region
+
   name           = "default"
   s3_bucket_name = var.s3_bucket_name
   s3_key_prefix  = var.s3_key_prefix
@@ -23,6 +27,8 @@ resource "aws_config_delivery_channel" "default" {
 }
 
 resource "aws_config_configuration_recorder_status" "default" {
+  region = var.region
+
   name       = aws_config_configuration_recorder.default.name
   is_enabled = true
   depends_on = [aws_config_delivery_channel.default]

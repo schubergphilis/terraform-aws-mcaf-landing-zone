@@ -14,6 +14,12 @@ variable "kms_key_arn" {
   description = "The ARN of the KMS key for AWS Config"
 }
 
+variable "region" {
+  type        = string
+  description = "The AWS region where the resources will be created. If omitted, the default provider region is used."
+  default     = null
+}
+
 variable "s3_bucket_name" {
   type        = string
   description = "The name of the S3 bucket for AWS Config"
