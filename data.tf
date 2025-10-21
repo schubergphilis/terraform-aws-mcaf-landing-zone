@@ -23,7 +23,10 @@ data "aws_organizations_organizational_units" "default" {
 data "aws_region" "current" {}
 
 data "aws_sns_topic" "all_config_notifications" {
+  for_each = local.all_organisation_regions
   provider = aws.audit
+
+  region = each.value
 
   name = "aws-controltower-AllConfigNotifications"
 }

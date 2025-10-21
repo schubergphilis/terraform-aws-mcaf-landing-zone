@@ -193,5 +193,5 @@ module "aws_config_recorder" {
   kms_key_arn                 = module.kms_key_logging.arn
   s3_bucket_name              = module.aws_config_s3.name
   s3_key_prefix               = var.aws_config.delivery_channel_s3_key_prefix
-  sns_topic_arn               = data.aws_sns_topic.all_config_notifications.arn
+  sns_topic_arn               = data.aws_sns_topic.all_config_notifications[each.value].arn
 }
