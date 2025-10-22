@@ -2,6 +2,107 @@
 
 This document captures required refactoring on your part when upgrading to a module version that contains breaking changes.
 
+## Upgrading to v8.0.0
+
+### Key Changes v8.0.0
+
+#### Amazon GuardDuty
+
+This introduces a major refactor of the Amazon GuardDuty configuration.  
+GuardDuty is now automatically enabled and managed across all enabled regions, replacing the old logic which only enabled GuardDuty in the home region.
+
+### How to upgrade v8.0.0
+
+The GuardDuty code has been moved to a submodule and is now automatically enabled for all home + linked regions. To prevent recreation of resources in your home region please add the following moved statements.
+
+```hcl
+moved {
+  from = module.landing_zone.aws_guardduty_organization_admin_account.audit[0]
+  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_admin_account.default
+}
+
+moved {
+  from = module.landing_zone.aws_guardduty_detector.audit
+  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_detector.delegated_admin
+}
+
+moved {
+  from = module.landing_zone.aws_guardduty_organization_configuration.default[0]
+  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration.default
+}
+
+moved {
+  from = module.landing_zone.aws_guardduty_organization_configuration_feature.ebs_malware_protection
+  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration_feature.ebs_malware_protection
+}
+
+moved {
+  from = module.landing_zone.aws_guardduty_organization_configuration_feature.eks_audit_logs
+  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration_feature.eks_audit_logs
+}
+
+moved {
+  from = module.landing_zone.aws_guardduty_organization_configuration_feature.lambda_network_logs
+  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration_feature.lambda_network_logs
+}
+
+moved {
+  from = module.landing_zone.aws_guardduty_organization_configuration_feature.rds_login_events
+  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration_feature.rds_login_events
+}
+
+moved {
+  from = module.landing_zone.aws_guardduty_organization_configuration_feature.s3_data_events
+  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration_feature.s3_data_events
+}
+
+moved {
+  from = module.landing_zone.aws_guardduty_organization_configuration_feature.runtime_monitoring
+  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration_feature.runtime_monitoring
+}
+```
+
+In rare cases, the detector isn’t fully created before features are enabled. This can cause an error when enabling a feature (in this instance, runtime_monitoring):
+
+```hcl
+Error: reading GuardDuty Organization Configuration (): operation error GuardDuty: DescribeOrganizationConfiguration, https response error StatusCode: 400, RequestID, BadRequestException: The request is rejected because an invalid or out-of-range value is specified as an input parameter.
+with module.landing_zone.module.guardduty["us-east-1"].aws_guardduty_organization_configuration_feature.runtime_monitoring
+on .terraform/modules/landing_zone/modules/guardduty/main.tf line 89, in resource "aws_guardduty_organization_configuration_feature" "runtime_monitoring":
+
+resource "aws_guardduty_organization_configuration_feature" "runtime_monitoring" {
+```
+
+If the following resources were successfully created:
+
+* aws_guardduty_detector.delegated_admin
+* aws_guardduty_organization_admin_account.default
+* aws_guardduty_organization_configuration.default
+
+then it’s safe to run a new terraform apply, which should successfully enable all features.
+
+## Upgrading to v7.1.x
+
+### Key Changes v7.1.x
+
+AWS Config is now automatically enabled in the core-management account for all enabled regions.  
+This causes the resource ID to change, resulting in AWS Config being recreated.  
+This has no impact, as it only applies to AWS Config in the core-management account.
+
+If you want to prevent this behavior, use the following `moved` statements:
+
+```hcl
+moved {
+  from = module.landing_zone.module.aws_config_recorder
+  to   = module.landing_zone.module.aws_config_recorder["<home-region>"]
+}
+```
+
+## Upgrading to v7.0.2
+
+### Key Changes v7.0.2
+
+Due to the replacement of the `region` variable with `authorized_aws_region`, a recreation of the `aws_config_aggregate_authorization` resource is required. This cannot be prevented with a moved statement, but it has no impact — the resource will be deleted and recreated within a few seconds.
+
 ## Upgrading to v7.0.0
 
 ### Key Changes v7.0.0
