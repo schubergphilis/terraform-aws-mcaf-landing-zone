@@ -74,9 +74,9 @@ resource "aws_guardduty_organization_configuration_feature" "runtime_monitoring"
 
 If the following resources were successfully created:
 
-* aws_guardduty_detector.delegated_admin
-* aws_guardduty_organization_admin_account.default
-* aws_guardduty_organization_configuration.default
+* `aws_guardduty_detector.delegated_admin`
+* `aws_guardduty_organization_admin_account.default`
+* `aws_guardduty_organization_configuration.default`
 
 then it’s safe to run a new terraform apply, which should successfully enable all features.
 
