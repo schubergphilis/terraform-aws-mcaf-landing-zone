@@ -6,63 +6,23 @@ This document captures required refactoring on your part when upgrading to a mod
 
 ### Key Changes v8.0.0
 
-#### Amazon GuardDuty
-
-This introduces a major refactor of the Amazon GuardDuty configuration.  
-GuardDuty is now automatically enabled and managed across all enabled regions, replacing the old logic which only enabled GuardDuty in the home region.
+The **GuardDuty** and **Inspector** configurations have been refactored into their own dedicated submodules. This change improves modularity and clarity but requires additional steps to preserve Terraform state. Both services are now automatically enabled and managed across all enabled regions, replacing the old logic which only enabled these services in the home region.
 
 ### How to upgrade v8.0.0
 
-The GuardDuty code has been moved to a submodule and is now automatically enabled for all home + linked regions. To prevent recreation of resources in your home region please add the following moved statements.
+To prevent resource recreation in your home region (as specified in `var.regions.home_region`), helper scripts are provided to automatically generate the necessary `moved` statements.  
+Run these scripts from within your Terraform workspace directory:
 
-```hcl
-moved {
-  from = module.landing_zone.aws_guardduty_organization_admin_account.audit[0]
-  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_admin_account.default
-}
-
-moved {
-  from = module.landing_zone.aws_guardduty_detector.audit
-  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_detector.delegated_admin
-}
-
-moved {
-  from = module.landing_zone.aws_guardduty_organization_configuration.default[0]
-  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration.default
-}
-
-moved {
-  from = module.landing_zone.aws_guardduty_organization_configuration_feature.ebs_malware_protection
-  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration_feature.ebs_malware_protection
-}
-
-moved {
-  from = module.landing_zone.aws_guardduty_organization_configuration_feature.eks_audit_logs
-  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration_feature.eks_audit_logs
-}
-
-moved {
-  from = module.landing_zone.aws_guardduty_organization_configuration_feature.lambda_network_logs
-  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration_feature.lambda_network_logs
-}
-
-moved {
-  from = module.landing_zone.aws_guardduty_organization_configuration_feature.rds_login_events
-  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration_feature.rds_login_events
-}
-
-moved {
-  from = module.landing_zone.aws_guardduty_organization_configuration_feature.s3_data_events
-  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration_feature.s3_data_events
-}
-
-moved {
-  from = module.landing_zone.aws_guardduty_organization_configuration_feature.runtime_monitoring
-  to   = module.landing_zone.module.guardduty["<home-region>"].aws_guardduty_organization_configuration_feature.runtime_monitoring
-}
+```bash
+scripts/v8-generate-moved-blocks-guardduty.sh
+scripts/v8-generate-moved-blocks-inspector.sh
 ```
 
-In rare cases, the detector isn’t fully created before features are enabled. This can cause an error when enabling a feature (in this instance, runtime_monitoring):
+Each script will generate a file named `v8-moved-*.tf` containing the moved blocks required to maintain resource history and avoid accidental resource destruction during your next terraform plan or terraform apply.
+
+#### Known Issue: GuardDuty Feature Enablement Timing
+
+In rare cases, the GuardDuty detector might not be fully created before its features are enabled. This can result in an error similar to the following when enabling a feature (for example, runtime_monitoring):
 
 ```hcl
 Error: reading GuardDuty Organization Configuration (): operation error GuardDuty: DescribeOrganizationConfiguration, https response error StatusCode: 400, RequestID, BadRequestException: The request is rejected because an invalid or out-of-range value is specified as an input parameter.
