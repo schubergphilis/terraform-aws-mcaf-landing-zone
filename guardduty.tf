@@ -8,8 +8,7 @@ module "guardduty" {
 
   source = "./modules/guardduty"
 
-  region = each.value
-
+  region                        = each.value
   ebs_malware_protection_status = var.aws_guardduty.ebs_malware_protection_status
   eks_audit_logs_status         = var.aws_guardduty.eks_audit_logs_status
   finding_publishing_frequency  = var.aws_guardduty.finding_publishing_frequency

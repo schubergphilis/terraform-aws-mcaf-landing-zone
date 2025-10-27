@@ -1,29 +1,16 @@
-variable "enable_scan_ec2" {
-  type        = bool
-  default     = true
-  description = "Whether AWS Inspector scans EC2 instances."
-}
-
-variable "enable_scan_ecr" {
-  type        = bool
-  default     = true
-  description = "Whether AWS Inspector scans ECR repositories."
-}
-
-variable "enable_scan_lambda" {
-  type        = bool
-  default     = true
-  description = "Whether AWS Inspector scans Lambda functions."
-}
-
-variable "enable_scan_lambda_code" {
-  type        = bool
-  default     = true
-  description = "Whether AWS Inspector scans Lambda function code."
+variable "enable_scan" {
+  type = object({
+    ec2         = optional(bool, true)
+    ecr         = optional(bool, true)
+    lambda      = optional(bool, true)
+    lambda_code = optional(bool, true)
+  })
+  default     = {}
+  description = "Type of resources to scan."
 
   validation {
-    condition     = !(var.enable_scan_lambda_code && !var.enable_scan_lambda)
-    error_message = "If 'enable_scan_lambda_code' is true, 'enable_scan_lambda' must also be true."
+    condition     = !(var.enable_scan.lambda_code && !var.enable_scan.lambda)
+    error_message = "If enable_scan.lambda_code is true, enable_scan.lambda must also be true."
   }
 }
 

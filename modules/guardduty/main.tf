@@ -7,8 +7,7 @@ data "aws_caller_identity" "delegated_admin" {
 resource "aws_guardduty_organization_admin_account" "default" {
   provider = aws.management
 
-  region = var.region
-
+  region           = var.region
   admin_account_id = data.aws_caller_identity.delegated_admin.account_id
 }
 
@@ -18,8 +17,7 @@ resource "aws_guardduty_detector" "delegated_admin" {
   #checkov:skip=CKV2_AWS_3: "Ensure GuardDuty is enabled to specific org/region" - False positive, GuardDuty is enabled by default.
   provider = aws.delegated_admin
 
-  region = var.region
-
+  region                       = var.region
   enable                       = true
   finding_publishing_frequency = var.finding_publishing_frequency
   tags                         = var.tags
@@ -28,8 +26,7 @@ resource "aws_guardduty_detector" "delegated_admin" {
 resource "aws_guardduty_organization_configuration" "default" {
   provider = aws.delegated_admin
 
-  region = var.region
-
+  region                           = var.region
   auto_enable_organization_members = "ALL"
   detector_id                      = aws_guardduty_detector.delegated_admin.id
 
@@ -39,8 +36,7 @@ resource "aws_guardduty_organization_configuration" "default" {
 resource "aws_guardduty_organization_configuration_feature" "ebs_malware_protection" {
   provider = aws.delegated_admin
 
-  region = var.region
-
+  region      = var.region
   detector_id = aws_guardduty_detector.delegated_admin.id
   name        = "EBS_MALWARE_PROTECTION"
   auto_enable = var.ebs_malware_protection_status == true ? "ALL" : "NONE"
@@ -49,8 +45,7 @@ resource "aws_guardduty_organization_configuration_feature" "ebs_malware_protect
 resource "aws_guardduty_organization_configuration_feature" "eks_audit_logs" {
   provider = aws.delegated_admin
 
-  region = var.region
-
+  region      = var.region
   detector_id = aws_guardduty_detector.delegated_admin.id
   name        = "EKS_AUDIT_LOGS"
   auto_enable = var.eks_audit_logs_status == true ? "ALL" : "NONE"
@@ -59,8 +54,7 @@ resource "aws_guardduty_organization_configuration_feature" "eks_audit_logs" {
 resource "aws_guardduty_organization_configuration_feature" "lambda_network_logs" {
   provider = aws.delegated_admin
 
-  region = var.region
-
+  region      = var.region
   detector_id = aws_guardduty_detector.delegated_admin.id
   name        = "LAMBDA_NETWORK_LOGS"
   auto_enable = var.lambda_network_logs_status == true ? "ALL" : "NONE"
@@ -69,8 +63,7 @@ resource "aws_guardduty_organization_configuration_feature" "lambda_network_logs
 resource "aws_guardduty_organization_configuration_feature" "rds_login_events" {
   provider = aws.delegated_admin
 
-  region = var.region
-
+  region      = var.region
   detector_id = aws_guardduty_detector.delegated_admin.id
   name        = "RDS_LOGIN_EVENTS"
   auto_enable = var.rds_login_events_status == true ? "ALL" : "NONE"
@@ -79,8 +72,7 @@ resource "aws_guardduty_organization_configuration_feature" "rds_login_events" {
 resource "aws_guardduty_organization_configuration_feature" "s3_data_events" {
   provider = aws.delegated_admin
 
-  region = var.region
-
+  region      = var.region
   detector_id = aws_guardduty_detector.delegated_admin.id
   name        = "S3_DATA_EVENTS"
   auto_enable = var.s3_data_events_status == true ? "ALL" : "NONE"
@@ -89,8 +81,7 @@ resource "aws_guardduty_organization_configuration_feature" "s3_data_events" {
 resource "aws_guardduty_organization_configuration_feature" "runtime_monitoring" {
   provider = aws.delegated_admin
 
-  region = var.region
-
+  region      = var.region
   detector_id = aws_guardduty_detector.delegated_admin.id
   name        = "RUNTIME_MONITORING"
   auto_enable = var.runtime_monitoring_status.enabled == true ? "ALL" : "NONE"

@@ -16,13 +16,15 @@ module "inspector" {
 
   source = "./modules/inspector"
 
-  region = each.value
-
-  enable_scan_ec2         = var.aws_inspector.enable_scan_ec2
-  enable_scan_ecr         = var.aws_inspector.enable_scan_ecr
-  enable_scan_lambda      = var.aws_inspector.enable_scan_lambda
-  enable_scan_lambda_code = var.aws_inspector.enable_scan_lambda_code
+  region                  = each.value
   member_account_ids      = local.inspector_members_account_ids
   resource_create_timeout = var.aws_inspector.resource_create_timeout
   tags                    = var.tags
+
+  enable_scan = {
+    ec2         = var.aws_inspector.enable_scan_ec2
+    ecr         = var.aws_inspector.enable_scan_ecr
+    lambda      = var.aws_inspector.enable_scan_lambda
+    lambda_code = var.aws_inspector.enable_scan_lambda_code
+  }
 }

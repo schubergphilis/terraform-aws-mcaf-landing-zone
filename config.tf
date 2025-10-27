@@ -186,8 +186,7 @@ module "aws_config_recorder" {
 
   source = "./modules/aws-config-recorder"
 
-  region = each.value
-
+  region                      = each.value
   delivery_frequency          = var.aws_config.delivery_frequency
   iam_service_linked_role_arn = aws_iam_service_linked_role.config.arn
   kms_key_arn                 = module.kms_key_logging.arn
