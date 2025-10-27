@@ -175,6 +175,7 @@ locals {
     local.us_east_1_edge_service_actions,
     local.us_east_1_global_service_actions,
     local.us_east_1_security_lake_aggregation_service_actions,
+    var.aws_guardduty.enabled ? ["guardduty:*"] : []
   ))
 
   # Statement #2:

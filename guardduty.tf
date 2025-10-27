@@ -1,90 +1,27 @@
-// AWS GuardDuty - Management account configuration
-resource "aws_guardduty_organization_admin_account" "audit" {
-  count = var.aws_guardduty.enabled == true ? 1 : 0
+module "guardduty" {
+  for_each = var.aws_guardduty.enabled == true ? local.all_organisation_regions : []
 
-  admin_account_id = var.control_tower_account_ids.audit
-}
-
-// AWS GuardDuty - Audit account configuration
-resource "aws_guardduty_detector" "audit" {
-  #checkov:skip=CKV_AWS_238: "Ensure that GuardDuty detector is enabled" - False positive, GuardDuty is enabled by default.
-  #checkov:skip=CKV2_AWS_3: "Ensure GuardDuty is enabled to specific org/region" - False positive, GuardDuty is enabled by default.
-  provider = aws.audit
-
-  enable                       = var.aws_guardduty.enabled
-  finding_publishing_frequency = var.aws_guardduty.finding_publishing_frequency
-  tags                         = var.tags
-}
-
-resource "aws_guardduty_organization_configuration" "default" {
-  count    = var.aws_guardduty.enabled == true ? 1 : 0
-  provider = aws.audit
-
-  auto_enable_organization_members = var.aws_guardduty.enabled ? "ALL" : "NONE"
-  detector_id                      = aws_guardduty_detector.audit.id
-
-  depends_on = [aws_guardduty_organization_admin_account.audit]
-}
-
-resource "aws_guardduty_organization_configuration_feature" "ebs_malware_protection" {
-  provider = aws.audit
-
-  detector_id = aws_guardduty_detector.audit.id
-  name        = "EBS_MALWARE_PROTECTION"
-  auto_enable = var.aws_guardduty.ebs_malware_protection_status == true ? "ALL" : "NONE"
-}
-
-resource "aws_guardduty_organization_configuration_feature" "eks_audit_logs" {
-  provider = aws.audit
-
-  detector_id = aws_guardduty_detector.audit.id
-  name        = "EKS_AUDIT_LOGS"
-  auto_enable = var.aws_guardduty.eks_audit_logs_status == true ? "ALL" : "NONE"
-}
-
-resource "aws_guardduty_organization_configuration_feature" "lambda_network_logs" {
-  provider = aws.audit
-
-  detector_id = aws_guardduty_detector.audit.id
-  name        = "LAMBDA_NETWORK_LOGS"
-  auto_enable = var.aws_guardduty.lambda_network_logs_status == true ? "ALL" : "NONE"
-}
-
-resource "aws_guardduty_organization_configuration_feature" "rds_login_events" {
-  provider = aws.audit
-
-  detector_id = aws_guardduty_detector.audit.id
-  name        = "RDS_LOGIN_EVENTS"
-  auto_enable = var.aws_guardduty.rds_login_events_status == true ? "ALL" : "NONE"
-}
-
-resource "aws_guardduty_organization_configuration_feature" "s3_data_events" {
-  provider = aws.audit
-
-  detector_id = aws_guardduty_detector.audit.id
-  name        = "S3_DATA_EVENTS"
-  auto_enable = var.aws_guardduty.s3_data_events_status == true ? "ALL" : "NONE"
-}
-
-resource "aws_guardduty_organization_configuration_feature" "runtime_monitoring" {
-  provider = aws.audit
-
-  detector_id = aws_guardduty_detector.audit.id
-  name        = "RUNTIME_MONITORING"
-  auto_enable = var.aws_guardduty.runtime_monitoring_status.enabled == true ? "ALL" : "NONE"
-
-  additional_configuration {
-    name        = "ECS_FARGATE_AGENT_MANAGEMENT"
-    auto_enable = var.aws_guardduty.runtime_monitoring_status.ecs_fargate_agent_management_status == true ? "ALL" : "NONE"
+  providers = {
+    aws.management      = aws
+    aws.delegated_admin = aws.audit
   }
 
-  additional_configuration {
-    name        = "EC2_AGENT_MANAGEMENT"
-    auto_enable = var.aws_guardduty.runtime_monitoring_status.ec2_agent_management_status == true ? "ALL" : "NONE"
-  }
+  source = "./modules/guardduty"
 
-  additional_configuration {
-    name        = "EKS_ADDON_MANAGEMENT"
-    auto_enable = var.aws_guardduty.runtime_monitoring_status.eks_addon_management_status == true ? "ALL" : "NONE"
+  region = each.value
+
+  ebs_malware_protection_status = var.aws_guardduty.ebs_malware_protection_status
+  eks_audit_logs_status         = var.aws_guardduty.eks_audit_logs_status
+  finding_publishing_frequency  = var.aws_guardduty.finding_publishing_frequency
+  lambda_network_logs_status    = var.aws_guardduty.lambda_network_logs_status
+  rds_login_events_status       = var.aws_guardduty.rds_login_events_status
+  s3_data_events_status         = var.aws_guardduty.s3_data_events_status
+  tags                          = var.tags
+
+  runtime_monitoring_status = {
+    enabled                             = var.aws_guardduty.runtime_monitoring_status.enabled
+    eks_addon_management_status         = var.aws_guardduty.runtime_monitoring_status.eks_addon_management_status
+    ecs_fargate_agent_management_status = var.aws_guardduty.runtime_monitoring_status.ecs_fargate_agent_management_status
+    ec2_agent_management_status         = var.aws_guardduty.runtime_monitoring_status.ec2_agent_management_status
   }
 }
