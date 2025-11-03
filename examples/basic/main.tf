@@ -43,7 +43,6 @@ module "landing_zone" {
   control_tower_account_ids = local.control_tower_account_ids
 
   regions = {
-    allowed_regions = ["eu-central-1"]
-    home_region     = "eu-central-1"
+    home_region = "eu-central-1"
   }
 }

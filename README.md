@@ -47,14 +47,14 @@ To find your linked regions:
 3. Linked regions are listed under **Landing Zone Regions**.
 
 > [!NOTE]
-> By default, `us-east-1` is included as a linked region to ensure data collection from global services. To restrict deployment of non-global resources in this region, use the `allowed_regions` functionality described in the section below.
+> By default, `us-east-1` is included as a linked region to ensure data collection from global services. 
 
 > [!IMPORTANT]
 > All specified linked regions need to be an AWS Control Tower governed region. This ensures that an AWS Config recorder is enabled by AWS Control Tower in all governed regions. AWS Security Hub will only function correctly if an AWS Config recorder exists in all linked regions.
 
 **Allowed Regions**
 
-The `regions.allowed_regions` variable defines the allowed regions within your AWS Organization. This triggers the deployment of a [Service Control Policy (SCP)](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region), which is attached to the root of your AWS Organization.
+The `regions.allowed_regions` variable defines the allowed regions within your AWS Organization. By default only your home region is allowed. This triggers the deployment of a [Service Control Policy (SCP)](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region), which is attached to the root of your AWS Organization. If you do not want to make use of this SCP, set `var.regions.allowed_regions` to `null`.
 
 **Additional per-region service action exceptions**
 
@@ -101,7 +101,6 @@ You need to configure the `regions` variable as follows:
 
 ```hcl
 regions = {
-  allowed_regions = ["eu-central-1"]
   home_region     = "eu-central-1"
 }
 ```

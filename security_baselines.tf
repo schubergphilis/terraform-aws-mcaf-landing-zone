@@ -7,7 +7,7 @@ module "security_baseline_master" {
   aws_ebs_snapshot_block_public_access_state  = var.aws_ebs_snapshot_block_public_access_state
   aws_ec2_image_block_public_access_state     = var.aws_ec2_image_block_public_access_state
   aws_ssm_documents_public_sharing_permission = var.aws_ssm_documents_public_sharing_permission
-  extra_regions_to_baseline                   = local.all_organisation_regions
+  extra_regions_to_baseline                   = local.all_governed_regions
   tags                                        = var.tags
 }
 
@@ -22,7 +22,7 @@ module "security_baseline_audit" {
   aws_ebs_snapshot_block_public_access_state  = var.aws_ebs_snapshot_block_public_access_state
   aws_ec2_image_block_public_access_state     = var.aws_ec2_image_block_public_access_state
   aws_ssm_documents_public_sharing_permission = var.aws_ssm_documents_public_sharing_permission
-  extra_regions_to_baseline                   = local.all_organisation_regions
+  extra_regions_to_baseline                   = local.all_governed_regions
   tags                                        = var.tags
 }
 
@@ -37,6 +37,6 @@ module "security_baseline_logging" {
   aws_ebs_snapshot_block_public_access_state  = var.aws_ebs_snapshot_block_public_access_state
   aws_ec2_image_block_public_access_state     = var.aws_ec2_image_block_public_access_state
   aws_ssm_documents_public_sharing_permission = var.aws_ssm_documents_public_sharing_permission
-  extra_regions_to_baseline                   = local.all_organisation_regions
+  extra_regions_to_baseline                   = local.all_governed_regions
   tags                                        = var.tags
 }

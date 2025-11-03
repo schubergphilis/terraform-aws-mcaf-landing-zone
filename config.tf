@@ -1,7 +1,7 @@
 locals {
   aws_config_aggregators = flatten([
     for account in toset(try(var.aws_config.aggregator_account_ids, [])) : [
-      for region in toset(try(local.all_organisation_regions, [])) : {
+      for region in toset(try(local.all_governed_regions, [])) : {
         account_id = account
         region     = region
       }
@@ -34,7 +34,7 @@ resource "aws_config_aggregate_authorization" "master" {
 }
 
 resource "aws_config_aggregate_authorization" "master_to_audit" {
-  for_each = local.all_organisation_regions
+  for_each = local.all_governed_regions
 
   account_id            = var.control_tower_account_ids.audit
   authorized_aws_region = each.value
@@ -182,7 +182,7 @@ module "aws_config_s3" {
 }
 
 module "aws_config_recorder" {
-  for_each = local.all_organisation_regions
+  for_each = local.all_governed_regions
 
   source = "./modules/aws-config-recorder"
 
