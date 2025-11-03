@@ -1,5 +1,5 @@
 module "guardduty" {
-  for_each = var.aws_guardduty.enabled == true ? local.all_organisation_regions : []
+  for_each = var.aws_guardduty.enabled == true ? local.all_governed_regions : []
 
   providers = {
     aws.management      = aws

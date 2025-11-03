@@ -47,14 +47,14 @@ To find your linked regions:
 3. Linked regions are listed under **Landing Zone Regions**.
 
 > [!NOTE]
-> By default, `us-east-1` is included as a linked region to ensure data collection from global services. To restrict deployment of non-global resources in this region, use the `allowed_regions` functionality described in the section below.
+> By default, `us-east-1` is included as a linked region to ensure data collection from global services. 
 
 > [!IMPORTANT]
 > All specified linked regions need to be an AWS Control Tower governed region. This ensures that an AWS Config recorder is enabled by AWS Control Tower in all governed regions. AWS Security Hub will only function correctly if an AWS Config recorder exists in all linked regions.
 
 **Allowed Regions**
 
-The `regions.allowed_regions` variable defines the allowed regions within your AWS Organization. This triggers the deployment of a [Service Control Policy (SCP)](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region), which is attached to the root of your AWS Organization.
+The `regions.allowed_regions` variable defines the allowed regions within your AWS Organization. By default only your home region is allowed. This triggers the deployment of a [Service Control Policy (SCP)](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_examples.html#example-scp-deny-region), which is attached to the root of your AWS Organization. If you do not want to make use of this SCP, set `var.regions.allowed_regions` to `null`.
 
 **Additional per-region service action exceptions**
 
@@ -101,7 +101,6 @@ You need to configure the `regions` variable as follows:
 
 ```hcl
 regions = {
-  allowed_regions = ["eu-central-1"]
   home_region     = "eu-central-1"
 }
 ```
@@ -580,7 +579,7 @@ module "landing_zone" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_control_tower_account_ids"></a> [control\_tower\_account\_ids](#input\_control\_tower\_account\_ids) | Control Tower core account IDs | <pre>object({<br/>    audit   = string<br/>    logging = string<br/>  })</pre> | n/a | yes |
-| <a name="input_regions"></a> [regions](#input\_regions) | Region configuration, plus global and per-region service SCP exceptions. See the README for more information on the configuration options. | <pre>object({<br/>    additional_allowed_service_actions_per_region    = optional(map(list(string)), {})<br/>    allowed_regions                                  = list(string)<br/>    enable_cdk_service_actions                       = optional(bool, false)<br/>    enable_edge_service_actions                      = optional(bool, false)<br/>    enable_security_lake_aggregation_service_actions = optional(bool, false)<br/>    home_region                                      = string<br/>    linked_regions                                   = optional(list(string), ["us-east-1"])<br/>  })</pre> | n/a | yes |
+| <a name="input_regions"></a> [regions](#input\_regions) | Region configuration, plus global and per-region service SCP exceptions. See the README for more information on the configuration options. | <pre>object({<br/>    additional_allowed_service_actions_per_region    = optional(map(list(string)), {})<br/>    allowed_regions                                  = optional(list(string), []) # Allowed regions within your AWS Organization, defaults to your `home_region`.<br/>    enable_cdk_service_actions                       = optional(bool, false)<br/>    enable_edge_service_actions                      = optional(bool, false)<br/>    enable_security_lake_aggregation_service_actions = optional(bool, false)<br/>    home_region                                      = string                                # AWS Control Tower home region.<br/>    linked_regions                                   = optional(list(string), ["us-east-1"]) # AWS Control Tower governed regions.<br/>  })</pre> | n/a | yes |
 | <a name="input_additional_auditing_trail"></a> [additional\_auditing\_trail](#input\_additional\_auditing\_trail) | CloudTrail configuration for additional auditing trail | <pre>object({<br/>    name       = string<br/>    bucket     = string<br/>    kms_key_id = string<br/><br/>    event_selector = optional(object({<br/>      data_resource = optional(object({<br/>        type   = string<br/>        values = list(string)<br/>      }))<br/>      exclude_management_event_sources = optional(set(string), null)<br/>      include_management_events        = optional(bool, true)<br/>      read_write_type                  = optional(string, "All")<br/>    }))<br/>  })</pre> | `null` | no |
 | <a name="input_aws_account_password_policy"></a> [aws\_account\_password\_policy](#input\_aws\_account\_password\_policy) | AWS account password policy parameters for the audit, logging and master account | <pre>object({<br/>    allow_users_to_change        = bool<br/>    max_age                      = number<br/>    minimum_length               = number<br/>    require_lowercase_characters = bool<br/>    require_numbers              = bool<br/>    require_symbols              = bool<br/>    require_uppercase_characters = bool<br/>    reuse_prevention_history     = number<br/>  })</pre> | <pre>{<br/>  "allow_users_to_change": true,<br/>  "max_age": 90,<br/>  "minimum_length": 14,<br/>  "require_lowercase_characters": true,<br/>  "require_numbers": true,<br/>  "require_symbols": true,<br/>  "require_uppercase_characters": true,<br/>  "reuse_prevention_history": 24<br/>}</pre> | no |
 | <a name="input_aws_aiservices_opt_out_policy_enabled"></a> [aws\_aiservices\_opt\_out\_policy\_enabled](#input\_aws\_aiservices\_opt\_out\_policy\_enabled) | Enable the AWS AI Services Opt-Out Policy at the organization level to prevent AWS from using your content for model training. | `bool` | `true` | no |

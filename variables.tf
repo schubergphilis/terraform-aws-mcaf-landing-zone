@@ -332,12 +332,12 @@ variable "monitor_iam_activity_sns_subscription" {
 variable "regions" {
   type = object({
     additional_allowed_service_actions_per_region    = optional(map(list(string)), {})
-    allowed_regions                                  = list(string)
+    allowed_regions                                  = optional(list(string), []) # Allowed regions within your AWS Organization, defaults to your `home_region`.
     enable_cdk_service_actions                       = optional(bool, false)
     enable_edge_service_actions                      = optional(bool, false)
     enable_security_lake_aggregation_service_actions = optional(bool, false)
-    home_region                                      = string
-    linked_regions                                   = optional(list(string), ["us-east-1"])
+    home_region                                      = string                                # AWS Control Tower home region.
+    linked_regions                                   = optional(list(string), ["us-east-1"]) # AWS Control Tower governed regions.
   })
   description = "Region configuration, plus global and per-region service SCP exceptions. See the README for more information on the configuration options."
 
