@@ -2,6 +2,22 @@
 
 This document captures required refactoring on your part when upgrading to a module version that contains breaking changes.
 
+## Upgrading to v9.0.0
+
+### Key Changes v9.0.0
+
+All variables related to the security baseline configuration of the core accounts have been consolidated into one `aws_core_accounts_baseline_settings` variable.
+
+### Variables v9.0.0
+
+The following variables have been moved/renamed:
+
+- `aws_account_password_policy`. -> `aws_core_accounts_baseline_settings.account_password_policy`
+- `aws_ebs_encryption_by_default`. -> `aws_core_accounts_baseline_settings.ebs_encryption_by_default`
+- `aws_ebs_snapshot_block_public_access_state`. -> `aws_core_accounts_baseline_settings.ebs_snapshot_block_public_access_state`
+- `aws_ec2_image_block_public_access_state`. -> `aws_core_accounts_baseline_settings.ec2_image_block_public_access_state`
+- `aws_ssm_documents_public_sharing_permission`. -> `aws_core_accounts_baseline_settings.ssm_documents_public_sharing_permission`
+
 ## Upgrading to v8.0.0
 
 ### Key Changes v8.0.0
