@@ -3,7 +3,7 @@ resource "aws_auditmanager_account_registration" "default" {
 
   delegated_admin_account = data.aws_caller_identity.audit.account_id
   deregister_on_destroy   = true
-  kms_key                 = module.kms_key_audit.arn
+  kms_key                 = module.kms_key_audit[var.regions.home_region].arn
 }
 
 module "audit_manager_reports" {
@@ -13,7 +13,7 @@ module "audit_manager_reports" {
   source  = "schubergphilis/mcaf-s3/aws"
   version = "~> 0.14.1"
 
-  kms_key_arn = module.kms_key_audit.arn
+  kms_key_arn = module.kms_key_audit[var.regions.home_region].arn
   name_prefix = var.aws_auditmanager.reports_bucket_prefix
   versioning  = true
 

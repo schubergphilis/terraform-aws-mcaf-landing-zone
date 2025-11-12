@@ -13,34 +13,34 @@ output "aws_config_iam_service_linked_role_arn" {
   value       = aws_iam_service_linked_role.config.arn
 }
 
-output "kms_key_arn" {
-  description = "ARN of KMS key for the management account"
-  value       = module.kms_key.arn
+output "kms_key_arns_management_account" {
+  description = "Map of region => ARN of KMS key for the core management account"
+  value       = { for region, module in module.kms_key : region => module.arn }
 }
 
-output "kms_key_id" {
-  description = "ID of KMS key for the management account"
-  value       = module.kms_key.id
+output "kms_key_ids_management_account" {
+  description = "Map of region => ID of KMS key for the core management account"
+  value       = { for region, module in module.kms_key : region => module.id }
 }
 
-output "kms_key_audit_arn" {
-  description = "ARN of KMS key for the audit account"
-  value       = module.kms_key_audit.arn
+output "kms_key_arns_audit_account" {
+  description = "Map of region => ARN of KMS key for the core audit account"
+  value       = { for region, module in module.kms_key_audit : region => module.arn }
 }
 
-output "kms_key_audit_id" {
-  description = "ID of KMS key for the audit account"
-  value       = module.kms_key_audit.id
+output "kms_key_ids_audit_account" {
+  description = "Map of region => ID of KMS key for the core audit account"
+  value       = { for region, module in module.kms_key_audit : region => module.id }
 }
 
-output "kms_key_logging_arn" {
-  description = "ARN of KMS key for the logging account"
-  value       = module.kms_key_logging.arn
+output "kms_key_arns_logging_account" {
+  description = "Map of region => ARN of KMS key for the core logging account"
+  value       = { for region, module in module.kms_key_logging : region => module.arn }
 }
 
-output "kms_key_logging_id" {
-  description = "ID of KMS key for the logging account"
-  value       = module.kms_key_logging.id
+output "kms_key_ids_logging_account" {
+  description = "Map of region => ID of KMS key for the core logging account"
+  value       = { for region, module in module.kms_key_logging : region => module.id }
 }
 
 output "monitor_iam_activity_sns_topic_arn" {

@@ -256,22 +256,22 @@ variable "datadog_excluded_regions" {
   default     = []
 }
 
-variable "kms_key_policy" {
-  type        = list(string)
-  default     = []
-  description = "A list of valid KMS key policy JSON documents"
+variable "kms_key_policies_by_region" {
+  type        = map(list(string))
+  default     = {}
+  description = "core-management key: region => list of extra policy JSON docs to merge."
 }
 
-variable "kms_key_policy_audit" {
-  type        = list(string)
-  default     = []
-  description = "A list of valid KMS key policy JSON document for use with audit KMS key"
+variable "kms_key_policies_audit_by_region" {
+  type        = map(list(string))
+  default     = {}
+  description = "core-audit key: region => list of extra policy JSON docs to merge."
 }
 
-variable "kms_key_policy_logging" {
-  type        = list(string)
-  default     = []
-  description = "A list of valid KMS key policy JSON document for use with logging KMS key"
+variable "kms_key_policies_logging_by_region" {
+  type        = map(list(string))
+  default     = {}
+  description = "core-logging key: region => list of extra policy JSON docs to merge."
 }
 
 variable "monitor_iam_activity" {

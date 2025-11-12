@@ -5,7 +5,7 @@ resource "aws_sns_topic" "iam_activity" {
   name                           = "LandingZone-IAMActivity"
   http_success_feedback_role_arn = aws_iam_role.sns_feedback.arn
   http_failure_feedback_role_arn = aws_iam_role.sns_feedback.arn
-  kms_master_key_id              = module.kms_key_audit.id
+  kms_master_key_id              = module.kms_key_audit[var.regions.home_region].id
   tags                           = var.tags
 }
 

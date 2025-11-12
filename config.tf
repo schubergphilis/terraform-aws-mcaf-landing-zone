@@ -146,7 +146,7 @@ module "aws_config_s3" {
   version = "~> 0.14.1"
 
   name        = local.aws_config_s3_name
-  kms_key_arn = module.kms_key_logging.arn
+  kms_key_arn = module.kms_key_logging[var.regions.home_region].arn # As is recommended design, all AWS Config output is send to a bucket in the home region.
   policy      = data.aws_iam_policy_document.aws_config_s3.json
   versioning  = true
   tags        = var.tags
@@ -189,7 +189,7 @@ module "aws_config_recorder" {
   region                      = each.value
   delivery_frequency          = var.aws_config.delivery_frequency
   iam_service_linked_role_arn = aws_iam_service_linked_role.config.arn
-  kms_key_arn                 = module.kms_key_logging.arn
+  kms_key_arn                 = module.kms_key_logging[var.regions.home_region].arn
   s3_bucket_name              = module.aws_config_s3.name
   s3_key_prefix               = var.aws_config.delivery_channel_s3_key_prefix
   sns_topic_arn               = data.aws_sns_topic.all_config_notifications[each.value].arn

@@ -9,7 +9,7 @@ module "ses-root-accounts-mail-alias" {
 
   dmarc      = var.ses_root_accounts_mail_forward.dmarc
   domain     = var.ses_root_accounts_mail_forward.domain
-  kms_key_id = module.kms_key.id
+  kms_key_id = module.kms_key[var.regions.home_region].id
   tags       = var.tags
 }
 
@@ -25,7 +25,7 @@ module "ses-root-accounts-mail-forward" {
 
   bucket_name       = "ses-forwarder-${replace(var.ses_root_accounts_mail_forward.domain, ".", "-")}"
   from_email        = var.ses_root_accounts_mail_forward.from_email
-  kms_key_arn       = module.kms_key.arn
+  kms_key_arn       = module.kms_key[var.regions.home_region].arn
   recipient_mapping = var.ses_root_accounts_mail_forward.recipient_mapping
   tags              = var.tags
 }
