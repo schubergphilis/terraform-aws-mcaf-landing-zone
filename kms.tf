@@ -248,6 +248,31 @@ data "aws_iam_policy_document" "kms_key_audit" {
   }
 
   statement {
+    sid       = "Allow CloudWatch Log Groups"
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${each.key}:${data.aws_caller_identity.audit.account_id}:key/*"]
+
+    actions = [
+      "kms:Decrypt",
+      "kms:Describe*",
+      "kms:Encrypt",
+      "kms:GenerateDataKey*",
+      "kms:ReEncrypt*"
+    ]
+
+    condition {
+      test     = "ArnLike"
+      variable = "kms:EncryptionContext:aws:logs:arn"
+      values   = ["arn:aws:logs:${each.key}:${data.aws_caller_identity.audit.account_id}:log-group:/aws/ssm/automation"]
+    }
+
+    principals {
+      type        = "Service"
+      identifiers = ["logs.${each.key}.amazonaws.com"]
+    }
+  }
+
+  statement {
     sid       = "Allow SNS Decrypt"
     effect    = "Allow"
     resources = ["arn:aws:kms:${each.key}:${data.aws_caller_identity.audit.account_id}:key/*"]
@@ -413,11 +438,11 @@ data "aws_iam_policy_document" "kms_key_logging" {
     resources = ["arn:aws:kms:${each.key}:${data.aws_caller_identity.logging.account_id}:key/*"]
 
     actions = [
-      "kms:Encrypt",
       "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
       "kms:DescribeKey",
+      "kms:Encrypt",
+      "kms:GenerateDataKey*",
+      "kms:ReEncrypt*",
     ]
 
     principals {
