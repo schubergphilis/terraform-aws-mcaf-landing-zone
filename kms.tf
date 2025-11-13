@@ -106,33 +106,32 @@ data "aws_iam_policy_document" "kms_key" {
     }
   }
 
-  dynamic "statement" {
-    for_each = var.ses_root_accounts_mail_forward != null ? ["allow_cw_loggroup_email_forwarder"] : []
-    content {
-      sid       = "Allow EmailForwarder CloudWatch Log Group"
-      effect    = "Allow"
-      resources = ["arn:aws:kms:${each.key}:${data.aws_caller_identity.management.account_id}:key/*"]
+  statement {
+    sid       = "Allow CloudWatch Log Groups"
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${each.key}:${data.aws_caller_identity.management.account_id}:key/*"]
 
-      actions = [
-        "kms:Decrypt",
-        "kms:Describe*",
-        "kms:Encrypt",
-        "kms:GenerateDataKey*",
-        "kms:ReEncrypt*"
-      ]
+    actions = [
+      "kms:Decrypt",
+      "kms:Describe*",
+      "kms:Encrypt",
+      "kms:GenerateDataKey*",
+      "kms:ReEncrypt*"
+    ]
 
-      condition {
-        test     = "ArnLike"
-        variable = "kms:EncryptionContext:aws:logs:arn"
-        values = [
-          "arn:aws:logs:${each.key}:${data.aws_caller_identity.management.account_id}:log-group:/aws/lambda/EmailForwarder"
-        ]
-      }
+    condition {
+      test     = "ArnLike"
+      variable = "kms:EncryptionContext:aws:logs:arn"
+      values = compact([
+        "arn:aws:logs:${each.key}:${data.aws_caller_identity.management.account_id}:log-group:/aws/ssm/automation",
+        var.ses_root_accounts_mail_forward != null ?
+        "arn:aws:logs:${each.key}:${data.aws_caller_identity.management.account_id}:log-group:/aws/lambda/EmailForwarder" : null
+      ])
+    }
 
-      principals {
-        type        = "Service"
-        identifiers = ["logs.${each.key}.amazonaws.com"]
-      }
+    principals {
+      type        = "Service"
+      identifiers = ["logs.${each.key}.amazonaws.com"]
     }
   }
 }
