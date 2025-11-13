@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v9.0.1 - 2025-11-13
+
+### What's Changed
+
+#### 🐛 Bug Fixes
+
+* fix: update the management and audit kms key policy to allow encryption of the ssm automation log group (#252) @marwinbaumannsbp
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v9.0.0...v9.0.1
+
 ## v9.0.0 - 2025-11-13
 
 ### What's Changed
