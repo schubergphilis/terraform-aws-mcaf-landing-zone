@@ -36,5 +36,5 @@ locals {
   )) > 0 ? true : false
 
   allowed_regions      = distinct(concat([var.regions.home_region], try(var.regions.linked_regions, [])))
-  all_governed_regions = toset(distinct(concat([var.regions.home_region], var.regions.linked_regions, local.allowed_regions, [data.aws_region.current.region])))
+  all_governed_regions = toset(distinct(concat([var.regions.home_region], var.regions.linked_regions, local.allowed_regions)))
 }

@@ -18,30 +18,6 @@ variable "additional_auditing_trail" {
   description = "CloudTrail configuration for additional auditing trail"
 }
 
-variable "aws_account_password_policy" {
-  type = object({
-    allow_users_to_change        = bool
-    max_age                      = number
-    minimum_length               = number
-    require_lowercase_characters = bool
-    require_numbers              = bool
-    require_symbols              = bool
-    require_uppercase_characters = bool
-    reuse_prevention_history     = number
-  })
-  default = {
-    allow_users_to_change        = true
-    max_age                      = 90
-    minimum_length               = 14
-    require_lowercase_characters = true
-    require_numbers              = true
-    require_symbols              = true
-    require_uppercase_characters = true
-    reuse_prevention_history     = 24
-  }
-  description = "AWS account password policy parameters for the audit, logging and master account"
-}
-
 variable "aws_aiservices_opt_out_policy_enabled" {
   type        = bool
   default     = true
@@ -92,43 +68,27 @@ variable "aws_config_sns_subscription" {
   description = "Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic"
 }
 
-variable "aws_ebs_encryption_by_default" {
-  type        = bool
-  default     = true
-  description = "Set to true to enable AWS Elastic Block Store encryption by default"
-}
+variable "aws_core_accounts_baseline_settings" {
+  type = object({
+    ebs_encryption_by_default               = optional(bool, true)
+    ebs_snapshot_block_public_access_state  = optional(string, "block-new-sharing")
+    ec2_image_block_public_access_state     = optional(string, "block-new-sharing")
+    ssm_documents_public_sharing_permission = optional(string, "Disable")
 
-variable "aws_ebs_snapshot_block_public_access_state" {
-  type        = string
-  default     = "block-new-sharing"
-  description = "Configure regionally the EBS snapshot public sharing policy, alternatives: `block-all-sharing` and `unblocked`"
+    account_password_policy = optional(object({
+      allow_users_to_change        = optional(bool, true)
+      max_age                      = optional(number, 90)
+      minimum_length               = optional(number, 14)
+      require_lowercase_characters = optional(bool, true)
+      require_numbers              = optional(bool, true)
+      require_symbols              = optional(bool, true)
+      require_uppercase_characters = optional(bool, true)
+      reuse_prevention_history     = optional(number, 24)
+    }), {})
+  })
 
-  validation {
-    condition     = contains(["unblocked", "block-new-sharing", "block-all-sharing"], var.aws_ebs_snapshot_block_public_access_state)
-    error_message = "Allowed values for aws_ebs_snapshot_block_public_access_state are: \"unblocked\", \"block-new-sharing\", \"block-all-sharing\"."
-  }
-}
-
-variable "aws_ec2_image_block_public_access_state" {
-  type        = string
-  default     = "block-new-sharing"
-  description = "Configure blocking new AMIs from being publicly shared, alternatives: `unblocked`"
-
-  validation {
-    condition     = contains(["block-new-sharing", "unblocked"], var.aws_ec2_image_block_public_access_state)
-    error_message = "Allowed values for aws_ec2_image_block_public_access_state are: \"block-new-sharing\", \"unblocked\"."
-  }
-}
-
-variable "aws_ssm_documents_public_sharing_permission" {
-  type        = string
-  default     = "Disable"
-  description = "Configure the SSM documents public sharing policy, alternatives: `Enable`"
-
-  validation {
-    condition     = contains(["Disable", "Enable"], var.aws_ssm_documents_public_sharing_permission)
-    error_message = "Allowed values for aws_ssm_documents_public_sharing_permission are: \"Disable\", \"Enable\"."
-  }
+  default     = {}
+  description = "Consolidated settings for mcaf-account-baseline configuration used across core accounts."
 }
 
 variable "aws_guardduty" {
@@ -296,22 +256,46 @@ variable "datadog_excluded_regions" {
   default     = []
 }
 
-variable "kms_key_policy" {
-  type        = list(string)
-  default     = []
-  description = "A list of valid KMS key policy JSON documents"
+variable "kms_key_policies_management_by_region" {
+  type        = map(list(string))
+  default     = {}
+  description = "core-management key: region => list of extra policy JSON docs to merge."
+
+  validation {
+    condition = alltrue([
+      for region in keys(var.kms_key_policies_management_by_region) :
+      contains(local.all_governed_regions, region)]
+    )
+    error_message = "Map keys must be in governed regions."
+  }
 }
 
-variable "kms_key_policy_audit" {
-  type        = list(string)
-  default     = []
-  description = "A list of valid KMS key policy JSON document for use with audit KMS key"
+variable "kms_key_policies_audit_by_region" {
+  type        = map(list(string))
+  default     = {}
+  description = "core-audit key: region => list of extra policy JSON docs to merge."
+
+  validation {
+    condition = alltrue([
+      for region in keys(var.kms_key_policies_audit_by_region) :
+      contains(local.all_governed_regions, region)]
+    )
+    error_message = "Map keys must be in governed regions."
+  }
 }
 
-variable "kms_key_policy_logging" {
-  type        = list(string)
-  default     = []
-  description = "A list of valid KMS key policy JSON document for use with logging KMS key"
+variable "kms_key_policies_logging_by_region" {
+  type        = map(list(string))
+  default     = {}
+  description = "core-logging key: region => list of extra policy JSON docs to merge."
+
+  validation {
+    condition = alltrue([
+      for region in keys(var.kms_key_policies_logging_by_region) :
+      contains(local.all_governed_regions, region)]
+    )
+    error_message = "Map keys must be in governed regions."
+  }
 }
 
 variable "monitor_iam_activity" {

@@ -2,6 +2,65 @@
 
 This document captures required refactoring on your part when upgrading to a module version that contains breaking changes.
 
+## Upgrading to v9.0.0
+
+### Key Changes v9.0.0
+
+- All variables related to the security baseline configuration of the core accounts have been consolidated into one `aws_core_accounts_baseline_settings` variable.
+- KMS keys are now created automatically for all governed regions (local.all_governed_regions) and passed to each mcaf-account-baseline module. This removes the need for manual key creation or single-region assumptions.
+- Per-region KMS key policies can now be defined via new map variables, allowing regional customization while retaining centralized management.
+
+### Variables v9.0.0
+
+The following variables related to the account-baseline have been moved/renamed:
+
+- `aws_account_password_policy`. -> `aws_core_accounts_baseline_settings.account_password_policy`
+- `aws_ebs_encryption_by_default`. -> `aws_core_accounts_baseline_settings.ebs_encryption_by_default`
+- `aws_ebs_snapshot_block_public_access_state`. -> `aws_core_accounts_baseline_settings.ebs_snapshot_block_public_access_state`
+- `aws_ec2_image_block_public_access_state`. -> `aws_core_accounts_baseline_settings.ec2_image_block_public_access_state`
+- `aws_ssm_documents_public_sharing_permission`. -> `aws_core_accounts_baseline_settings.ssm_documents_public_sharing_permission`
+
+The following variables related to the kms key policy have been renamed:
+
+- `kms_key_policy` type `list(string)` -> `kms_key_policies_management_by_region` type `map(list(string))`
+- `kms_key_policy_audit` type `list(string)` -> `kms_key_policies_audit_by_region` type `map(list(string))`
+- `kms_key_policy_logging` type `list(string)` -> `kms_key_policies_logging_by_region` type `map(list(string))`
+
+For example the input needs to be modified from:
+
+```hcl
+kms_key_policy          = [data.aws_iam_policy_document.kms_key_policy.json]
+```
+
+to:
+
+```hcl
+kms_key_policies_management_by_region = {
+  (data.aws_region.current.region) = [data.aws_iam_policy_document.kms_key_policy.json]
+}
+```
+
+The following outputs have been renamed:
+
+- `kms_key_arn` -> `kms_key_arns_management_account`
+- `kms_key_id` -> `kms_key_ids_management_account`
+- `kms_key_audit_arn` -> `kms_key_arns_audit_account`
+- `kms_key_audit_id` -> `kms_key_ids_audit_account`
+- `kms_key_logging_arn` -> `kms_key_arns_logging_account`
+- `kms_key_logging_id` -> `kms_key_ids_logging_account`
+
+### How to upgrade v9.0.0
+
+To prevent resource recreation in your home region (as specified in `var.regions.home_region`), a helper script is provided to automatically generate the necessary `moved` statements for KMS.  
+
+Run this scripts from within your Terraform workspace directory:
+
+```bash
+scripts/v9-generate-moved-blocks-kms.sh
+```
+
+This script will generate a file named `v9-moved-kms.tf` containing the moved blocks required to maintain resource history and avoid accidental resource destruction during your next terraform plan or terraform apply.
+
 ## Upgrading to v8.0.0
 
 ### Key Changes v8.0.0
