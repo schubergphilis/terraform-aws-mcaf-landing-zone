@@ -26,7 +26,7 @@ data "aws_sns_topic" "all_config_notifications" {
   for_each = local.all_governed_regions
   provider = aws.audit
 
-  region = each.value
+  region = each.key
 
   name = "aws-controltower-AllConfigNotifications"
 }

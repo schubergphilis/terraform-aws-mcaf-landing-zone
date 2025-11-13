@@ -256,22 +256,46 @@ variable "datadog_excluded_regions" {
   default     = []
 }
 
-variable "kms_key_policies_by_region" {
+variable "kms_key_policies_management_by_region" {
   type        = map(list(string))
   default     = {}
   description = "core-management key: region => list of extra policy JSON docs to merge."
+
+  validation {
+    condition = alltrue([
+      for region in keys(var.kms_key_policies_management_by_region) :
+      contains(local.all_governed_regions, region)]
+    )
+    error_message = "Map keys must be in governed regions."
+  }
 }
 
 variable "kms_key_policies_audit_by_region" {
   type        = map(list(string))
   default     = {}
   description = "core-audit key: region => list of extra policy JSON docs to merge."
+
+  validation {
+    condition = alltrue([
+      for region in keys(var.kms_key_policies_audit_by_region) :
+      contains(local.all_governed_regions, region)]
+    )
+    error_message = "Map keys must be in governed regions."
+  }
 }
 
 variable "kms_key_policies_logging_by_region" {
   type        = map(list(string))
   default     = {}
   description = "core-logging key: region => list of extra policy JSON docs to merge."
+
+  validation {
+    condition = alltrue([
+      for region in keys(var.kms_key_policies_logging_by_region) :
+      contains(local.all_governed_regions, region)]
+    )
+    error_message = "Map keys must be in governed regions."
+  }
 }
 
 variable "monitor_iam_activity" {

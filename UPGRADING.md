@@ -22,7 +22,7 @@ The following variables related to the account-baseline have been moved/renamed:
 
 The following variables related to the kms key policy have been renamed:
 
-- `kms_key_policy` type `list(string)` -> `kms_key_policies_by_region` type `map(list(string))`
+- `kms_key_policy` type `list(string)` -> `kms_key_policies_management_by_region` type `map(list(string))`
 - `kms_key_policy_audit` type `list(string)` -> `kms_key_policies_audit_by_region` type `map(list(string))`
 - `kms_key_policy_logging` type `list(string)` -> `kms_key_policies_logging_by_region` type `map(list(string))`
 
@@ -35,7 +35,7 @@ kms_key_policy          = [data.aws_iam_policy_document.kms_key_policy.json]
 to:
 
 ```hcl
-kms_key_policies_by_region = {
+kms_key_policies_management_by_region = {
   (data.aws_region.current.region) = [data.aws_iam_policy_document.kms_key_policy.json]
 }
 ```

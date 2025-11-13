@@ -16,7 +16,7 @@ module "inspector" {
 
   source = "./modules/inspector"
 
-  region                  = each.value
+  region                  = each.key
   member_account_ids      = local.inspector_members_account_ids
   resource_create_timeout = var.aws_inspector.resource_create_timeout
   tags                    = var.tags
