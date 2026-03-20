@@ -1,3 +1,28 @@
+variable "account_contacts" {
+  type = object({
+    contact_billing = optional(object({
+      email_address = string
+      name          = string
+      phone_number  = string
+      title         = string
+    }), null)
+    contact_operations = optional(object({
+      email_address = string
+      name          = string
+      phone_number  = string
+      title         = string
+    }), null)
+    contact_security = optional(object({
+      email_address = string
+      name          = string
+      phone_number  = string
+      title         = string
+    }), null)
+  })
+  default     = {}
+  description = "AWS account alternate contacts"
+}
+
 variable "additional_auditing_trail" {
   type = object({
     name       = string
