@@ -1,26 +1,26 @@
 variable "account_contacts" {
   type = object({
-    contact_billing = optional(object({
+    billing = optional(object({
       email_address = string
       name          = string
       phone_number  = string
       title         = string
-    }), null)
-    contact_operations = optional(object({
+    }))
+    operations = optional(object({
       email_address = string
       name          = string
       phone_number  = string
       title         = string
-    }), null)
-    contact_security = optional(object({
+    }))
+    security = optional(object({
       email_address = string
       name          = string
       phone_number  = string
       title         = string
-    }), null)
+    }))
   })
   default     = {}
-  description = "AWS account alternate contacts"
+  description = "Alternate contacts for Control Tower core accounts (core-management, core-audit, core-logging)"
 }
 
 variable "additional_auditing_trail" {

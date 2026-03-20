@@ -29,100 +29,36 @@ resource "aws_cloudwatch_metric_alarm" "iam_activity_master" {
   tags                      = var.tags
 }
 
-resource "aws_account_alternate_contact" "management_billing" {
-  count = var.account_contacts.contact_billing == null ? 0 : 1
+resource "aws_account_alternate_contact" "management" {
+  for_each = { for k, v in var.account_contacts : k => v if v != null }
 
-  alternate_contact_type = "BILLING"
-  email_address          = var.account_contacts.contact_billing.email_address
-  name                   = var.account_contacts.contact_billing.name
-  phone_number           = var.account_contacts.contact_billing.phone_number
-  title                  = var.account_contacts.contact_billing.title
+  alternate_contact_type = upper(each.key)
+  email_address          = each.value.email_address
+  name                   = each.value.name
+  phone_number           = each.value.phone_number
+  title                  = each.value.title
 }
 
-resource "aws_account_alternate_contact" "management_operations" {
-  count = var.account_contacts.contact_operations == null ? 0 : 1
+resource "aws_account_alternate_contact" "audit" {
+  for_each = { for k, v in var.account_contacts : k => v if v != null }
 
-  alternate_contact_type = "OPERATIONS"
-  email_address          = var.account_contacts.contact_operations.email_address
-  name                   = var.account_contacts.contact_operations.name
-  phone_number           = var.account_contacts.contact_operations.phone_number
-  title                  = var.account_contacts.contact_operations.title
-}
-
-resource "aws_account_alternate_contact" "management_security" {
-  count = var.account_contacts.contact_security == null ? 0 : 1
-
-  alternate_contact_type = "SECURITY"
-  email_address          = var.account_contacts.contact_security.email_address
-  name                   = var.account_contacts.contact_security.name
-  phone_number           = var.account_contacts.contact_security.phone_number
-  title                  = var.account_contacts.contact_security.title
-}
-
-
-resource "aws_account_alternate_contact" "logging_billing" {
-  count    = var.account_contacts.contact_billing == null ? 0 : 1
-  provider = aws.logging
-
-  alternate_contact_type = "BILLING"
-  email_address          = var.account_contacts.contact_billing.email_address
-  name                   = var.account_contacts.contact_billing.name
-  phone_number           = var.account_contacts.contact_billing.phone_number
-  title                  = var.account_contacts.contact_billing.title
-}
-
-resource "aws_account_alternate_contact" "logging_operations" {
-  count    = var.account_contacts.contact_operations == null ? 0 : 1
-  provider = aws.logging
-
-  alternate_contact_type = "OPERATIONS"
-  email_address          = var.account_contacts.contact_operations.email_address
-  name                   = var.account_contacts.contact_operations.name
-  phone_number           = var.account_contacts.contact_operations.phone_number
-  title                  = var.account_contacts.contact_operations.title
-}
-
-resource "aws_account_alternate_contact" "logging_security" {
-  count    = var.account_contacts.contact_security == null ? 0 : 1
-  provider = aws.logging
-
-  alternate_contact_type = "SECURITY"
-  email_address          = var.account_contacts.contact_security.email_address
-  name                   = var.account_contacts.contact_security.name
-  phone_number           = var.account_contacts.contact_security.phone_number
-  title                  = var.account_contacts.contact_security.title
-}
-
-
-resource "aws_account_alternate_contact" "audit_billing" {
-  count    = var.account_contacts.contact_billing == null ? 0 : 1
   provider = aws.audit
 
-  alternate_contact_type = "BILLING"
-  email_address          = var.account_contacts.contact_billing.email_address
-  name                   = var.account_contacts.contact_billing.name
-  phone_number           = var.account_contacts.contact_billing.phone_number
-  title                  = var.account_contacts.contact_billing.title
+  alternate_contact_type = upper(each.key)
+  email_address          = each.value.email_address
+  name                   = each.value.name
+  phone_number           = each.value.phone_number
+  title                  = each.value.title
 }
 
-resource "aws_account_alternate_contact" "audit_operations" {
-  count    = var.account_contacts.contact_operations == null ? 0 : 1
-  provider = aws.audit
+resource "aws_account_alternate_contact" "logging" {
+  for_each = { for k, v in var.account_contacts : k => v if v != null }
 
-  alternate_contact_type = "OPERATIONS"
-  email_address          = var.account_contacts.contact_operations.email_address
-  name                   = var.account_contacts.contact_operations.name
-  phone_number           = var.account_contacts.contact_operations.phone_number
-  title                  = var.account_contacts.contact_operations.title
-}
+  provider = aws.logging
 
-resource "aws_account_alternate_contact" "audit_security" {
-  count    = var.account_contacts.contact_security == null ? 0 : 1
-  provider = aws.audit
-
-  alternate_contact_type = "SECURITY"
-  email_address          = var.account_contacts.contact_security.email_address
-  name                   = var.account_contacts.contact_security.name
-  phone_number           = var.account_contacts.contact_security.phone_number
-  title                  = var.account_contacts.contact_security.title
+  alternate_contact_type = upper(each.key)
+  email_address          = each.value.email_address
+  name                   = each.value.name
+  phone_number           = each.value.phone_number
+  title                  = each.value.title
 }
