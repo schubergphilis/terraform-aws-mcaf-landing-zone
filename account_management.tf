@@ -28,3 +28,37 @@ resource "aws_cloudwatch_metric_alarm" "iam_activity_master" {
   insufficient_data_actions = []
   tags                      = var.tags
 }
+
+resource "aws_account_alternate_contact" "management" {
+  for_each = { for k, v in var.account_contacts : k => v if v != null }
+
+  alternate_contact_type = upper(each.key)
+  email_address          = each.value.email_address
+  name                   = each.value.name
+  phone_number           = each.value.phone_number
+  title                  = each.value.title
+}
+
+resource "aws_account_alternate_contact" "audit" {
+  for_each = { for k, v in var.account_contacts : k => v if v != null }
+
+  provider = aws.audit
+
+  alternate_contact_type = upper(each.key)
+  email_address          = each.value.email_address
+  name                   = each.value.name
+  phone_number           = each.value.phone_number
+  title                  = each.value.title
+}
+
+resource "aws_account_alternate_contact" "logging" {
+  for_each = { for k, v in var.account_contacts : k => v if v != null }
+
+  provider = aws.logging
+
+  alternate_contact_type = upper(each.key)
+  email_address          = each.value.email_address
+  name                   = each.value.name
+  phone_number           = each.value.phone_number
+  title                  = each.value.title
+}

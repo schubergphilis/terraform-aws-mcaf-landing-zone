@@ -1,3 +1,28 @@
+variable "account_contacts" {
+  type = object({
+    billing = optional(object({
+      email_address = string
+      name          = string
+      phone_number  = string
+      title         = string
+    }))
+    operations = optional(object({
+      email_address = string
+      name          = string
+      phone_number  = string
+      title         = string
+    }))
+    security = optional(object({
+      email_address = string
+      name          = string
+      phone_number  = string
+      title         = string
+    }))
+  })
+  default     = {}
+  description = "Alternate contacts for Control Tower core accounts (core-management, core-audit, core-logging)"
+}
+
 variable "additional_auditing_trail" {
   type = object({
     name       = string
