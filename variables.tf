@@ -223,9 +223,14 @@ variable "aws_sso_permission_sets" {
       account_name = string
       sso_groups   = list(string)
     }))
-    inline_policy       = optional(string, null)
-    managed_policy_arns = optional(list(string), [])
-    session_duration    = optional(string, "PT4H")
+    inline_policy                               = optional(string, null)
+    managed_policy_arns                         = optional(list(string), [])
+    permissions_boundary_aws_managed_policy_arn = optional(string, null)
+    permissions_boundary_customer_managed_policy = optional(object({
+      name = string
+      path = optional(string, "/")
+    }), null)
+    session_duration = optional(string, "PT4H")
   }))
   default     = {}
   description = "Map of AWS IAM Identity Center permission sets with AWS accounts and group names that should be granted access to each account"
