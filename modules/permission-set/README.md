@@ -173,6 +173,8 @@ No modules.
 | [aws_ssoadmin_managed_policy_attachment.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_managed_policy_attachment) | resource |
 | [aws_ssoadmin_permission_set.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set) | resource |
 | [aws_ssoadmin_permission_set_inline_policy.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set_inline_policy) | resource |
+| [aws_ssoadmin_permissions_boundary_attachment.aws_managed_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permissions_boundary_attachment) | resource |
+| [aws_ssoadmin_permissions_boundary_attachment.customer_managed_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permissions_boundary_attachment) | resource |
 | [aws_identitystore_group.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/identitystore_group) | data source |
 | [aws_ssoadmin_instances.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_instances) | data source |
 | [aws_ssoadmin_permission_set.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssoadmin_permission_set) | data source |
@@ -187,6 +189,8 @@ No modules.
 | <a name="input_inline_policy"></a> [inline\_policy](#input\_inline\_policy) | The IAM inline policy to attach to a permission set | `string` | `null` | no |
 | <a name="input_managed_policy_arns"></a> [managed\_policy\_arns](#input\_managed\_policy\_arns) | List of IAM managed policy ARNs to be attached to the permission set | `list(string)` | `[]` | no |
 | <a name="input_module_depends_on"></a> [module\_depends\_on](#input\_module\_depends\_on) | A list of external resources the module depends\_on | `any` | `[]` | no |
+| <a name="input_permissions_boundary_aws_managed_policy_arn"></a> [permissions\_boundary\_aws\_managed\_policy\_arn](#input\_permissions\_boundary\_aws\_managed\_policy\_arn) | The ARN of the AWS managed policy to use as a permissions boundary for the permission set | `string` | `null` | no |
+| <a name="input_permissions_boundary_customer_managed_policy"></a> [permissions\_boundary\_customer\_managed\_policy](#input\_permissions\_boundary\_customer\_managed\_policy) | The customer managed policy name and path to use as a permissions boundary for the permission set. The policy with the specified name and path must exist in each account where the permission set is being created | <pre>object({<br/>    name = string<br/>    path = optional(string, "/")<br/>  })</pre> | `null` | no |
 | <a name="input_session_duration"></a> [session\_duration](#input\_session\_duration) | The length of time that the application user sessions are valid in the ISO-8601 standard | `string` | `"PT4H"` | no |
 
 ## Outputs

@@ -37,6 +37,26 @@ variable "managed_policy_arns" {
   description = "List of IAM managed policy ARNs to be attached to the permission set"
 }
 
+variable "permissions_boundary_aws_managed_policy_arn" {
+  type        = string
+  default     = null
+  description = "The ARN of the AWS managed policy to use as a permissions boundary for the permission set"
+
+  validation {
+    condition     = var.permissions_boundary_aws_managed_policy_arn == null || var.permissions_boundary_customer_managed_policy == null
+    error_message = "Only one of permissions_boundary_aws_managed_policy_arn or permissions_boundary_customer_managed_policy can be defined at a time."
+  }
+}
+
+variable "permissions_boundary_customer_managed_policy" {
+  type = object({
+    name = string
+    path = optional(string, "/")
+  })
+  default     = null
+  description = "The customer managed policy name and path to use as a permissions boundary for the permission set. The policy with the specified name and path must exist in each account where the permission set is being created"
+}
+
 variable "session_duration" {
   type        = string
   default     = "PT4H"
