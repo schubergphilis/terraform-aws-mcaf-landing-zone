@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v9.2.0 - 2026-04-08
+
+### What's Changed
+
+#### 🚀 Features
+
+* feat: add support for attaching permission boundaries to permission sets (#254) @skesarkar-schubergphilis
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v9.1.0...v9.2.0
+
 ## v9.1.0 - 2026-03-23
 
 ### What's Changed
