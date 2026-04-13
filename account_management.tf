@@ -5,10 +5,10 @@ locals {
   )
 
   iam_metric_filters_list = flatten([
-    for lg in data.aws_cloudwatch_log_groups.cloudtrail_master.log_groups : [
+    for log_group in data.aws_cloudwatch_log_groups.cloudtrail_master.log_group_names : [
       for pattern_key, pattern_value in local.iam_activity_patterns : {
-        key            = "${lg.log_group_name}-${pattern_key}"
-        log_group_name = lg.log_group_name
+        key            = "${log_group}-${pattern_key}"
+        log_group_name = log_group
         pattern_key    = pattern_key
         pattern_value  = pattern_value
       }
