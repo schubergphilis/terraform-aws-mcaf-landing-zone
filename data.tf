@@ -26,8 +26,8 @@ data "aws_resourcegroupstaggingapi_resources" "controltower_config_s3" {
   resource_type_filters = ["s3"]
 
   tag_filter {
-    key    = "aws-control-tower"
-    values = ["managed-by-control-tower"]
+    key    = "aws:cloudformation:logical-id"
+    values = ["ConfigS3Bucket"]
   }
 }
 

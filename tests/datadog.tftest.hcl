@@ -113,7 +113,7 @@ mock_provider "aws" {
           resource_arn       = "arn:aws:s3:::aws-controltower-config-logs-012345678902-aaa-bbb"
           compliance_details = []
           tags = {
-            "aws-control-tower" = "managed-by-control-tower"
+            "aws:cloudformation:logical-id" = "ConfigS3Bucket"
           }
         }
       ]

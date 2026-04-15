@@ -9,11 +9,9 @@ locals {
     ]
   )
 
-  controltower_aws_config_s3_name = one([
-    for mapping in data.aws_resourcegroupstaggingapi_resources.controltower_config_s3.resource_tag_mapping_list :
-    element(split(":::", mapping.resource_arn), 1)
-    if startswith(element(split(":::", mapping.resource_arn), 1), "aws-controltower-config-logs-")
-  ])
+  controltower_aws_config_s3_name = element(split(":::", one(
+    data.aws_resourcegroupstaggingapi_resources.controltower_config_s3.resource_tag_mapping_list[*].resource_arn
+  )), 1)
 }
 
 resource "aws_config_organization_managed_rule" "default" {
