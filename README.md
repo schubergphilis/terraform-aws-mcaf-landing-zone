@@ -166,21 +166,8 @@ additional_auditing_trail = {
 
 ### AWS Config Rules
 
-This module provisions by default a set of basic AWS Config Rules. In order to add extra rules, a list of [rule identifiers](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html) can be passed via the variable `aws_config.rule_identifiers`.
+This module provisions by default a set of basic AWS Config Rules. In order to add extra rules, a list of [rule identifiers](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html) can be passed via the variable `aws_config_organization_managed_rules`.
 
-If you would like to authorize other accounts to aggregate AWS Config data, the account IDs can also be passed via the variable `aws_config.aggregator_account_ids`.
-
-> [!NOTE]
-> This module already authorizes the `audit` account to aggregate Config data from all other accounts in the organization, so there is no need to specify the `audit` account ID in the `aggregator_account_ids` list.
-
-Example:
-
-```hcl
-aws_config = {
-  aggregator_account_ids = ["123456789012"]
-  rule_identifiers       = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
-}
-```
 
 ### AWS GuardDuty
 

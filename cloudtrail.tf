@@ -1,4 +1,3 @@
-#tfsec:ignore:AWS065
 resource "aws_cloudtrail" "additional_auditing_trail" {
   #checkov:skip=CKV_AWS_252: "Ensure CloudTrail defines an SNS Topic"
   #checkov:skip=CKV2_AWS_10: "Ensure CloudTrail trails are integrated with CloudWatch Logs"

@@ -20,6 +20,17 @@ data "aws_organizations_organizational_units" "default" {
 
 data "aws_region" "current" {}
 
+data "aws_resourcegroupstaggingapi_resources" "controltower_config_s3" {
+  provider = aws.audit
+
+  resource_type_filters = ["s3"]
+
+  tag_filter {
+    key    = "aws-control-tower"
+    values = ["managed-by-control-tower"]
+  }
+}
+
 data "aws_sns_topic" "all_config_notifications" {
   for_each = local.all_governed_regions
   provider = aws.audit

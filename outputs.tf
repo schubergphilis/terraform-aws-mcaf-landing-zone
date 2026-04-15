@@ -1,11 +1,6 @@
-output "aws_config_s3_bucket_arn" {
-  description = "ARN of the AWS Config S3 bucket in the logging account"
-  value       = module.aws_config_s3.arn
-}
-
 output "aws_config_s3_bucket_name" {
   description = "Name of the AWS Config S3 bucket in the logging account"
-  value       = module.aws_config_s3.name
+  value       = local.controltower_aws_config_s3_name
 }
 
 output "aws_config_iam_service_linked_role_arn" {

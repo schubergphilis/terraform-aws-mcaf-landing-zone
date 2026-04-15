@@ -106,6 +106,20 @@ mock_provider "aws" {
     }
   }
 
+  mock_data "aws_resourcegroupstaggingapi_resources" {
+    defaults = {
+      resource_tag_mapping_list = [
+        {
+          resource_arn       = "arn:aws:s3:::aws-controltower-config-logs-012345678902-aaa-bbb"
+          compliance_details = []
+          tags = {
+            "aws-control-tower" = "managed-by-control-tower"
+          }
+        }
+      ]
+    }
+  }
+
   mock_data "aws_sns_topic" {
     defaults = {
       arn = "arn:aws:sns:eu-central-1:012345678902:aws-controltower-AllConfigNotifications"
