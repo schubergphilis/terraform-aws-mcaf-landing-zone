@@ -166,21 +166,8 @@ additional_auditing_trail = {
 
 ### AWS Config Rules
 
-This module provisions by default a set of basic AWS Config Rules. In order to add extra rules, a list of [rule identifiers](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html) can be passed via the variable `aws_config.rule_identifiers`.
+This module provisions by default a set of basic AWS Config Rules. In order to add extra rules, a list of [rule identifiers](https://docs.aws.amazon.com/config/latest/developerguide/managed-rules-by-aws-config.html) can be passed via the variable `aws_config_organization_managed_rules`.
 
-If you would like to authorize other accounts to aggregate AWS Config data, the account IDs can also be passed via the variable `aws_config.aggregator_account_ids`.
-
-> [!NOTE]
-> This module already authorizes the `audit` account to aggregate Config data from all other accounts in the organization, so there is no need to specify the `audit` account ID in the `aggregator_account_ids` list.
-
-Example:
-
-```hcl
-aws_config = {
-  aggregator_account_ids = ["123456789012"]
-  rule_identifiers       = ["ACCESS_KEYS_ROTATED", "ALB_WAF_ENABLED"]
-}
-```
 
 ### AWS GuardDuty
 
@@ -499,7 +486,6 @@ module "landing_zone" {
 |------|--------|---------|
 | <a name="module_audit_manager_reports"></a> [audit\_manager\_reports](#module\_audit\_manager\_reports) | schubergphilis/mcaf-s3/aws | ~> 0.14.1 |
 | <a name="module_aws_config_recorder"></a> [aws\_config\_recorder](#module\_aws\_config\_recorder) | ./modules/aws-config-recorder | n/a |
-| <a name="module_aws_config_s3"></a> [aws\_config\_s3](#module\_aws\_config\_s3) | schubergphilis/mcaf-s3/aws | ~> 0.14.1 |
 | <a name="module_aws_sso_permission_sets"></a> [aws\_sso\_permission\_sets](#module\_aws\_sso\_permission\_sets) | ./modules/permission-set | n/a |
 | <a name="module_datadog_audit"></a> [datadog\_audit](#module\_datadog\_audit) | schubergphilis/mcaf-datadog/aws | ~> 0.9.0 |
 | <a name="module_datadog_logging"></a> [datadog\_logging](#module\_datadog\_logging) | schubergphilis/mcaf-datadog/aws | ~> 0.9.0 |
@@ -529,11 +515,6 @@ module "landing_zone" {
 | [aws_cloudwatch_event_target.security_hub_findings](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_cloudwatch_log_metric_filter.iam_activity_master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_metric_filter) | resource |
 | [aws_cloudwatch_metric_alarm.iam_activity_master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
-| [aws_config_aggregate_authorization.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_aggregate_authorization) | resource |
-| [aws_config_aggregate_authorization.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_aggregate_authorization) | resource |
-| [aws_config_aggregate_authorization.master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_aggregate_authorization) | resource |
-| [aws_config_aggregate_authorization.master_to_audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_aggregate_authorization) | resource |
-| [aws_config_configuration_aggregator.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_configuration_aggregator) | resource |
 | [aws_config_organization_managed_rule.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_organization_managed_rule) | resource |
 | [aws_iam_role.sns_feedback](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.sns_feedback_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
@@ -566,7 +547,6 @@ module "landing_zone" {
 | [aws_caller_identity.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_caller_identity.management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_cloudwatch_log_groups.cloudtrail_master](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/cloudwatch_log_groups) | data source |
-| [aws_iam_policy_document.aws_config_s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.kms_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.kms_key_audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.kms_key_logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -574,6 +554,7 @@ module "landing_zone" {
 | [aws_organizations_organization.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_organization) | data source |
 | [aws_organizations_organizational_units.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/organizations_organizational_units) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
+| [aws_resourcegroupstaggingapi_resources.controltower_config_s3](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/resourcegroupstaggingapi_resources) | data source |
 | [aws_sns_topic.all_config_notifications](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/sns_topic) | data source |
 | [mcaf_aws_all_organizational_units.default](https://registry.terraform.io/providers/schubergphilis/mcaf/latest/docs/data-sources/aws_all_organizational_units) | data source |
 
@@ -587,7 +568,7 @@ module "landing_zone" {
 | <a name="input_additional_auditing_trail"></a> [additional\_auditing\_trail](#input\_additional\_auditing\_trail) | CloudTrail configuration for additional auditing trail | <pre>object({<br/>    name       = string<br/>    bucket     = string<br/>    kms_key_id = string<br/><br/>    event_selector = optional(object({<br/>      data_resource = optional(object({<br/>        type   = string<br/>        values = list(string)<br/>      }))<br/>      exclude_management_event_sources = optional(set(string), null)<br/>      include_management_events        = optional(bool, true)<br/>      read_write_type                  = optional(string, "All")<br/>    }))<br/>  })</pre> | `null` | no |
 | <a name="input_aws_aiservices_opt_out_policy_enabled"></a> [aws\_aiservices\_opt\_out\_policy\_enabled](#input\_aws\_aiservices\_opt\_out\_policy\_enabled) | Enable the AWS AI Services Opt-Out Policy at the organization level to prevent AWS from using your content for model training. | `bool` | `true` | no |
 | <a name="input_aws_auditmanager"></a> [aws\_auditmanager](#input\_aws\_auditmanager) | AWS Audit Manager config settings | <pre>object({<br/>    enabled               = bool<br/>    reports_bucket_prefix = string<br/>  })</pre> | <pre>{<br/>  "enabled": true,<br/>  "reports_bucket_prefix": "audit-manager-reports"<br/>}</pre> | no |
-| <a name="input_aws_config"></a> [aws\_config](#input\_aws\_config) | AWS Config settings | <pre>object({<br/>    aggregator_account_ids          = optional(list(string), [])<br/>    delivery_channel_s3_bucket_name = optional(string, null)<br/>    delivery_channel_s3_key_prefix  = optional(string, null)<br/>    delivery_frequency              = optional(string, "TwentyFour_Hours")<br/>    rule_identifiers                = optional(list(string), [])<br/>  })</pre> | <pre>{<br/>  "aggregator_account_ids": [],<br/>  "delivery_channel_s3_bucket_name": null,<br/>  "delivery_channel_s3_key_prefix": null,<br/>  "delivery_frequency": "TwentyFour_Hours",<br/>  "rule_identifiers": []<br/>}</pre> | no |
+| <a name="input_aws_config_organization_managed_rules"></a> [aws\_config\_organization\_managed\_rules](#input\_aws\_config\_organization\_managed\_rules) | List of AWS Config Organization Managed Rule identifiers | `list(string)` | `[]` | no |
 | <a name="input_aws_config_sns_subscription"></a> [aws\_config\_sns\_subscription](#input\_aws\_config\_sns\_subscription) | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br/>    endpoint = string<br/>    protocol = string<br/>  }))</pre> | `{}` | no |
 | <a name="input_aws_core_accounts_baseline_settings"></a> [aws\_core\_accounts\_baseline\_settings](#input\_aws\_core\_accounts\_baseline\_settings) | Consolidated settings for mcaf-account-baseline configuration used across core accounts. | <pre>object({<br/>    ebs_encryption_by_default               = optional(bool, true)<br/>    ebs_snapshot_block_public_access_state  = optional(string, "block-new-sharing")<br/>    ec2_image_block_public_access_state     = optional(string, "block-new-sharing")<br/>    ssm_documents_public_sharing_permission = optional(string, "Disable")<br/><br/>    account_password_policy = optional(object({<br/>      allow_users_to_change        = optional(bool, true)<br/>      max_age                      = optional(number, 90)<br/>      minimum_length               = optional(number, 14)<br/>      require_lowercase_characters = optional(bool, true)<br/>      require_numbers              = optional(bool, true)<br/>      require_symbols              = optional(bool, true)<br/>      require_uppercase_characters = optional(bool, true)<br/>      reuse_prevention_history     = optional(number, 24)<br/>    }), {})<br/>  })</pre> | `{}` | no |
 | <a name="input_aws_guardduty"></a> [aws\_guardduty](#input\_aws\_guardduty) | AWS GuardDuty settings | <pre>object({<br/>    enabled                       = optional(bool, true)<br/>    finding_publishing_frequency  = optional(string, "FIFTEEN_MINUTES")<br/>    ebs_malware_protection_status = optional(bool, true)<br/>    eks_audit_logs_status         = optional(bool, true)<br/>    lambda_network_logs_status    = optional(bool, true)<br/>    rds_login_events_status       = optional(bool, true)<br/>    s3_data_events_status         = optional(bool, true)<br/>    runtime_monitoring_status = optional(object({<br/>      enabled                             = optional(bool, true)<br/>      eks_addon_management_status         = optional(bool, true)<br/>      ecs_fargate_agent_management_status = optional(bool, true)<br/>      ec2_agent_management_status         = optional(bool, true)<br/>    }), {})<br/>  })</pre> | `{}` | no |
@@ -613,7 +594,6 @@ module "landing_zone" {
 | Name | Description |
 |------|-------------|
 | <a name="output_aws_config_iam_service_linked_role_arn"></a> [aws\_config\_iam\_service\_linked\_role\_arn](#output\_aws\_config\_iam\_service\_linked\_role\_arn) | IAM Service Linked Role ARN for AWS Config in the management account |
-| <a name="output_aws_config_s3_bucket_arn"></a> [aws\_config\_s3\_bucket\_arn](#output\_aws\_config\_s3\_bucket\_arn) | ARN of the AWS Config S3 bucket in the logging account |
 | <a name="output_aws_config_s3_bucket_name"></a> [aws\_config\_s3\_bucket\_name](#output\_aws\_config\_s3\_bucket\_name) | Name of the AWS Config S3 bucket in the logging account |
 | <a name="output_kms_key_arns_audit_account"></a> [kms\_key\_arns\_audit\_account](#output\_kms\_key\_arns\_audit\_account) | Map of region => ARN of KMS key for the core audit account |
 | <a name="output_kms_key_arns_logging_account"></a> [kms\_key\_arns\_logging\_account](#output\_kms\_key\_arns\_logging\_account) | Map of region => ARN of KMS key for the core logging account |

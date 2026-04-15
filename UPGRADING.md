@@ -2,6 +2,81 @@
 
 This document captures required refactoring on your part when upgrading to a module version that contains breaking changes.
 
+## Upgrading to v10.0.0
+
+### Key Changes v10.0.0
+
+This release aligns the module with AWS Control Tower Landing Zone 4.0. Several resources and variables that are now handled natively by Control Tower have been removed.
+
+> [!IMPORTANT]
+> **Upgrade to Control Tower v4.x before upgrading this module to v10.x or higher.** 
+> See the [AWS Control Tower Landing Zone 4.0 upgrade guide](https://docs.aws.amazon.com/controltower/latest/userguide/key-changes-lz-v4.html) for instructions.
+
+> [!NOTE]
+> If you also use the [`terraform-aws-mcaf-organization`](https://github.com/schubergphilis/terraform-aws-mcaf-organization) module, upgrade it to the latest version at the same time. Control Tower v4.x registers additional service access principals that must be reflected in your organization configuration.
+
+#### AWS Config Aggregator removal
+
+Control Tower Landing Zone 4.0 deploys a Service-Linked Config Aggregator (SLCA) (`aws-controltower-ConfigAggregatorForOrganization`) in the audit account. This replaces the custom `audit` aggregator and all related aggregate authorizations that were previously managed by this module.
+
+The following resources have been removed:
+
+- `aws_config_configuration_aggregator.audit`
+- `aws_config_aggregate_authorization.master`
+- `aws_config_aggregate_authorization.master_to_audit`
+- `aws_config_aggregate_authorization.audit`
+- `aws_config_aggregate_authorization.logging`
+
+After upgrading, Terraform will plan to **destroy** these now-redundant resources. This is expected and safe to apply.
+
+#### AWS Config S3 bucket
+
+The custom AWS Config S3 bucket (`module.aws_config_s3`) is no longer managed by this module. Instead, the module now automatically discovers and uses the S3 bucket that Control Tower provisions in the logging account (prefixed with `aws-controltower-config-logs-`).
+
+The old bucket is **not deleted** — a `removed` block ensures Terraform drops it from state while preserving it in AWS. You can delete the old bucket later according to your own data retention policy.
+
+#### AWS Config delivery channel
+
+- The `s3_key_prefix` is now automatically set to the AWS Organizations ID to match the path structure that Control Tower uses for all other accounts.
+- The `delivery_frequency` is now hardcoded to `One_Hour`. Since only the AWS Config configuration of the management account is now controlled by this module, leaving this configurable probably will cause more confusion than benefits as the amount of data is very low.
+
+#### Refactored IAM activity log metric filters
+
+Landing Zones deployed with Control Tower 4.0 use a suffixed CloudTrail log group name (e.g. `aws-controltower/CloudTrailLogs-aaa-bbb`) instead of the previous `aws-controltower/CloudTrailLogs`. The module now dynamically discovers the log group name, making it fully backwards compatible with both naming conventions. Expect `moved` blocks in the plan output to reflect the updated resource keys — no manual action is required.
+
+### Variables v10.0.0
+
+The `aws_config` variable has been replaced and split up:
+
+| Old (`aws_config` attribute)        | New                                     | Notes                                                              |
+|-------------------------------------|-----------------------------------------|--------------------------------------------------------------------|
+| `aggregator_account_ids`            | _(removed)_                             | Handled by Control Tower SLCA                                      |
+| `delivery_channel_s3_bucket_name`   | _(removed)_                             | Auto-discovered from Control Tower bucket                          |
+| `delivery_channel_s3_key_prefix`    | _(removed)_                             | Automatically set to the AWS Organizations ID                      |
+| `delivery_frequency`                | _(removed)_                             | Hardcoded to `One_Hour`                                            |
+| `rule_identifiers`                  | `aws_config_organization_managed_rules` | Now a top-level `list(string)` variable instead of a nested object |
+
+#### Migration example
+
+```hcl
+# Before
+aws_config = {
+  aggregator_account_ids          = ["123456789012"]
+  delivery_channel_s3_bucket_name = "my-custom-config-bucket"
+  delivery_channel_s3_key_prefix  = "my-prefix"
+  delivery_frequency              = "TwentyFour_Hours"
+  rule_identifiers                = ["IAM_PASSWORD_POLICY"]
+}
+
+# After
+aws_config_organization_managed_rules = ["IAM_PASSWORD_POLICY"]
+```
+
+### Outputs v10.0.0
+
+- `aws_config_s3_bucket_arn` has been **removed** (the bucket is no longer managed; use the name output to construct the ARN if needed).
+- `aws_config_s3_bucket_name` now returns the name of the Control Tower config logs bucket.
+
 ## Upgrading to v9.0.0
 
 ### Key Changes v9.0.0
