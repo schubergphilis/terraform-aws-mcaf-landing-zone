@@ -8,10 +8,8 @@ data "aws_caller_identity" "logging" {
 
 data "aws_caller_identity" "management" {}
 
-data "aws_cloudwatch_log_group" "cloudtrail_master" {
-  count = var.monitor_iam_activity ? 1 : 0
-
-  name = "aws-controltower/CloudTrailLogs"
+data "aws_cloudwatch_log_groups" "cloudtrail_master" {
+  log_group_name_prefix = "aws-controltower/CloudTrailLogs"
 }
 
 data "aws_organizations_organization" "default" {}

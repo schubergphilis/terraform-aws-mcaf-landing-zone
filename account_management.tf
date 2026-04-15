@@ -1,12 +1,39 @@
-resource "aws_cloudwatch_log_metric_filter" "iam_activity_master" {
-  for_each = var.monitor_iam_activity ? merge(local.iam_activity, local.cloudtrail_activity_cis_aws_foundations) : {}
+locals {
+  iam_activity_patterns = merge(
+    local.iam_activity,
+    local.cloudtrail_activity_cis_aws_foundations
+  )
 
-  name           = "LandingZone-IAMActivity-${each.key}"
-  pattern        = each.value
-  log_group_name = data.aws_cloudwatch_log_group.cloudtrail_master[0].name
+  iam_metric_filters_list = flatten([
+    for log_group in data.aws_cloudwatch_log_groups.cloudtrail_master.log_group_names : [
+      for pattern_key, pattern_value in local.iam_activity_patterns : {
+        key            = "${log_group}-${pattern_key}"
+        log_group_name = log_group
+        pattern_key    = pattern_key
+        pattern_value  = pattern_value
+      }
+    ]
+  ])
+
+  iam_metric_filters = var.monitor_iam_activity ? {
+    for item in local.iam_metric_filters_list :
+    item.key => {
+      log_group_name = item.log_group_name
+      pattern_key    = item.pattern_key
+      pattern_value  = item.pattern_value
+    }
+  } : {}
+}
+
+resource "aws_cloudwatch_log_metric_filter" "iam_activity_master" {
+  for_each = local.iam_metric_filters
+
+  name           = "LandingZone-IAMActivity-${each.value.pattern_key}"
+  pattern        = each.value.pattern_value
+  log_group_name = each.value.log_group_name
 
   metric_transformation {
-    name      = "LandingZone-IAMActivity-${each.key}"
+    name      = "LandingZone-IAMActivity-${each.value.pattern_key}"
     namespace = "LandingZone-IAMActivity"
     value     = "1"
   }
