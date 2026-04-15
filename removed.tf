@@ -8,3 +8,22 @@ removed {
     destroy = false
   }
 }
+
+# AWS Audit Manager is no longer supported as the service is closed to new customers
+# as of April 30, 2026. These removed blocks ensure Terraform drops the resources
+# from state. Users should deregister and clean up Audit Manager resources manually.
+removed {
+  from = aws_auditmanager_account_registration.default
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = module.audit_manager_reports
+
+  lifecycle {
+    destroy = false
+  }
+}

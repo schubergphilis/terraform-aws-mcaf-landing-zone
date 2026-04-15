@@ -49,18 +49,6 @@ variable "aws_aiservices_opt_out_policy_enabled" {
   description = "Enable the AWS AI Services Opt-Out Policy at the organization level to prevent AWS from using your content for model training."
 }
 
-variable "aws_auditmanager" {
-  type = object({
-    enabled               = bool
-    reports_bucket_prefix = string
-  })
-  default = {
-    enabled               = true
-    reports_bucket_prefix = "audit-manager-reports"
-  }
-  description = "AWS Audit Manager config settings"
-}
-
 variable "aws_config_organization_managed_rules" {
   type        = list(string)
   default     = []
