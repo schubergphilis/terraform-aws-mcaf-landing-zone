@@ -148,7 +148,3 @@ moved {
   from = aws_cloudwatch_metric_alarm.iam_activity_master["VpcChange"]
   to   = aws_cloudwatch_metric_alarm.iam_activity_master["aws-controltower/CloudTrailLogs-VpcChange"]
 }
-
-
-
-
