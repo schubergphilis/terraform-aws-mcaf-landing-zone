@@ -481,7 +481,7 @@ module "landing_zone" {
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.7.0 |
-| <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | >= 3.39 |
+| <a name="requirement_datadog"></a> [datadog](#requirement\_datadog) | >= 3.39, < 4.0 |
 | <a name="requirement_mcaf"></a> [mcaf](#requirement\_mcaf) | >= 0.4.2 |
 
 ## Providers
