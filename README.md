@@ -494,11 +494,11 @@ module "landing_zone" {
 | <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | schubergphilis/mcaf-kms/aws | ~> 1.0.0 |
 | <a name="module_kms_key_audit"></a> [kms\_key\_audit](#module\_kms\_key\_audit) | schubergphilis/mcaf-kms/aws | ~> 1.0.0 |
 | <a name="module_kms_key_logging"></a> [kms\_key\_logging](#module\_kms\_key\_logging) | schubergphilis/mcaf-kms/aws | ~> 1.0.0 |
-| <a name="module_security_baseline_audit"></a> [security\_baseline\_audit](#module\_security\_baseline\_audit) | schubergphilis/mcaf-account-baseline/aws | ~> 7.0.1 |
-| <a name="module_security_baseline_logging"></a> [security\_baseline\_logging](#module\_security\_baseline\_logging) | schubergphilis/mcaf-account-baseline/aws | ~> 7.0.1 |
-| <a name="module_security_baseline_master"></a> [security\_baseline\_master](#module\_security\_baseline\_master) | schubergphilis/mcaf-account-baseline/aws | ~> 7.0.1 |
+| <a name="module_security_baseline_audit"></a> [security\_baseline\_audit](#module\_security\_baseline\_audit) | schubergphilis/mcaf-account-baseline/aws | ~> 7.1.0 |
+| <a name="module_security_baseline_logging"></a> [security\_baseline\_logging](#module\_security\_baseline\_logging) | schubergphilis/mcaf-account-baseline/aws | ~> 7.1.0 |
+| <a name="module_security_baseline_master"></a> [security\_baseline\_master](#module\_security\_baseline\_master) | schubergphilis/mcaf-account-baseline/aws | ~> 7.1.0 |
 | <a name="module_ses-root-accounts-mail-alias"></a> [ses-root-accounts-mail-alias](#module\_ses-root-accounts-mail-alias) | schubergphilis/mcaf-ses/aws | ~> 1.0.0 |
-| <a name="module_ses-root-accounts-mail-forward"></a> [ses-root-accounts-mail-forward](#module\_ses-root-accounts-mail-forward) | schubergphilis/mcaf-ses-forwarder/aws | ~> 1.0.0 |
+| <a name="module_ses-root-accounts-mail-forward"></a> [ses-root-accounts-mail-forward](#module\_ses-root-accounts-mail-forward) | schubergphilis/mcaf-ses-forwarder/aws | ~> 1.1.1 |
 | <a name="module_tag_policy_assignment"></a> [tag\_policy\_assignment](#module\_tag\_policy\_assignment) | ./modules/tag-policy-assignment | n/a |
 
 ## Resources
