@@ -15,6 +15,17 @@ This release aligns the module with AWS Control Tower Landing Zone 4.0. Several 
 > [!NOTE]
 > If you also use the [`terraform-aws-mcaf-organization`](https://github.com/schubergphilis/terraform-aws-mcaf-organization) module, upgrade it to the latest version at the same time. Control Tower v4.x registers additional service access principals that must be reflected in your organization configuration.
 
+#### AWS Audit Manager removal
+
+AWS Audit Manager is [no longer open to new customers as of April 30, 2026](https://aws.amazon.com/audit-manager/). All Audit Manager resources have been removed from this module, including:
+
+- `aws_auditmanager_account_registration.default`
+- `module.audit_manager_reports` (S3 bucket for Audit Manager reports)
+- The `aws_auditmanager` variable
+- KMS key policy statements that granted Audit Manager access
+
+The `removed` blocks ensure Terraform drops these resources from state without destroying them. If you were using Audit Manager, you should deregister and clean up your Audit Manager resources manually before they become inaccessible.
+
 #### AWS Config Aggregator removal
 
 Control Tower Landing Zone 4.0 deploys a Service-Linked Config Aggregator (SLCA) (`aws-controltower-ConfigAggregatorForOrganization`) in the audit account. This replaces the custom `audit` aggregator and all related aggregate authorizations that were previously managed by this module.
@@ -45,6 +56,12 @@ The old bucket is **not deleted** — a `removed` block ensures Terraform drops 
 Landing Zones deployed with Control Tower 4.0 use a suffixed CloudTrail log group name (e.g. `aws-controltower/CloudTrailLogs-aaa-bbb`) instead of the previous `aws-controltower/CloudTrailLogs`. The module now dynamically discovers the log group name, making it fully backwards compatible with both naming conventions. Expect `moved` blocks in the plan output to reflect the updated resource keys — no manual action is required.
 
 ### Variables v10.0.0
+
+The `aws_auditmanager` variable has been removed entirely:
+
+| Old variable       | New         | Notes                                                          |
+|--------------------|-------------|----------------------------------------------------------------|
+| `aws_auditmanager` | _(removed)_ | AWS Audit Manager is closed to new customers as of 2026-04-30 |
 
 The `aws_config` variable has been replaced and split up:
 
