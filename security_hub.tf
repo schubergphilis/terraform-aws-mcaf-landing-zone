@@ -24,6 +24,116 @@ resource "aws_securityhub_member" "management" {
 }
 
 // AWS Security Hub - Audit account configuration and enrollment
+data "aws_iam_policy_document" "security_hub_delegated_administrator" {
+  statement {
+    sid = "SecurityServicesDelegatingOrgReadActions"
+    actions = [
+      "organizations:ListRoots"
+    ]
+    resources = ["*"]
+    principals {
+      identifiers = ["arn:aws:iam::${var.control_tower_account_ids.audit}:root"]
+      type        = "AWS"
+    }
+  }
+
+  statement {
+    sid = "SecurityServicesDelegatingNecessaryOrgManagementActions"
+    actions = [
+      "organizations:DescribeOrganization",
+      "organizations:DescribeOrganizationalUnit",
+      "organizations:DescribeAccount",
+      "organizations:ListRoots",
+      "organizations:ListOrganizationalUnitsForParent",
+      "organizations:ListParents",
+      "organizations:ListChildren",
+      "organizations:ListAccounts",
+      "organizations:ListAccountsForParent",
+      "organizations:ListTagsForResource",
+      "organizations:ListDelegatedAdministrators",
+      "organizations:ListHandshakesForAccount"
+    ]
+    resources = [
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:root/${data.aws_organizations_organization.default.id}/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:organization/${data.aws_organizations_organization.default.id}",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:ou/${data.aws_organizations_organization.default.id}/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:account/${data.aws_organizations_organization.default.id}/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:policy/${data.aws_organizations_organization.default.id}/securityhub_policy/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:policy/${data.aws_organizations_organization.default.id}/inspector_policy/*",
+    ]
+    principals {
+      identifiers = ["arn:aws:iam::${var.control_tower_account_ids.audit}:root"]
+      type        = "AWS"
+    }
+  }
+
+  statement {
+    sid = "SecurityServicesDelegatingPolicyDescribeActions"
+    actions = [
+      "organizations:DescribePolicy",
+      "organizations:DescribeEffectivePolicy",
+      "organizations:ListPolicies",
+      "organizations:ListPoliciesForTarget",
+      "organizations:ListTargetsForPolicy"
+    ]
+    resources = [
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:root/${data.aws_organizations_organization.default.id}/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:ou/${data.aws_organizations_organization.default.id}/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:account/${data.aws_organizations_organization.default.id}/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:policy/${data.aws_organizations_organization.default.id}/securityhub_policy/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:policy/${data.aws_organizations_organization.default.id}/inspector_policy/*",
+    ]
+    principals {
+      identifiers = ["arn:aws:iam::${var.control_tower_account_ids.audit}:root"]
+      type        = "AWS"
+    }
+  }
+
+  statement {
+    sid = "SecurityServicesDelegatingPolicyMutationActions"
+    actions = [
+      "organizations:CreatePolicy",
+      "organizations:UpdatePolicy",
+      "organizations:DeletePolicy",
+      "organizations:AttachPolicy",
+      "organizations:DetachPolicy",
+      "organizations:EnablePolicyType",
+      "organizations:DisablePolicyType"
+    ]
+    resources = [
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:root/${data.aws_organizations_organization.default.id}/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:ou/${data.aws_organizations_organization.default.id}/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:account/${data.aws_organizations_organization.default.id}/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:policy/${data.aws_organizations_organization.default.id}/securityhub_policy/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:policy/${data.aws_organizations_organization.default.id}/inspector_policy/*",
+    ]
+    principals {
+      identifiers = ["arn:aws:iam::${var.control_tower_account_ids.audit}:root"]
+      type        = "AWS"
+    }
+  }
+
+  statement {
+    sid = "SecurityServicesDelegatingPolicyTagActions"
+    actions = [
+      "organizations:TagResource",
+      "organizations:UntagResource"
+    ]
+    resources = [
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:policy/${data.aws_organizations_organization.default.id}/securityhub_policy/*",
+      "arn:aws:organizations::${data.aws_caller_identity.management.account_id}:policy/${data.aws_organizations_organization.default.id}/inspector_policy/*",
+    ]
+    principals {
+      identifiers = ["arn:aws:iam::${var.control_tower_account_ids.audit}:root"]
+      type        = "AWS"
+    }
+  }
+}
+
+resource "aws_organizations_resource_policy" "security_hub_delegated_administrator" {
+  content = data.aws_iam_policy_document.security_hub_delegated_administrator.json
+}
+
 resource "aws_securityhub_account" "default" {
   provider = aws.audit
 
