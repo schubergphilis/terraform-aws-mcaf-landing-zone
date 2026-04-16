@@ -5,6 +5,22 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v10.0.0 - 2026-04-16
+
+### What's Changed
+
+#### 🚀 Features
+
+* feat!: feat!: upgrade security hub standards arns to the latest versions(#259) @marwinbaumannsbp
+* feat!: Remove deprecated AWS Audit Manager resources from code (#257) @marwinbaumannsbp
+* feat!: update AWS Config setup to match Control Tower v4.x (#256) @marwinbaumannsbp
+
+#### 🐛 Bug Fixes
+
+* fix: Refactor iam_activity_master log metric filter to support Landing Zone 4.0 (#255) @fatbasstard
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v9.2.0...v10.0.0
+
 ## v9.2.0 - 2026-04-08
 
 ### What's Changed
