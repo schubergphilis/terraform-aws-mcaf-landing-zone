@@ -51,6 +51,19 @@ The old bucket is **not deleted** — a `removed` block ensures Terraform drops 
 - The `s3_key_prefix` is now automatically set to the AWS Organizations ID to match the path structure that Control Tower uses for all other accounts.
 - The `delivery_frequency` is now hardcoded to `One_Hour`. Since only the AWS Config configuration of the management account is now controlled by this module, leaving this configurable probably will cause more confusion than benefits as the amount of data is very low.
 
+#### Updated default Security Hub standards
+
+The default Security Hub standards ARNs have been updated to the latest versions:
+
+- CIS AWS Foundations Benchmark: `v/1.4.0` → `v/5.0.0`
+- PCI DSS: `v/3.2.1` → `v/4.0.1`
+
+If you rely on the defaults (i.e. you have **not** set `aws_security_hub.standards_arns`), Terraform will plan to replace the old standard subscriptions with the new versions. Review the plan carefully, as disabling an old standard and enabling a new one may temporarily affect your compliance posture.
+
+Migration to the latest CIS AWS Foundations Benchmark (v5.0.0) is recommended, as v1.4.0 is over 4 years old and no longer reflects current AWS security best practices.
+
+If you want to keep the previous versions, explicitly set `aws_security_hub.standards_arns` to the old values.
+
 #### Refactored IAM activity log metric filters
 
 Landing Zones deployed with Control Tower 4.0 use a suffixed CloudTrail log group name (e.g. `aws-controltower/CloudTrailLogs-aaa-bbb`) instead of the previous `aws-controltower/CloudTrailLogs`. The module now dynamically discovers the log group name, making it fully backwards compatible with both naming conventions. Expect `moved` blocks in the plan output to reflect the updated resource keys — no manual action is required.
