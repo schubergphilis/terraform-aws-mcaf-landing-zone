@@ -27,3 +27,20 @@ removed {
     destroy = false
   }
 }
+
+# Security Hub membership is handled by the "mcaf-lz" Security Hub Configuration Policy.
+removed {
+  from = aws_securityhub_member.management
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = aws_securityhub_member.logging
+
+  lifecycle {
+    destroy = false
+  }
+}
