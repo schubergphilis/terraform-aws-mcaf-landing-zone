@@ -76,6 +76,10 @@ resource "aws_securityhub_configuration_policy_association" "root" {
 
   target_id = data.aws_organizations_organization.default.roots[0].id
   policy_id = aws_securityhub_configuration_policy.default.id
+
+  timeouts {
+    create = "5m"
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "security_hub_findings" {
