@@ -11,18 +11,6 @@ resource "aws_securityhub_account" "management" {
   depends_on = [aws_securityhub_organization_configuration.default]
 }
 
-resource "aws_securityhub_member" "management" {
-  provider = aws.audit
-
-  account_id = data.aws_caller_identity.management.account_id
-
-  depends_on = [aws_securityhub_account.management]
-
-  lifecycle {
-    ignore_changes = [invite]
-  }
-}
-
 // AWS Security Hub - Audit account configuration and enrollment
 resource "aws_securityhub_account" "default" {
   provider = aws.audit
@@ -124,17 +112,4 @@ resource "aws_sns_topic_subscription" "security_hub_findings" {
   endpoint_auto_confirms = length(regexall("http", each.value.protocol)) > 0
   protocol               = each.value.protocol
   topic_arn              = aws_sns_topic.security_hub_findings.arn
-}
-
-// AWS Security Hub - Logging account enrollment
-resource "aws_securityhub_member" "logging" {
-  provider = aws.audit
-
-  account_id = data.aws_caller_identity.logging.account_id
-
-  lifecycle {
-    ignore_changes = [invite]
-  }
-
-  depends_on = [aws_securityhub_organization_configuration.default]
 }
