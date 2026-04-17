@@ -5,6 +5,21 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v10.0.1 - 2026-04-17
+
+### What's Changed
+
+#### 🐛 Bug Fixes
+
+* fix: Remove account level security hub configuration (#261) @fatbasstard
+* fix: Increase timeout of the aws_securityhub_configuration_policy_association (#262) @fatbasstard
+
+#### 🧺 Miscellaneous
+
+* chore: Bump MCAF modules (#258) @fatbasstard
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v10.0.0...v10.0.1
+
 ## v10.0.0 - 2026-04-16
 
 ### What's Changed
