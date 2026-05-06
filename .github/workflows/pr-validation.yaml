@@ -19,11 +19,9 @@ jobs:
   autolabeler:
     runs-on: ubuntu-latest
     steps:
-      - uses: release-drafter/release-drafter@v6
+      - uses: release-drafter/release-drafter/autolabeler@v7
         with:
           config-name: release-drafter-config.yaml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   title-checker:
     runs-on: ubuntu-latest
