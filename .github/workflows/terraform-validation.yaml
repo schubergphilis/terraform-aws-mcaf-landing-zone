@@ -36,10 +36,14 @@ jobs:
       - name: Terraform Lint
         id: lint
         run: |
+          echo "Installing tflint plugins, if any"
+          tflint --init
           echo "Checking ."
           tflint --format compact
 
           for d in examples/*/; do
+            echo "Installing tflint plugins, if any"
+            tflint --chdir=$d  --init
             echo "Checking ${d} ..."
             tflint --chdir=$d --format compact
           done
