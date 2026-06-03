@@ -100,7 +100,7 @@ variable "aws_ebs_encryption_by_default" {
 
 variable "aws_ebs_snapshot_block_public_access_state" {
   type        = string
-  default     = "block-new-sharing"
+  default     = null
   nullable    = true
   description = "Configure regionally the EBS snapshot public sharing policy, alternatives: `block-all-sharing` and `unblocked`. Use `null` to explicitly opt out of regional configuration when the setting is governed at the AWS Organization level via Declarative Policies."
 
