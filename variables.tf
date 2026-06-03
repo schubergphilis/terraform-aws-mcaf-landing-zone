@@ -105,7 +105,7 @@ variable "aws_ebs_snapshot_block_public_access_state" {
   description = "Configure regionally the EBS snapshot public sharing policy, alternatives: `block-all-sharing` and `unblocked`. Use `null` to explicitly opt out of regional configuration when the setting is governed at the AWS Organization level via Declarative Policies."
 
   validation {
-    condition     = var.aws_ebs_snapshot_block_public_access_state == null || contains(["unblocked", "block-new-sharing", "block-all-sharing"], var.aws_ebs_snapshot_block_public_access_state)
+    condition     = var.aws_ebs_snapshot_block_public_access_state == null ? true : contains(["unblocked", "block-new-sharing", "block-all-sharing"], var.aws_ebs_snapshot_block_public_access_state)
     error_message = "Allowed values for aws_ebs_snapshot_block_public_access_state are: null, \"unblocked\", \"block-new-sharing\", \"block-all-sharing\"."
   }
 }
