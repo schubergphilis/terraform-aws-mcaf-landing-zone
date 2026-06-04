@@ -1,11 +1,11 @@
 locals {
   security_baseline_input = {
-    regions                                     = toset(var.regions.allowed_regions)
-    aws_ebs_encryption_by_default               = var.aws_ebs_encryption_by_default
-    aws_ebs_snapshot_block_public_access_state  = var.aws_ebs_snapshot_block_public_access_state
-    aws_ssm_documents_public_sharing_permission = var.aws_ssm_documents_public_sharing_permission
-    aws_ec2_image_block_public_access_state     = var.aws_ec2_image_block_public_access_state
-    aws_account_password_policy                 = var.aws_account_password_policy
+    regions                                      = toset(var.regions.allowed_regions)
+    aws_ebs_encryption_by_default                = var.aws_ebs_encryption_by_default
+    aws_ebs_snapshot_block_public_access_config  = var.aws_ebs_snapshot_block_public_access_config
+    aws_ssm_documents_public_sharing_permission  = var.aws_ssm_documents_public_sharing_permission
+    aws_ec2_image_block_public_access_config     = var.aws_ec2_image_block_public_access_config
+    aws_account_password_policy                  = var.aws_account_password_policy
   }
 }
 

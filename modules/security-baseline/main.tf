@@ -23,7 +23,9 @@ resource "aws_s3_account_public_access_block" "default" {
 # This is set regionally, but enforced account-wide, see:
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/manage-block-public-access-for-amis.html#enable-block-public-access-for-amis
 resource "aws_ec2_image_block_public_access" "default" {
-  state = var.security_baseline_input.aws_ec2_image_block_public_access_state
+  count = var.security_baseline_input.aws_ec2_image_block_public_access_config.enabled ? 1 : 0
+
+  state = var.security_baseline_input.aws_ec2_image_block_public_access_config.state
 }
 
 module "regional_resources_baseline" {
@@ -31,8 +33,8 @@ module "regional_resources_baseline" {
 
   source = "./../../modules/security-baseline-regional"
 
-  region                                      = each.value
-  aws_ebs_encryption_by_default               = var.security_baseline_input.aws_ebs_encryption_by_default
-  aws_ebs_snapshot_block_public_access_state  = var.security_baseline_input.aws_ebs_snapshot_block_public_access_state
-  aws_ssm_documents_public_sharing_permission = var.security_baseline_input.aws_ssm_documents_public_sharing_permission
+  region                                       = each.value
+  aws_ebs_encryption_by_default                = var.security_baseline_input.aws_ebs_encryption_by_default
+  aws_ebs_snapshot_block_public_access_config  = var.security_baseline_input.aws_ebs_snapshot_block_public_access_config
+  aws_ssm_documents_public_sharing_permission  = var.security_baseline_input.aws_ssm_documents_public_sharing_permission
 }

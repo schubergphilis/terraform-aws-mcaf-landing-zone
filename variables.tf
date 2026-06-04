@@ -98,26 +98,31 @@ variable "aws_ebs_encryption_by_default" {
   description = "Set to true to enable AWS Elastic Block Store encryption by default"
 }
 
-variable "aws_ebs_snapshot_block_public_access_state" {
-  type        = string
-  default     = null
-  nullable    = true
-  description = "Configure regionally the EBS snapshot public sharing policy, alternatives: `block-all-sharing` and `unblocked`. Use `null` to explicitly opt out of regional configuration when the setting is governed at the AWS Organization level via Declarative Policies."
+variable "aws_ebs_snapshot_block_public_access_config" {
+  type = object({
+    enabled = optional(bool, true)
+    state   = optional(string, "block-new-sharing")
+  })
+  default     = {}
+  description = "EBS snapshot block public access configuration. Set enabled to false to opt out when the setting is governed at the AWS Organization level via Declarative Policies."
 
   validation {
-    condition     = var.aws_ebs_snapshot_block_public_access_state == null ? true : contains(["unblocked", "block-new-sharing", "block-all-sharing"], var.aws_ebs_snapshot_block_public_access_state)
-    error_message = "Allowed values for aws_ebs_snapshot_block_public_access_state are: null, \"unblocked\", \"block-new-sharing\", \"block-all-sharing\"."
+    condition     = contains(["unblocked", "block-new-sharing", "block-all-sharing"], var.aws_ebs_snapshot_block_public_access_config.state)
+    error_message = "Allowed values for state are: \"unblocked\", \"block-new-sharing\", \"block-all-sharing\"."
   }
 }
 
-variable "aws_ec2_image_block_public_access_state" {
-  type        = string
-  default     = "block-new-sharing"
-  description = "Configure blocking new AMIs from being publicly shared, alternatives: `unblocked`"
+variable "aws_ec2_image_block_public_access_config" {
+  type = object({
+    enabled = optional(bool, true)
+    state   = optional(string, "block-new-sharing")
+  })
+  default     = {}
+  description = "EC2 AMI block public access configuration. Set enabled to false to opt out when the setting is governed at the AWS Organization level via Declarative Policies."
 
   validation {
-    condition     = contains(["block-new-sharing", "unblocked"], var.aws_ec2_image_block_public_access_state)
-    error_message = "Allowed values for aws_ec2_image_block_public_access_state are: \"block-new-sharing\", \"unblocked\"."
+    condition     = contains(["block-new-sharing", "unblocked"], var.aws_ec2_image_block_public_access_config.state)
+    error_message = "Allowed values for state are: \"block-new-sharing\", \"unblocked\"."
   }
 }
 
