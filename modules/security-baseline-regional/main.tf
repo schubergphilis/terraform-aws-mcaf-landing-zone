@@ -4,8 +4,10 @@ resource "aws_ebs_encryption_by_default" "default" {
 }
 
 resource "aws_ebs_snapshot_block_public_access" "default" {
+  count  = var.aws_ebs_snapshot_block_public_access_config.enabled ? 1 : 0
   region = var.region
-  state  = var.aws_ebs_snapshot_block_public_access_state
+
+  state = var.aws_ebs_snapshot_block_public_access_config.state
 }
 
 resource "aws_ssm_service_setting" "documents_public_sharing_permission" {
