@@ -29,6 +29,7 @@ locals {
 module "security_baseline_master" {
   source = "git::https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline.git?ref=add-config-objects-for-public-access"
 
+  enable_additional_eu_regions                = false
   extra_regions_to_baseline                   = local.all_governed_regions
   account_password_policy                     = var.aws_core_accounts_baseline_settings.account_password_policy
   aws_ebs_encryption_by_default               = var.aws_core_accounts_baseline_settings.ebs_encryption_by_default
@@ -44,6 +45,7 @@ module "security_baseline_audit" {
 
   source = "git::https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline.git?ref=add-config-objects-for-public-access"
 
+  enable_additional_eu_regions                = false
   extra_regions_to_baseline                   = local.all_governed_regions
   account_password_policy                     = var.aws_core_accounts_baseline_settings.account_password_policy
   aws_ebs_encryption_by_default               = var.aws_core_accounts_baseline_settings.ebs_encryption_by_default
@@ -59,6 +61,7 @@ module "security_baseline_logging" {
 
   source = "git::https://github.com/schubergphilis/terraform-aws-mcaf-account-baseline.git?ref=add-config-objects-for-public-access"
 
+  enable_additional_eu_regions                = false
   extra_regions_to_baseline                   = local.all_governed_regions
   account_password_policy                     = var.aws_core_accounts_baseline_settings.account_password_policy
   aws_ebs_encryption_by_default               = var.aws_core_accounts_baseline_settings.ebs_encryption_by_default
