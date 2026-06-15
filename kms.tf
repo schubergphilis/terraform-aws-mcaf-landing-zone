@@ -66,6 +66,34 @@ data "aws_iam_policy_document" "kms_key" {
   }
 
   statement {
+    sid = "Allow SSM Automation Log Group Encryption"
+    actions = [
+      "kms:Decrypt",
+      "kms:Describe*",
+      "kms:Encrypt",
+      "kms:GenerateDataKey*",
+      "kms:ReEncrypt*"
+    ]
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${each.key}:${data.aws_caller_identity.management.account_id}:key/*"]
+
+    condition {
+      test     = "ArnLike"
+      variable = "kms:EncryptionContext:aws:logs:arn"
+      values = [
+        "arn:aws:logs:${each.key}:${data.aws_caller_identity.management.account_id}:log-group:/aws/ssm/automation"
+      ]
+    }
+
+    principals {
+      type = "Service"
+      identifiers = [
+        "logs.${each.key}.amazonaws.com"
+      ]
+    }
+  }
+
+  statement {
     sid       = "Allow Control Tower dependencies CloudWatch, CloudTrail, Config & SNS Decrypt"
     effect    = "Allow"
     resources = ["arn:aws:kms:${each.key}:${data.aws_caller_identity.management.account_id}:key/*"]
@@ -245,6 +273,32 @@ data "aws_iam_policy_document" "kms_key_audit" {
         "cloudwatch.amazonaws.com",
         "events.amazonaws.com"
       ]
+    }
+  }
+
+  statement {
+    sid = "Allow SSM Automation Log Group Encryption"
+    actions = [
+      "kms:Decrypt",
+      "kms:Describe*",
+      "kms:Encrypt",
+      "kms:GenerateDataKey*",
+      "kms:ReEncrypt*"
+    ]
+    effect    = "Allow"
+    resources = ["arn:aws:kms:${each.key}:${data.aws_caller_identity.audit.account_id}:key/*"]
+
+    condition {
+      test     = "ArnLike"
+      variable = "kms:EncryptionContext:aws:logs:arn"
+      values = [
+        "arn:aws:logs:${each.key}:${data.aws_caller_identity.audit.account_id}:log-group:/aws/ssm/automation"
+      ]
+    }
+
+    principals {
+      type        = "Service"
+      identifiers = ["logs.${each.key}.amazonaws.com"]
     }
   }
 
