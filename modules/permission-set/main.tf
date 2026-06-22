@@ -99,6 +99,18 @@ resource "aws_ssoadmin_managed_policy_attachment" "default" {
   ]
 }
 
+resource "aws_ssoadmin_customer_managed_policy_attachment" "customer_managed_policy" {
+  count = var.customer_managed_policy_attachment != null ? 1 : 0
+
+  instance_arn       = local.instance_arn
+  permission_set_arn = local.permission_set_arn
+
+  customer_managed_policy_reference {
+    name = var.customer_managed_policy_attachment.name
+    path = var.customer_managed_policy_attachment.path
+  }
+}
+
 resource "aws_ssoadmin_permissions_boundary_attachment" "aws_managed_policy" {
   count = var.permissions_boundary_aws_managed_policy_arn != null ? 1 : 0
 

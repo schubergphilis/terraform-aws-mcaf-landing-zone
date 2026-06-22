@@ -19,6 +19,15 @@ variable "create" {
   description = "Set to false to only manage assignments when the permission set already exists"
 }
 
+variable "customer_managed_policy_attachment" {
+  type = object({
+    name = string
+    path = optional(string, "/")
+  })
+  default     = null
+  description = "The customer managed policy name and path to attach to the permission set. The policy with the specified name and path must exist in each account where the permission set is being created"
+}
+
 variable "inline_policy" {
   type        = string
   default     = null
