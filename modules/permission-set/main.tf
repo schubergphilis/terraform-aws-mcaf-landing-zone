@@ -109,6 +109,10 @@ resource "aws_ssoadmin_customer_managed_policy_attachment" "customer_managed_pol
     name = var.customer_managed_policy_attachment.name
     path = var.customer_managed_policy_attachment.path
   }
+
+  depends_on = [
+    var.module_depends_on
+  ]
 }
 
 resource "aws_ssoadmin_permissions_boundary_attachment" "aws_managed_policy" {
