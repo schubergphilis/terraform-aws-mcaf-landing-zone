@@ -4,7 +4,7 @@ output "arn" {
 }
 
 output "name" {
-  description = "The Name of the permission set."
+  description = "The name of the permission set."
   value       = local.permission_set_name
 }
 
