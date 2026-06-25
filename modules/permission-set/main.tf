@@ -9,8 +9,9 @@ locals {
     ]
   ])
 
-  instance_arn       = var.create ? aws_ssoadmin_permission_set.default[0].instance_arn : data.aws_ssoadmin_permission_set.default[0].instance_arn
-  permission_set_arn = var.create ? aws_ssoadmin_permission_set.default[0].arn : data.aws_ssoadmin_permission_set.default[0].arn
+  instance_arn        = var.create ? aws_ssoadmin_permission_set.default[0].instance_arn : data.aws_ssoadmin_permission_set.default[0].instance_arn
+  permission_set_arn  = var.create ? aws_ssoadmin_permission_set.default[0].arn : data.aws_ssoadmin_permission_set.default[0].arn
+  permission_set_name = var.create ? aws_ssoadmin_permission_set.default[0].name : data.aws_ssoadmin_permission_set.default[0].name
 }
 
 data "aws_ssoadmin_instances" "default" {}

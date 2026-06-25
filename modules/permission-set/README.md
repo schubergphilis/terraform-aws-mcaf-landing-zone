@@ -198,4 +198,5 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_arn"></a> [arn](#output\_arn) | The ARN of the permission set. |
+| <a name="output_name"></a> [name](#output\_name) | The name of the permission set. |
 <!-- END_TF_DOCS -->
