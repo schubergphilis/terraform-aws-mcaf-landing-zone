@@ -4,6 +4,7 @@ module "aws_sso_permission_sets" {
   source                                       = "./modules/permission-set"
   name                                         = each.key
   assignments                                  = each.value.assignments
+  customer_managed_policy_attachment           = each.value.customer_managed_policy_attachment
   inline_policy                                = each.value.inline_policy
   managed_policy_arns                          = each.value.managed_policy_arns
   permissions_boundary_aws_managed_policy_arn  = each.value.permissions_boundary_aws_managed_policy_arn
