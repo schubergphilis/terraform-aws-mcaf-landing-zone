@@ -177,6 +177,13 @@ The feature can be controlled via the `aws_guardduty` variable and is enabled by
 
 Note: In case you are migrating an existing AWS organization to this module, all existing accounts except for the `management` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
 
+### AWS IAM Access Analyzer
+
+This module enables [IAM Access Analyzer](https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html) at the organization level, with the `audit` account registered as the delegated administrator. Two organization-wide analyzers are created and controlled via the `aws_access_analyzer` variable:
+
+- **External access** (`ORGANIZATION`) — detects resources shared outside the organization. Created in every governed region, satisfying CIS AWS Foundations Benchmark control IAM.28. Provided at no additional charge.
+- **Unused access** (`ORGANIZATION_UNUSED_ACCESS`) — flags IAM roles, users, and credentials unused for longer than `unused_access_age` days (default `90`). As IAM is a global service, this analyzer is created only in the home region. This is a [paid feature](https://aws.amazon.com/iam/access-analyzer/pricing/) and is therefore disabled by default. It's recommended to turn this on once in a while to view and solve unused IAM resources and then disable again.
+
 ## AWS KMS
 
 The module creates 3 AWS KMS keys, one for the management account, one for the audit account, and one for the log archive account. We recommend to further scope down the AWS KMS key policy in the management account by providing a secure policy using `kms_key_policy`. The default policy "Base Permissions" can be overwritten and should be limited to the root account only, for example by using the statement below:
