@@ -5,6 +5,26 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v10.1.0 - 2026-06-26
+
+### What's Changed
+
+#### 🚀 Features
+
+* feat: add organization-wide IAM Access Analyzer (#266) @marwinbaumannsbp
+* feat: Add support for a customer managed policy attachment (#264) @fatbasstard
+
+#### 🐛 Bug Fixes
+
+* fix: Add permission set name output (#265) @fatbasstard
+* fix: Add the Permission set ARN output (#263) @fatbasstard
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v10.0.1...v10.1.0
+
+> [!IMPORTANT]
+Ensure the AWS Service Access principal `access-analyzer.amazonaws.com` is enabled in your organization. Use
+[terraform-aws-mcaf-organization](https://registry.terraform.io/modules/schubergphilis/mcaf-organization/aws/latest) version v0.4.0 or higher to ensure this is set.
+
 ## v10.0.1 - 2026-04-17
 
 ### What's Changed
