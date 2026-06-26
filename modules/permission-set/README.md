@@ -170,6 +170,7 @@ No modules.
 | Name | Type |
 |------|------|
 | [aws_ssoadmin_account_assignment.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_account_assignment) | resource |
+| [aws_ssoadmin_customer_managed_policy_attachment.customer_managed_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_customer_managed_policy_attachment) | resource |
 | [aws_ssoadmin_managed_policy_attachment.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_managed_policy_attachment) | resource |
 | [aws_ssoadmin_permission_set.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set) | resource |
 | [aws_ssoadmin_permission_set_inline_policy.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssoadmin_permission_set_inline_policy) | resource |
@@ -186,6 +187,7 @@ No modules.
 | <a name="input_name"></a> [name](#input\_name) | Name of the permission set | `string` | n/a | yes |
 | <a name="input_assignments"></a> [assignments](#input\_assignments) | List of account names and IDs and Identity Center groups to assign to the permission set | <pre>list(object({<br/>    account_id   = string<br/>    account_name = string<br/>    sso_groups   = list(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_create"></a> [create](#input\_create) | Set to false to only manage assignments when the permission set already exists | `bool` | `true` | no |
+| <a name="input_customer_managed_policy_attachment"></a> [customer\_managed\_policy\_attachment](#input\_customer\_managed\_policy\_attachment) | The customer managed policy name and path to attach to the permission set. The policy with the specified name and path must exist in each account where the permission set is being created | <pre>object({<br/>    name = string<br/>    path = optional(string, "/")<br/>  })</pre> | `null` | no |
 | <a name="input_inline_policy"></a> [inline\_policy](#input\_inline\_policy) | The IAM inline policy to attach to a permission set | `string` | `null` | no |
 | <a name="input_managed_policy_arns"></a> [managed\_policy\_arns](#input\_managed\_policy\_arns) | List of IAM managed policy ARNs to be attached to the permission set | `list(string)` | `[]` | no |
 | <a name="input_module_depends_on"></a> [module\_depends\_on](#input\_module\_depends\_on) | A list of external resources the module depends\_on | `any` | `[]` | no |

@@ -194,6 +194,10 @@ variable "aws_sso_permission_sets" {
       account_name = string
       sso_groups   = list(string)
     }))
+    customer_managed_policy_attachment = optional(object({
+      name = string
+      path = optional(string, "/")
+    }), null)
     inline_policy                               = optional(string, null)
     managed_policy_arns                         = optional(list(string), [])
     permissions_boundary_aws_managed_policy_arn = optional(string, null)
