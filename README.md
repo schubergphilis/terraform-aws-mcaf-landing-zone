@@ -177,6 +177,16 @@ The feature can be controlled via the `aws_guardduty` variable and is enabled by
 
 Note: In case you are migrating an existing AWS organization to this module, all existing accounts except for the `management` and `logging` accounts have to be enabled like explained [here](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html#guardduty_add_orgs_accounts).
 
+### AWS IAM Access Analyzer
+
+This module enables [IAM Access Analyzer](https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html) at the organization level, with the `audit` account registered as the delegated administrator. Two organization-wide analyzers are created and controlled via the `aws_access_analyzer` variable:
+
+- **External access** (`ORGANIZATION`) — detects resources shared outside the organization. Created in every governed region, satisfying CIS AWS Foundations Benchmark control IAM.28. Provided at no additional charge.
+- **Unused access** (`ORGANIZATION_UNUSED_ACCESS`) — flags IAM roles, users, and credentials unused for longer than `unused_access_age` days (default `90`). As IAM is a global service, this analyzer is created only in the home region. This is a [paid feature](https://aws.amazon.com/iam/access-analyzer/pricing/) and is therefore disabled by default. It's recommended to turn this on once in a while to view and solve unused IAM resources and then disable again.
+
+> [!NOTE]
+> Organization analyzers require the `AWSServiceRoleForAccessAnalyzer` service-linked role to exist in the management account. This module creates it automatically; if the role already exists, set `create_service_linked_role = false` to avoid an "already exists" error.
+
 ## AWS KMS
 
 The module creates 3 AWS KMS keys, one for the management account, one for the audit account, and one for the log archive account. We recommend to further scope down the AWS KMS key policy in the management account by providing a secure policy using `kms_key_policy`. The default policy "Base Permissions" can be overwritten and should be limited to the root account only, for example by using the statement below:
@@ -505,6 +515,8 @@ module "landing_zone" {
 
 | Name | Type |
 |------|------|
+| [aws_accessanalyzer_analyzer.external_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/accessanalyzer_analyzer) | resource |
+| [aws_accessanalyzer_analyzer.unused_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/accessanalyzer_analyzer) | resource |
 | [aws_account_alternate_contact.audit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/account_alternate_contact) | resource |
 | [aws_account_alternate_contact.logging](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/account_alternate_contact) | resource |
 | [aws_account_alternate_contact.management](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/account_alternate_contact) | resource |
@@ -516,7 +528,9 @@ module "landing_zone" {
 | [aws_config_organization_managed_rule.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/config_organization_managed_rule) | resource |
 | [aws_iam_role.sns_feedback](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.sns_feedback_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_service_linked_role.access_analyzer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_service_linked_role) | resource |
 | [aws_iam_service_linked_role.config](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_service_linked_role) | resource |
+| [aws_organizations_delegated_administrator.access_analyzer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_delegated_administrator) | resource |
 | [aws_organizations_policy.aiservices_opt_out](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy) | resource |
 | [aws_organizations_policy.allowed_regions](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy) | resource |
 | [aws_organizations_policy.deny_root_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/organizations_policy) | resource |
@@ -562,6 +576,7 @@ module "landing_zone" {
 | <a name="input_regions"></a> [regions](#input\_regions) | Region configuration, plus global and per-region service SCP exceptions. See the README for more information on the configuration options. | <pre>object({<br/>    additional_allowed_service_actions_per_region    = optional(map(list(string)), {})<br/>    allowed_regions                                  = optional(list(string), []) # Allowed regions within your AWS Organization, defaults to your `home_region`.<br/>    enable_cdk_service_actions                       = optional(bool, false)<br/>    enable_edge_service_actions                      = optional(bool, false)<br/>    enable_security_lake_aggregation_service_actions = optional(bool, false)<br/>    home_region                                      = string                                # AWS Control Tower home region.<br/>    linked_regions                                   = optional(list(string), ["us-east-1"]) # AWS Control Tower governed regions.<br/>  })</pre> | n/a | yes |
 | <a name="input_account_contacts"></a> [account\_contacts](#input\_account\_contacts) | Alternate contacts for Control Tower core accounts (core-management, core-audit, core-logging) | <pre>object({<br/>    billing = optional(object({<br/>      email_address = string<br/>      name          = string<br/>      phone_number  = string<br/>      title         = string<br/>    }))<br/>    operations = optional(object({<br/>      email_address = string<br/>      name          = string<br/>      phone_number  = string<br/>      title         = string<br/>    }))<br/>    security = optional(object({<br/>      email_address = string<br/>      name          = string<br/>      phone_number  = string<br/>      title         = string<br/>    }))<br/>  })</pre> | `{}` | no |
 | <a name="input_additional_auditing_trail"></a> [additional\_auditing\_trail](#input\_additional\_auditing\_trail) | CloudTrail configuration for additional auditing trail | <pre>object({<br/>    name       = string<br/>    bucket     = string<br/>    kms_key_id = string<br/><br/>    event_selector = optional(object({<br/>      data_resource = optional(object({<br/>        type   = string<br/>        values = list(string)<br/>      }))<br/>      exclude_management_event_sources = optional(set(string), null)<br/>      include_management_events        = optional(bool, true)<br/>      read_write_type                  = optional(string, "All")<br/>    }))<br/>  })</pre> | `null` | no |
+| <a name="input_aws_access_analyzer"></a> [aws\_access\_analyzer](#input\_aws\_access\_analyzer) | AWS IAM Access Analyzer settings. Organization-wide analyzers are created in the audit account (registered as the delegated administrator). The external access analyzer (free) is enabled by default and created in every governed region. The unused access analyzer (paid) is disabled by default. | <pre>object({<br/>    external_access_enabled = optional(bool, true)<br/>    unused_access_enabled   = optional(bool, false)<br/><br/>    analyzer_name_prefix       = optional(string, "mcaf-landing-zone")<br/>    create_service_linked_role = optional(bool, true)<br/>    unused_access_age          = optional(number, 90)<br/>  })</pre> | `{}` | no |
 | <a name="input_aws_aiservices_opt_out_policy_enabled"></a> [aws\_aiservices\_opt\_out\_policy\_enabled](#input\_aws\_aiservices\_opt\_out\_policy\_enabled) | Enable the AWS AI Services Opt-Out Policy at the organization level to prevent AWS from using your content for model training. | `bool` | `true` | no |
 | <a name="input_aws_config_organization_managed_rules"></a> [aws\_config\_organization\_managed\_rules](#input\_aws\_config\_organization\_managed\_rules) | List of AWS Config Organization Managed Rule identifiers | `list(string)` | `[]` | no |
 | <a name="input_aws_config_sns_subscription"></a> [aws\_config\_sns\_subscription](#input\_aws\_config\_sns\_subscription) | Subscription options for the aws-controltower-AggregateSecurityNotifications (AWS Config) SNS topic | <pre>map(object({<br/>    endpoint = string<br/>    protocol = string<br/>  }))</pre> | `{}` | no |
