@@ -1,9 +1,23 @@
+locals {
+  access_analyzer_enabled = var.aws_access_analyzer.external_access_enabled || var.aws_access_analyzer.unused_access_enabled
+}
+
+// AWS IAM Access Analyzer - Service-linked role in the management account
+resource "aws_iam_service_linked_role" "access_analyzer" {
+  count = local.access_analyzer_enabled && var.aws_access_analyzer.create_service_linked_role ? 1 : 0
+
+  aws_service_name = "access-analyzer.amazonaws.com"
+  tags             = var.tags
+}
+
 // AWS IAM Access Analyzer - Management account configuration
 resource "aws_organizations_delegated_administrator" "access_analyzer" {
-  count = var.aws_access_analyzer.external_access_enabled || var.aws_access_analyzer.unused_access_enabled ? 1 : 0
+  count = local.access_analyzer_enabled ? 1 : 0
 
   account_id        = var.control_tower_account_ids.audit
   service_principal = "access-analyzer.amazonaws.com"
+
+  depends_on = [aws_iam_service_linked_role.access_analyzer]
 }
 
 // AWS IAM Access Analyzer - External access analyzer (CIS IAM.28)

@@ -47,8 +47,10 @@ variable "aws_access_analyzer" {
   type = object({
     external_access_enabled = optional(bool, true)
     unused_access_enabled   = optional(bool, false)
-    unused_access_age       = optional(number, 90)
-    analyzer_name_prefix    = optional(string, "mcaf-landing-zone")
+
+    analyzer_name_prefix       = optional(string, "mcaf-landing-zone")
+    create_service_linked_role = optional(bool, true)
+    unused_access_age          = optional(number, 90)
   })
   default     = {}
   description = "AWS IAM Access Analyzer settings. Organization-wide analyzers are created in the audit account (registered as the delegated administrator). The external access analyzer (free) is enabled by default and created in every governed region. The unused access analyzer (paid) is disabled by default."

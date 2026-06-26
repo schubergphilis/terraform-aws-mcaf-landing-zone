@@ -187,6 +187,11 @@ run "access_analyzer_enabled_by_default" {
     condition     = length(aws_accessanalyzer_analyzer.unused_access) == 0
     error_message = "The unused access analyzer should be disabled by default"
   }
+
+  assert {
+    condition     = length(aws_iam_service_linked_role.access_analyzer) == 1
+    error_message = "The Access Analyzer service-linked role should be created in the management account"
+  }
 }
 
 run "access_analyzer_unused_enabled" {
@@ -245,5 +250,34 @@ run "access_analyzer_all_disabled" {
   assert {
     condition     = length(aws_accessanalyzer_analyzer.unused_access) == 0
     error_message = "No unused access analyzer should be created when disabled"
+  }
+
+  assert {
+    condition     = length(aws_iam_service_linked_role.access_analyzer) == 0
+    error_message = "No service-linked role should be created when both analyzers are disabled"
+  }
+}
+
+run "access_analyzer_service_linked_role_disabled" {
+  module {
+    source = "./"
+  }
+
+  variables {
+    aws_access_analyzer = {
+      create_service_linked_role = false
+    }
+  }
+
+  command = plan
+
+  assert {
+    condition     = length(aws_iam_service_linked_role.access_analyzer) == 0
+    error_message = "No service-linked role should be created when create_service_linked_role is false"
+  }
+
+  assert {
+    condition     = length(aws_accessanalyzer_analyzer.external_access) == 2
+    error_message = "The external access analyzer should still be created when the service-linked role is managed externally"
   }
 }
