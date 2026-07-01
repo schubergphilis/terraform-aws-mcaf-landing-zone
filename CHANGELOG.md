@@ -5,6 +5,16 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v10.2.0 - 2026-07-01
+
+### What's Changed
+
+#### 🚀 Features
+
+* feat: expose enable_additional_eu_regions in baseline settings and update mcaf-account-baseline version ref (#267) @mayur7436
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-landing-zone/compare/v10.1.0...v10.2.0
+
 ## v10.1.0 - 2026-06-26
 
 ### What's Changed
