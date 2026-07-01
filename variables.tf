@@ -82,6 +82,7 @@ variable "aws_core_accounts_baseline_settings" {
     ebs_encryption_by_default               = optional(bool, true)
     ebs_snapshot_block_public_access_state  = optional(string, "block-new-sharing")
     ec2_image_block_public_access_state     = optional(string, "block-new-sharing")
+    enable_additional_eu_regions            = optional(bool, true)
     ssm_documents_public_sharing_permission = optional(string, "Disable")
 
     account_password_policy = optional(object({
