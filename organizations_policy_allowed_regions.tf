@@ -134,7 +134,8 @@ locals {
     "sqs:DeleteM*",
     "sqs:GetQueueA*",
     "glue:Get*",
-    "lakeformation:List*"
+    "lakeformation:List*",
+    "lakeformation:DescribeResource"
   ] : []
 
   # AWS services that are inherently multi-region, meaning they can operate across multiple regions.
